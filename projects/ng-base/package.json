@@ -1,0 +1,35 @@
+{
+  "name": "@lenne.tech/ng-base",
+  "description": "Angular library with basic elements and for communication with the lenne.Tech Nest Server",
+  "keywords": [
+    "angular",
+    "apollo",
+    "graphql",
+    "apollo-client",
+    "apollo-angular",
+    "angular-library",
+    "angular11+"
+  ],
+  "version": "0.0.1",
+  "author": "lenne.Tech <info@lenne.tech> (https://lenne.tech)",
+  "homepage": "http://lenne.tech",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lenneTech/ng-base"
+  },
+  "peerDependencies": {
+    "@angular/common": "^11.2.8",
+    "@angular/core": "^11.2.8",
+    "@angular/forms": "^11.2.8",
+    "@angular/platform-browser": "^11.2.8",
+    "@angular/router": "^11.2.8",
+    "rxjs": "^6.6.7"
+  },
+  "dependencies": {
+    "@apollo/client": "3.3.14",
+    "apollo-angular": "2.4.0",
+    "graphql": "15.5.0",
+    "tslib": "2.2.0"
+  }
+}
