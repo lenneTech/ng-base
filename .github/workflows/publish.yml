@@ -15,6 +15,7 @@ jobs:
           node-version: 14.16
       - run: npm install
       - run: npm build
+      - run: cd dist/ng-base
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
