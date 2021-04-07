@@ -152,7 +152,8 @@ export class Helper {
    * Delay
    */
   public static delay(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    const promise = new Promise((resolve) => setTimeout(resolve, ms));
+    return promise;
   }
 
   /**
