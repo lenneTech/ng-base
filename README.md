@@ -4,7 +4,8 @@ This is the base library of [lenne.Tech](https://lenne.tech) for Angular.
 
 ## Description
 
-This library contains all the basics to start a new project in combination with the [lenne.Tech Nest Server](https://github.com/lenneTech/nest-server#lennetech-nest-server):- GraphQL service and elements for easy communication with GraphQL API (via Models)
+This library contains all the basics to start a new project in combination with the [lenne.Tech Nest Server](https://github.com/lenneTech/nest-server#lennetech-nest-server):
+- GraphQL service and elements for easy communication with GraphQL API (via Models)
 - Standard Model with methods for mapping, cloning and comparing models
 - Basic User Model with basic rights handling
 - Loading Service for the subscription of loading processes
