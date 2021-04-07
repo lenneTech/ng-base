@@ -17,5 +17,6 @@ jobs:
       - run: npm run build
       - uses: JS-DevTools/npm-publish@v1
         with:
+          access: public
           package: ./dist/ng-base/package.json
           token: ${{ secrets.NPM_TOKEN }}
