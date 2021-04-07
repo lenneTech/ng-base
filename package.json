@@ -2,7 +2,7 @@
   "name": "ng-base",
   "version": "0.0.1",
   "scripts": {
-    "build": "ng build",
+    "build": "ng build --prod",
     "check": "npm run format:fix && npm run lint",
     "format:check": "prettier --config ./.prettierrc --list-different \"src/{app,environments,assets}/**/*{.ts,.js,.json,.scss}\"",
     "format:fix": "pretty-quick --staged",
