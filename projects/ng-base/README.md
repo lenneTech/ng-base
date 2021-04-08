@@ -5,6 +5,7 @@ This is the base library of [lenne.Tech](https://lenne.tech) for Angular.
 ## Description
 
 This library contains all the basics to start a new project in combination with the [lenne.Tech Nest Server](https://github.com/lenneTech/nest-server#lennetech-nest-server):
+
 - GraphQL service and elements for easy communication with GraphQL API (via Models)
 - Standard Model with methods for mapping, cloning and comparing models
 - Basic User Model with basic rights handling
@@ -23,6 +24,7 @@ For setting up a new project we recommend our [Angular Starter](https://github.c
 ## Integration into an Angular project
 
 Installation
+
 ```bash
 cd path/to/your/angular-project
 npm i @lenne.tech/ng-graphql-client
@@ -36,8 +38,12 @@ import { GraphQLModule } from '@lenne.tech/ng-graphql-client'
   imports: [
       GraphQLModule.forRoot({
         apiUrl: 'https://url.to-your.domain/api',
-        version: 'versionForLocalStorageKeys',
-        prefix: 'prefixForLocalStorageKeys'
+        authGuardRedirectUrl: '/path/to/login', // optional (default: '/auth')
+        prefix: 'prefixForLocalStorageKeys', // optional (default: '')
+        scrollDetectionOffset: 200, // should be >= scrollOffset, optional (default: 200)
+        scrollOffset: 100, // optional (default: 100)
+        storageType: 'local' as StorageType, // optional (default: 'local')
+        version: '0.1', // to set version for storage keys, optional (default: '')
       })
   ],
 })
@@ -47,3 +53,11 @@ import { GraphQLModule } from '@lenne.tech/ng-graphql-client'
 
 Description follows ...
 
+## Thanks
+
+Many thanks to the developers of [Angular](https://angular.io/), [Apollo Angular](https://apollo-angular.com/)
+and all the developers whose packages are used here.
+
+## License
+
+MIT - see LICENSE

@@ -1,10 +1,11 @@
 # Angular Base
 
-This is the base library of [lenne.Tech](https://lenne.tech) for Angular.
+This is the base library of [lenne.Tech](https://lenne.tech) for Angular. It contains the npm package [ng-base](https://github.com/lenneTech/ng-base/tree/main/projects/ng-base).
 
 ## Description
 
 This library contains all the basics to start a new project in combination with the [lenne.Tech Nest Server](https://github.com/lenneTech/nest-server#lennetech-nest-server):
+
 - GraphQL service and elements for easy communication with GraphQL API (via Models)
 - Standard Model with methods for mapping, cloning and comparing models
 - Basic User Model with basic rights handling
@@ -14,7 +15,7 @@ This library contains all the basics to start a new project in combination with 
 - Authentication service for user registration
 - and much more
 
-The detailed description of the features and instructions on how to use the library can be found in the [README.md of the library](projects/ng-base/src/README.md).
+The detailed description of the features and instructions on how to use the library can be found in the [README.md of the library](https://github.com/lenneTech/ng-base/tree/main/projects/ng-base/README.md).
 
 For setting up a new project we recommend our [Angular Starter](https://github.com/lenneTech/angular-starter), which already contains this library and also includes a few sample elements as templates.
 
@@ -23,7 +24,6 @@ For setting up a new project we recommend our [Angular Starter](https://github.c
 - [Node.js](https://nodejs.org) LTS (with npm)
 - [Angular CLI](https://cli.angular.io/)
 
-
 ## Test the package
 
 ```bash
@@ -31,6 +31,7 @@ npm run pack
 ```
 
 Afterwards, the package can be included in an Angular project as follows in the `package.json` on a test basis:
+
 ```json
 {
   "dependencies": {
@@ -44,10 +45,10 @@ Afterwards, the package can be included in an Angular project as follows in the 
 Update version in `projects/graphql-client/package.json` and `projects/graphql-client/package-lock.json`.
 
 After that, the new package can be published as follows:
+
 ```bash
 npm run publish
 ```
-
 
 ## Initialize log
 
@@ -57,28 +58,25 @@ The initialization of this library is inspired by
 ### Init library
 
 Init Angular
+
 ```bash
 ng new ng-base --createApplication false --prefix lt
 ng g library ng-base --prefix lt
 ```
 
 Change package name in `projects/ng-base/src`
+
 ```
 "name": "@lenne.tech/ng-base"
 ```
 
 Replace `path` configuration in `tsconfig.json`:
+
 ```json
 {
   "paths": {
-        "@lenne.tech/ng-base/*": [
-          "projects/ng-base/*",
-          "projects/ng-base"
-        ],
-        "@lenne.tech/ng-base": [
-          "dist/ng-base/*",
-          "dist/ng-base"
-        ]
+    "@lenne.tech/ng-base/*": ["projects/ng-base/*", "projects/ng-base"],
+    "@lenne.tech/ng-base": ["dist/ng-base/*", "dist/ng-base"]
   }
 }
 ```
@@ -86,11 +84,13 @@ Replace `path` configuration in `tsconfig.json`:
 Delete the content of the projects/some-lib/src/lib/ folder and remove content of the root public-api.ts file so that it’s empty.
 
 Install [ng-samurai](https://github.com/kreuzerk/ng-samurai) to extend the Angular CLI for creating Sub-entries:
+
 ```
 npm i -D ng-samurai
 ```
 
 Create new Sub-entry (without component `--gc false` and module `--gm false`):
+
 ```
 ng g ng-samurai:generate-subentry core --gc false --gm false
 ```
@@ -237,6 +237,7 @@ Add scripts in `package.json`:
 ```
 
 Add pre-commit hook:
+
 ```
 mkdir .husky
 npx husky add .husky/pre-commit "cd $(dirname "$0") && npm run check"
@@ -257,3 +258,12 @@ To get a little more leeway in dealing with TypeScript's strict typing, the foll
   }
 }
 ```
+
+## Thanks
+
+Many thanks to the developers of [Angular](https://angular.io/), [Apollo Angular](https://apollo-angular.com/)
+and all the developers whose packages are used here.
+
+## License
+
+MIT - see LICENSE
