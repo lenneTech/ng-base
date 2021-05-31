@@ -31,6 +31,7 @@ export * from './guards/logout.guard';
 export * from './enums/comparison-operator.enum';
 export * from './enums/graphql-request-type.enum';
 export * from './enums/logical-operator.enum';
+export * from './enums/sort-order.enum';
 
 // Interfaces
 export * from './interfaces/base-module-config.interface';
@@ -43,6 +44,8 @@ export * from './interfaces/graphql-options.interface';
 export * from './interfaces/graphql-plus-options.interfacen';
 export * from './interfaces/graphql-type-collection.interface';
 export * from './interfaces/single-filter-input.interface';
+export * from './interfaces/sort-input.interface';
+export * from './interfaces/find-args.interface';
 
 // Pipes
 export * from './pipes/ellipses.pipe';
