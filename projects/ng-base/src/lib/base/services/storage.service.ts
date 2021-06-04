@@ -8,7 +8,6 @@ import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-
   providedIn: 'root',
 })
 export class StorageService {
-
   /**
    * Storage
    */
@@ -19,14 +18,12 @@ export class StorageService {
    */
   protected prefix = '';
 
-
   /**
    * Initializations
    */
   constructor(@Inject(BASE_MODULE_CONFIG) private moduleConfig: BaseModuleConfig) {
-
     // Set storage
-    const type = moduleConfig.storageType;
+    const type = moduleConfig.storageType ? moduleConfig.storageType : 'local';
     if (window[type + 'Storage']) {
       this.storage = window[type + 'Storage'];
     }
@@ -67,18 +64,12 @@ export class StorageService {
 
     if (typeof itemKeys === 'object') {
       for (const [itemKey, itemValue] of Object.entries(itemKeys)) {
-        this.storage.setItem(
-          this.prefix + itemKey,
-          JSON.stringify(itemValue)
-        );
+        this.storage.setItem(this.prefix + itemKey, JSON.stringify(itemValue));
       }
       return true;
     }
 
-    this.storage.setItem(
-      this.prefix + itemKeys,
-      JSON.stringify(value)
-    );
+    this.storage.setItem(this.prefix + itemKeys, JSON.stringify(value));
     return true;
   }
 
@@ -86,7 +77,6 @@ export class StorageService {
    * Load items via key(s)
    */
   public load(itemKeys: string | string[]): any {
-
     // Check local storage
     if (!this.storage) {
       return;
@@ -100,9 +90,7 @@ export class StorageService {
     if (Array.isArray(itemKeys)) {
       const back = {};
       itemKeys.forEach((itemKey) => {
-        const loadedItem = this.storage.getItem(
-          this.prefix + itemKey
-        );
+        const loadedItem = this.storage.getItem(this.prefix + itemKey);
         if (loadedItem) {
           back[itemKey] = JSON.parse(loadedItem);
         } else {
