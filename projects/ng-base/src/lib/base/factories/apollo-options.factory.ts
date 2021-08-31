@@ -1,7 +1,8 @@
 import { HttpLink } from 'apollo-angular/http';
 import { BaseModuleConfig } from '../interfaces/base-module-config.interface';
 import { AuthService } from '../services/auth.service';
-import { ApolloLink, InMemoryCache } from '@apollo/client';
+import { ApolloLink } from '@apollo/client/core';
+import { InMemoryCache } from '@apollo/client/cache';
 
 /**
  * Factory for apollo-angular options
