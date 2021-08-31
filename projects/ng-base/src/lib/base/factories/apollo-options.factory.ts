@@ -1,7 +1,7 @@
 import { HttpLink } from 'apollo-angular/http';
 import { BaseModuleConfig } from '../interfaces/base-module-config.interface';
 import { AuthService } from '../services/auth.service';
-import { ApolloLink, InMemoryCache } from '@apollo/client/core';
+import { ApolloLink, InMemoryCache } from '@apollo/client';
 
 /**
  * Factory for apollo-angular options
@@ -18,7 +18,7 @@ export function apolloOptionsFactory(baseModuleConfig: BaseModuleConfig, httpLin
       if (token) {
         headers.Authorization = 'Bearer ' + token;
       }
-      operation.setContext(() => ({headers}));
+      operation.setContext(() => ({ headers }));
     }
     return forward(operation);
   });
