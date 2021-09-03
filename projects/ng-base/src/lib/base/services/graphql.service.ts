@@ -61,15 +61,25 @@ export class GraphQLService {
         let fields;
         let allowedFields;
 
+        // Log meta
+        if (config.log) {
+          console.log({ meta });
+        }
+
         if (config.fields) {
           allowedFields = meta.getFields(graphql, { type: config.type });
+
+          // Log meta
+          if (config.log) {
+            console.log({ allowedFields });
+          }
 
           fields = this.prepareFields(config.fields, {
             allowed: allowedFields,
           });
         }
 
-        // Log
+        // Log fields
         if (config.log) {
           console.log({ fields });
         }
