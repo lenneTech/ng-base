@@ -6,6 +6,7 @@ import { Observable, throwError } from 'rxjs';
 import { GraphQLMetaService } from './graphql-meta.service';
 import { GraphQLEnum } from '../classes/graphql-enum.class';
 import { GraphQLType } from '../classes/graphql-type.class';
+import { IGraphQLTypeCollection } from '../interfaces/graphql-type-collection.interface';
 
 /**
  * GraphQL service
@@ -74,9 +75,26 @@ export class GraphQLService {
             console.log({ allowedFields });
           }
 
-          fields = this.prepareFields(config.fields, {
+          const fieldsData = this.prepareFields(config.fields, {
             allowed: allowedFields,
           });
+
+          // Log fields data
+          if (config.log) {
+            fieldsData.usedFields.sort();
+            fieldsData.schemaFields.sort();
+            const filtered = fieldsData.schemaFields.filter((field) => !fieldsData.usedFields.includes(field));
+            const unused = this.graphQLTypeCollectionToStringArray(allowedFields).filter(
+              (field) => !fieldsData.usedFields.includes(field)
+            );
+            console.log({ fieldsData, filtered, unused });
+          }
+
+          fields = fieldsData.fieldsString;
+        }
+
+        if (fields && !fields.startsWith('{')) {
+          fields = '{' + fields + '\n}';
         }
 
         // Log fields
@@ -84,16 +102,30 @@ export class GraphQLService {
           console.log({ fields });
         }
 
-        if (fields && !fields.startsWith('{')) {
-          fields = '{' + fields + '\n}';
-        }
-
         // Get allowed args
         const allowedArgs = meta.getArgs(graphql, { type: config.type });
-        const args =
-          this.prepareArguments(config.arguments, {
-            allowed: allowedArgs,
-          }) || '';
+
+        // Log allowed args
+        if (config.log) {
+          console.log({ allowedArgs });
+        }
+
+        const argsData = this.prepareArguments(config.arguments, {
+          allowed: allowedArgs,
+        });
+
+        // Log args data
+        if (config.log) {
+          argsData.usedArgs.sort();
+          argsData.schemaArgs.sort();
+          const filtered = argsData.schemaArgs.filter((field) => !argsData.usedArgs.includes(field));
+          const unused = this.graphQLTypeCollectionToStringArray(allowedArgs)
+            .sort()
+            .filter((field) => !argsData.usedArgs.includes(field));
+          console.log({ argsData, filtered, unused });
+        }
+
+        const args = argsData.argsString || '';
 
         // Log
         if (config.log) {
@@ -150,19 +182,51 @@ export class GraphQLService {
   }
 
   /**
+   * Get fields / args from IGraphQLTypeCollection
+   */
+  protected graphQLTypeCollectionToStringArray(collection: IGraphQLTypeCollection, current = '', result = []) {
+    if (collection) {
+      if (collection instanceof GraphQLType) {
+        result.push(current);
+      } else {
+        for (const key of Object.keys(collection)) {
+          this.graphQLTypeCollectionToStringArray(
+            collection[key] as IGraphQLTypeCollection,
+            current ? current + '.' + key : key,
+            result
+          );
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * Prepare arguments for GraphQL request
    */
-  protected prepareArguments(args: any, options: { level?: number; allowed?: any } = {}): string {
+  protected prepareArguments(
+    args: any,
+    options: {
+      allowed?: any;
+      level?: number;
+      parent?: string;
+      schemaArgs?: string[];
+      usedArgs?: string[];
+    } = {}
+  ): { argsString: string; schemaArgs: string[]; usedArgs: string[] } {
     // Config
-    const { level, allowed } = {
-      level: 1,
+    const { allowed, level, parent, schemaArgs, usedArgs } = {
       allowed: null,
+      level: 1,
+      parent: '',
+      schemaArgs: [],
+      usedArgs: [],
       ...options,
     };
 
     // Check args
     if (!args) {
-      return '';
+      return { argsString: '', schemaArgs, usedArgs };
     }
 
     // Process args
@@ -180,13 +244,21 @@ export class GraphQLService {
           key = allowedKeys?.shift();
         }
 
-        result.push(this.prepareArguments(item, { level: level + 1, allowed: key ? allowed[key] : null }));
+        result.push(
+          this.prepareArguments(item, {
+            allowed: key ? allowed[key] : null,
+            level: level + 1,
+            parent: parent + key + '.',
+            schemaArgs,
+            usedArgs,
+          }).argsString
+        );
       }
       if (result.length) {
         if (level === 1) {
-          return '(' + result.join(', ') + ')';
+          return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs };
         } else {
-          return '[' + result.join(', ') + ']';
+          return { argsString: '[' + result.join(', ') + ']', schemaArgs, usedArgs };
         }
       }
     }
@@ -194,21 +266,35 @@ export class GraphQLService {
     // Process object
     else if (typeof args === 'object') {
       for (const [key, value] of Object.entries(args)) {
-        if (value instanceof GraphQLEnum) {
-          result.push(key + ':' + value.value);
-          continue;
-        }
+        const currentKey = parent + key;
+        schemaArgs.push(currentKey);
 
         if (allowed && !allowed[key]) {
           continue;
         }
 
         if (value !== undefined && value !== null) {
+          usedArgs.push(currentKey);
+
+          if (value instanceof GraphQLEnum) {
+            result.push(key + ':' + value.value);
+            continue;
+          }
+
           if (Array.isArray(value)) {
             result.push(
               key +
                 ': [' +
-                value.map((item) => this.prepareArguments(item, { level: level + 1, allowed: allowed[key] })) +
+                value.map(
+                  (item) =>
+                    this.prepareArguments(item, {
+                      allowed: allowed[key],
+                      level: level + 1,
+                      parent: currentKey + '.',
+                      schemaArgs,
+                      usedArgs,
+                    }).argsString
+                ) +
                 ']'
             );
             continue;
@@ -228,46 +314,62 @@ export class GraphQLService {
                   ? `"""${(value as Date).toString()}"""`
                   : value
                 : this.prepareArguments(value, {
-                    level: level + 1,
                     allowed: allowed[key],
-                  }))
+                    level: level + 1,
+                    parent: currentKey + '.',
+                    schemaArgs,
+                    usedArgs,
+                  }).argsString)
           );
         }
       }
       if (result.length) {
         if (level === 1) {
-          return '(' + result.join(', ') + ')';
+          return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs };
         } else {
-          return '{' + result.join(', ') + '}';
+          return { argsString: '{' + result.join(', ') + '}', schemaArgs, usedArgs };
         }
       }
     }
 
     // Others
     else {
-      return JSON.stringify(args);
+      return { argsString: JSON.stringify(args), schemaArgs, usedArgs };
     }
   }
 
   /**
    * Prepare fields for GraphQL request
    */
-  protected prepareFields(fields: any, options: { tab?: number; spaces?: number; allowed?: any } = {}): string {
+  protected prepareFields(
+    fields: any,
+    options: {
+      allowed?: any;
+      schemaFields?: string[];
+      usedFields?: string[];
+      parent?: string;
+      spaces?: number;
+      tab?: number;
+    } = {}
+  ): { schemaFields: string[]; fieldsString: string; usedFields: string[] } {
     // Config
-    const { tab, spaces, allowed } = {
-      tab: 1,
-      spaces: 2,
+    const { allowed, parent, schemaFields, spaces, tab, usedFields } = {
       allowed: null,
+      parent: '',
+      schemaFields: [],
+      spaces: 2,
+      tab: 1,
+      usedFields: [],
       ...options,
     };
 
+    // Init fields string
+    let fieldsString = '';
+
     // Check fields
     if (!fields) {
-      return '';
+      return { fieldsString, schemaFields, usedFields };
     }
-
-    // Init result
-    let result = '';
 
     // Process string
     if (typeof fields === 'string') {
@@ -275,52 +377,75 @@ export class GraphQLService {
         allowed &&
         ((typeof allowed === 'string' && allowed !== fields) || (typeof allowed === 'object' && !allowed[fields]))
       ) {
-        return '';
+        return { fieldsString, schemaFields, usedFields };
       }
-      return '\n' + ' '.repeat(spaces).repeat(tab) + fields;
+      return { fieldsString: '\n' + ' '.repeat(spaces).repeat(tab) + fields, schemaFields, usedFields };
     }
 
     // Process array
     else if (Array.isArray(fields)) {
       for (const item of fields) {
         if (typeof item === 'object') {
-          result = result + this.prepareFields(item, { tab: tab + 1, allowed });
+          fieldsString =
+            fieldsString +
+            this.prepareFields(item, {
+              allowed,
+              parent,
+              spaces,
+              schemaFields,
+              tab: tab + 1,
+              usedFields,
+            }).fieldsString;
           continue;
         }
+        const currentPath = parent + item;
+        schemaFields.push(currentPath);
         if (allowed && !allowed?.[item]) {
           continue;
         }
-        result =
-          result +
+        usedFields.push(currentPath);
+        fieldsString =
+          fieldsString +
           this.prepareFields(item, {
-            tab: tab + 1,
             allowed:
               typeof allowed?.[item] === 'object' && !(allowed?.[item] instanceof GraphQLType) ? allowed?.[item] : item,
-          });
+            parent: currentPath + '.',
+            spaces,
+            schemaFields,
+            tab: tab + 1,
+            usedFields,
+          }).fieldsString;
       }
     }
 
     // Process object
     else if (typeof fields === 'object') {
       for (const [key, val] of Object.entries(fields)) {
+        const currentPath = parent + key;
+        schemaFields.push(currentPath);
         if (allowed && !allowed[key]) {
           continue;
         }
+        usedFields.push(currentPath);
         if (typeof val !== 'object' || !Object.keys(val).length) {
-          result = result + '\n' + ' '.repeat(spaces).repeat(tab) + key;
+          fieldsString = fieldsString + '\n' + ' '.repeat(spaces).repeat(tab) + key;
         } else {
-          result =
-            result +
+          fieldsString =
+            fieldsString +
             '\n' +
             ' '.repeat(spaces).repeat(tab) +
             key +
             ' ' +
             '{' +
             this.prepareFields(val, {
-              tab: tab + 1,
               allowed:
                 typeof allowed?.[key] === 'object' && !(allowed?.[key] instanceof GraphQLType) ? allowed?.[key] : key,
-            }) +
+              parent: currentPath + '.',
+              spaces,
+              schemaFields,
+              tab: tab + 1,
+              usedFields,
+            }).fieldsString +
             '\n' +
             ' '.repeat(spaces).repeat(tab) +
             '}';
@@ -329,6 +454,6 @@ export class GraphQLService {
     }
 
     // Return result
-    return result;
+    return { fieldsString, schemaFields, usedFields };
   }
 }
