@@ -214,7 +214,7 @@ export class GraphQLService {
       usedArgs?: string[];
     } = {}
   ): { argsString: string; schemaArgs: string[]; usedArgs: string[] } {
-    // Config
+    // Init config variables
     const { allowed, level, parent, schemaArgs, usedArgs } = {
       allowed: null,
       level: 1,
@@ -225,11 +225,11 @@ export class GraphQLService {
     };
 
     // Check args
-    if (!args) {
+    if (args === undefined || args === null) {
       return { argsString: '', schemaArgs, usedArgs };
     }
 
-    // Process args
+    // Init args
     const result = [];
 
     // Process array
@@ -244,6 +244,7 @@ export class GraphQLService {
           key = allowedKeys?.shift();
         }
 
+        // Process value
         result.push(
           this.prepareArguments(item, {
             allowed: key ? allowed[key] : null,
@@ -254,10 +255,16 @@ export class GraphQLService {
           }).argsString
         );
       }
+
+      // Encapsulation of the array result
       if (result.length) {
+        // Complete result, encapsulated via round brackets
         if (level === 1) {
           return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs };
-        } else {
+        }
+
+        // Deeper result part, encapsulated via square brackets
+        else {
           return { argsString: '[' + result.join(', ') + ']', schemaArgs, usedArgs };
         }
       }
@@ -265,74 +272,108 @@ export class GraphQLService {
 
     // Process object
     else if (typeof args === 'object') {
+      // Process all object entries
       for (const [key, value] of Object.entries(args)) {
+        // Init data for current entry
         const currentKey = parent + key;
         schemaArgs.push(currentKey);
 
+        // If the allowed key handling is enabled and the current key is not included in the list of allowed keys,
+        // the current key will be skipped
         if (allowed && !allowed[key]) {
           continue;
         }
 
-        if (value !== undefined && value !== null) {
-          usedArgs.push(currentKey);
+        // Skip value if not exists
+        if (value === undefined && value === null) {
+          continue;
+        }
 
-          if (value instanceof GraphQLEnum) {
-            result.push(key + ':' + value.value);
-            continue;
-          }
+        // Add current key to metadata
+        usedArgs.push(currentKey);
 
-          if (Array.isArray(value)) {
-            result.push(
-              key +
-                ': [' +
-                value.map(
-                  (item) =>
-                    this.prepareArguments(item, {
-                      allowed: allowed[key],
-                      level: level + 1,
-                      parent: currentKey + '.',
-                      schemaArgs,
-                      usedArgs,
-                    }).argsString
-                ) +
-                ']'
-            );
-            continue;
-          }
+        // Process GraphQLEnum
+        if (value instanceof GraphQLEnum) {
+          result.push(key + ':' + value.value);
+          continue;
+        }
 
+        // Process array
+        else if (Array.isArray(value)) {
           result.push(
             key +
-              ': ' +
-              (typeof value === 'string' ||
-              typeof value === 'boolean' ||
-              Object.prototype.toString.call(value) === '[object Date]'
-                ? allowed[key].isEnum
-                  ? value
-                  : typeof value === 'string'
-                  ? `"""${value.replace(/"/g, '\\"')}"""`
-                  : Object.prototype.toString.call(value) === '[object Date]'
-                  ? `"""${(value as Date).toString()}"""`
-                  : value
-                : this.prepareArguments(value, {
+              ': [' +
+              value.map(
+                (item) =>
+                  this.prepareArguments(item, {
                     allowed: allowed[key],
                     level: level + 1,
                     parent: currentKey + '.',
                     schemaArgs,
                     usedArgs,
-                  }).argsString)
+                  }).argsString
+              ) +
+              ']'
           );
+          continue;
         }
+
+        // Prepare additional result string
+        let additionalResult = key + ': ';
+
+        // Value is a date object
+        if (typeof value === 'object' && Object.prototype.toString.call(value) === '[object Date]') {
+          additionalResult += `"""${(value as Date).toString()}"""`;
+        }
+
+        // Value is a string
+        else if (typeof value === 'string') {
+          // Enum (doesn't need quotation marks)
+          if (allowed[key].isEnum) {
+            additionalResult += value;
+          }
+
+          // String
+          else {
+            additionalResult += `"""${value.replace(/"/g, '\\"')}"""`;
+          }
+        }
+
+        // Value is a simple boolean or a number
+        else if (typeof value === 'boolean' || typeof value === 'number') {
+          additionalResult += value;
+        }
+
+        // Others
+        else {
+          additionalResult += this.prepareArguments(value, {
+            allowed: allowed[key],
+            level: level + 1,
+            parent: currentKey + '.',
+            schemaArgs,
+            usedArgs,
+          }).argsString;
+        }
+
+        // Push deeper part into result array
+        result.push(additionalResult);
       }
+
+      // Encapsulation of the object result
       if (result.length) {
+        // Complete result, encapsulated via round brackets
         if (level === 1) {
           return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs };
-        } else {
+        }
+
+        // Deeper result part, encapsulated via curly brackets
+        else {
           return { argsString: '{' + result.join(', ') + '}', schemaArgs, usedArgs };
         }
       }
     }
 
-    // Others
+    // Prepare and process other / unknown values as JSON
     else {
       return { argsString: JSON.stringify(args), schemaArgs, usedArgs };
     }
