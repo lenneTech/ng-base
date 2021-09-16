@@ -18,6 +18,11 @@ export interface BaseModuleConfig {
   authGuardRedirectUrl?: string;
 
   /**
+   * Whether logging is enabled or not
+   */
+  logging?: false;
+
+  /**
    * Version of the App (for storage handling)
    * Default: null
    */
