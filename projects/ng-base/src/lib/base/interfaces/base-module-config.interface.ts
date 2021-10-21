@@ -12,6 +12,11 @@ export interface BaseModuleConfig {
   apiUrl?: string;
 
   /**
+   * Websocket URL to server API
+   */
+  wsUrl?: string;
+
+  /**
    * Default redirect URL for AuthGuard
    * Default: '/auth'
    */

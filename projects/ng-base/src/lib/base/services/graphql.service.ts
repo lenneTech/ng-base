@@ -137,6 +137,11 @@ export class GraphQLService {
           ? gql(config.type + '{\n' + graphql + args + fields + '\n}')
           : gql(config.type + '{\n' + graphql + args + '\n}');
 
+        // Log
+        if (config.log) {
+          console.log({ documentNode });
+        }
+
         const request: any = {};
         request[config.type] = documentNode;
 
@@ -145,7 +150,18 @@ export class GraphQLService {
           console.log({ request });
         }
 
-        const func = config.type === GraphQLRequestType.MUTATION ? 'mutate' : config.type;
+        let func;
+        if (config.type === GraphQLRequestType.MUTATION) {
+          func = 'mutate';
+          request[config.type] = documentNode;
+        } else if (config.type === GraphQLRequestType.SUBSCRIPTION) {
+          func = 'subscribe';
+          request.query = documentNode;
+        } else {
+          func = config.type;
+          request[config.type] = documentNode;
+        }
+
         (this.apollo as any)[func](request).subscribe(
           (result: any) => {
             const data = result?.data?.[graphql] !== undefined ? result.data[graphql] : result;
@@ -169,8 +185,10 @@ export class GraphQLService {
               subscriber.next(config.model.map(data));
             }
 
-            // Done
-            subscriber.complete();
+            if (config.type !== GraphQLRequestType.SUBSCRIPTION) {
+              // Done
+              subscriber.complete();
+            }
           },
           (error: any) => {
             subscriber.error(error);

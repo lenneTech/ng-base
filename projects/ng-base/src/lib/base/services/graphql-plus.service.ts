@@ -5,6 +5,7 @@ import { GraphQLService } from './graphql.service';
 import { GraphQLMetaService } from './graphql-meta.service';
 import { IGraphQLPlusOptions } from '../interfaces/graphql-plus-options.interfacen';
 import { LoaderService } from './loader.service';
+import { GraphQLRequestType } from '../enums/graphql-request-type.enum';
 
 /**
  * GraphQL plus service, for extra error handling and loading indication
@@ -39,7 +40,9 @@ export class GraphQLPlusService extends GraphQLService {
 
           subscriber.next(response);
           this.handleLoader('stop', options);
-          subscriber.complete();
+          if (options.type !== GraphQLRequestType.SUBSCRIPTION) {
+            subscriber.complete();
+          }
         },
         (error) => {
           if (!options.ignoreErrors) {
