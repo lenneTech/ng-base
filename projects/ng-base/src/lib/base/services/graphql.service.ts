@@ -202,16 +202,30 @@ export class GraphQLService {
   /**
    * Get fields / args from IGraphQLTypeCollection
    */
-  protected graphQLTypeCollectionToStringArray(collection: IGraphQLTypeCollection, current = '', result = []) {
+  protected graphQLTypeCollectionToStringArray(
+    collection: IGraphQLTypeCollection,
+    current = '',
+    result = [],
+    cacheNode = []
+  ) {
     if (collection) {
       if (collection instanceof GraphQLType) {
         result.push(current);
       } else {
+        if (current?.includes('.')) {
+          cacheNode.push(current.split('.')[1]);
+        } else if (current) {
+          cacheNode.push(current);
+        }
         for (const key of Object.keys(collection)) {
+          if (current === key || cacheNode.includes(key)) {
+            continue;
+          }
           this.graphQLTypeCollectionToStringArray(
             collection[key] as IGraphQLTypeCollection,
             current ? current + '.' + key : key,
-            result
+            result,
+            cacheNode
           );
         }
       }
@@ -290,6 +304,10 @@ export class GraphQLService {
 
     // Process object
     else if (typeof args === 'object') {
+      // Check object is empty
+      if (args && Object.keys(args).length === 0 && Object.getPrototypeOf(args) === Object.prototype) {
+        return { argsString: '{}', schemaArgs, usedArgs };
+      }
       // Process all object entries
       for (const [key, value] of Object.entries(args)) {
         // Init data for current entry
