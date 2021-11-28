@@ -1,18 +1,11 @@
 {
   "extends": "../../.eslintrc.json",
-  "ignorePatterns": [
-    "node_modules/**/*"
-  ],
+  "ignorePatterns": ["node_modules/**/*"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
+      "files": ["*.ts"],
       "parserOptions": {
-        "project": [
-          "projects/ng-base/tsconfig.lib.json",
-          "projects/ng-base/tsconfig.spec.json"
-        ],
+        "project": ["projects/ng-base/tsconfig.lib.json", "projects/ng-base/tsconfig.spec.json"],
         "createDefaultProgram": true
       },
       "rules": {
@@ -34,14 +27,13 @@
         ],
         "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/no-unused-expressions": "off",
+        "@typescript-eslint/member-ordering": "off",
         "arrow-body-style": "off",
         "prefer-arrow/prefer-arrow-functions": "off"
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
+      "files": ["*.html"],
       "rules": {}
     }
   ]
