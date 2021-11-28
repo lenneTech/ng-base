@@ -4,9 +4,5 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "allowedNonPeerDependencies": [
-    "@apollo/client",
-    "apollo-angular",
-    "graphql"
-  ]
+  "allowedNonPeerDependencies": ["@apollo/client", "apollo-angular", "graphql", "subscriptions-transport-ws"]
 }
