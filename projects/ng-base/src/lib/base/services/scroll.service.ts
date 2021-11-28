@@ -10,48 +10,137 @@ import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-
 })
 export class ScrollService {
   /**
+   * Current scroll promise
+   *
+   * @protected
+   */
+  protected scrollPromise: Promise<void>;
+
+  /**
+   * Resolve function of current scroll promise
+   *
+   * @protected
+   */
+  protected scrollPromiseResolve: (value: void | PromiseLike<void>) => void;
+
+  /**
+   * Is a scroll listener set
+   *
+   * @protected
+   */
+  protected scrollListener = false;
+
+  /**
+   * Current scroll timer;
+   *
+   * @protected
+   */
+  protected scrollTimer = -1;
+
+  /**
    * Scroll offset
    */
-  private scrollOffset = 100;
+  protected readonly scrollOffset: number;
 
   /**
    * Detection offset
    * Should be >= scrollOffset
    */
-  private detectionOffset = 200;
+  protected readonly detectionOffset: number;
+
+  /**
+   * Sampling rate for scroll done detection
+   */
+  protected readonly scrollSamplingRate: number;
 
   /**
    * Initializer
    */
-  constructor(private router: Router, @Inject(BASE_MODULE_CONFIG) private moduleConfig: BaseModuleConfig,) {
+  constructor(private router: Router, @Inject(BASE_MODULE_CONFIG) private moduleConfig: BaseModuleConfig) {
     const config = {
       scrollDetectionOffset: 200,
       scrollOffset: 100,
-      ...moduleConfig
+      scrollSamplingRate: 100,
+      ...moduleConfig,
     };
 
     this.detectionOffset = config.scrollDetectionOffset;
     this.scrollOffset = config.scrollOffset;
+    this.scrollSamplingRate = config.scrollSamplingRate;
   }
 
   /**
    * Scroll to structureElement with specific ID
    */
-  scrollTo(id: string, options: { stopPropagation?: boolean } = {}) {
-    options = {
+  async scrollTo(
+    id: string,
+    options: {
+      checkUrl?: boolean;
+      loadImagesBefore?: boolean;
+      resetStyles?: boolean;
+      setOverflow?: boolean;
+      stopPropagation?: boolean;
+    } = {}
+  ) {
+    // Prepare config
+    const config = {
+      checkUrl: true,
+      loadImagesBefore: true,
+      resetStyles: false,
+      setOverflow: true,
       stopPropagation: true,
       ...options,
     };
 
-    if (this.router.url !== '/' && !this.router.url.startsWith('/#')) {
-      this.router.navigate(['/'], {fragment: id});
-      return options.stopPropagation ? false : true;
+    // Check current URL
+    if (config.checkUrl && this.router.url !== '/' && !this.router.url.startsWith('/#')) {
+      await this.router.navigate(['/'], { fragment: id });
+      return !config.stopPropagation;
     }
 
+    // Check if target element exits
     const el = document.getElementById(id);
+    if (!el) {
+      console.error('Missing scroll element with ID:', id);
+      return !config.stopPropagation;
+    }
+
+    // Check if body overflow is visible
+    // This is necessary for scroll handling
+    const body = document.querySelector('body');
+    let undoOverflowChanges = false;
+    const scrollBodyStyles = JSON.parse(JSON.stringify(window.getComputedStyle(body)));
+    if (config.setOverflow && (scrollBodyStyles.overflowX !== 'visible' || scrollBodyStyles.overflowY !== 'visible')) {
+      // Set body overflow to visible
+      console.warn('Style of body element for overflowX and overflowY will be set to "visible" for scrolling!');
+      body.style.overflowX = 'visible';
+      body.style.overflowY = 'visible';
+      undoOverflowChanges = true;
+    }
+
+    // Load images before scrolling (once)
+    if (config.loadImagesBefore) {
+      await this.preLoadImages();
+    }
+
+    // Get get bounding rect of target element
     const cords = el.getBoundingClientRect();
-    window.scrollBy({top: cords.top - this.scrollOffset, behavior: 'smooth'});
-    return options.stopPropagation ? false : true;
+
+    // Scroll to element
+    window.scrollBy({ top: cords.top - this.scrollOffset, behavior: 'smooth' });
+    await this.scrollDone({
+      doneFunction: () => {
+        // Undo changes
+        if (undoOverflowChanges && config.resetStyles) {
+          body.style.overflowX = scrollBodyStyles.overflowX;
+          body.style.overflowY = scrollBodyStyles.overflowY;
+          console.warn('Original style of body element for overflowX and overflowY is set.');
+        }
+      },
+    });
+
+    // Return stop propagation configuration
+    return !config.stopPropagation;
   }
 
   /**
@@ -83,5 +172,178 @@ export class ScrollService {
   isActive(id, list?, isFirst?) {
     const lastActiveElement = this.getLastActiveElement(list);
     return id === lastActiveElement || (lastActiveElement === null && isFirst);
+  }
+
+  /**
+   * Scroll done promise
+   */
+  public scrollDone(options: { doneFunction?: () => Promise<any> | any | void; timeout?: number } = {}): Promise<any> {
+    // Init configuration
+    const config = {
+      doneFunction: undefined,
+      timeout: undefined,
+      ...options,
+    };
+
+    // Return promise for scroll done
+    return new Promise(async (resolve, reject) => {
+      // Init variables
+      let rejected = false;
+      let timeoutId: number;
+
+      // Set timeout handling if necessary
+      if (config.timeout) {
+        timeoutId = window.setTimeout(() => {
+          rejected = true;
+          reject(new Error('Timeout for scrollDone after:' + config.timeout));
+        }, config.timeout);
+      }
+
+      // Wait for scroll done
+      await this.scrollDoneDetection();
+
+      // Resolve promise if not already rejected
+      if (!rejected) {
+        // Stop timeout if set
+        if (timeoutId) {
+          window.clearTimeout(timeoutId);
+        }
+
+        // Get result (if doneFunction is set)
+        let result;
+        if (config.doneFunction) {
+          result = await config.doneFunction();
+        }
+
+        // Scroll done
+        resolve(result);
+      }
+    });
+  }
+
+  /**
+   * Scroll done detecton
+   *
+   * @protected
+   */
+  protected scrollDoneDetection(): Promise<void> {
+    // Return current scroll promise (Singelton)
+    if (this.scrollPromise) {
+      return this.scrollPromise;
+    }
+
+    // Create current scroll promise
+    this.scrollPromise = new Promise((resolve) => {
+      this.scrollPromiseResolve = resolve;
+      if (this.scrollTimer !== -1) {
+        window.clearTimeout(this.scrollTimer);
+      }
+      this.scrollTimer = window.setTimeout(() => {
+        window.removeEventListener('scroll', this.scrollDoneDetection.bind(this));
+        this.scrollPromise = undefined;
+        resolve();
+      }, this.scrollSamplingRate);
+    });
+
+    // Lisitening to scroll event;
+    window.addEventListener('scroll', this.scrollDoneDetection.bind(this));
+
+    // Return promise
+    return this.scrollPromise;
+  }
+
+  /**
+   * Preaload images (for lazy handling)
+   *
+   * @param options
+   * @protected
+   */
+  protected preLoadImages(options?: {
+    doneFunction?: () => Promise<any> | any | void;
+    timeout?: number;
+  }): Promise<any> {
+    // Init configuration
+    const config = {
+      doneFunnction: undefined,
+      timeout: undefined,
+      ...options,
+    };
+
+    return new Promise((resolve) => {
+      // Init variables
+      let resolved = false;
+      let timeoutId;
+
+      // Init loading
+      const images = Array.from(document.getElementsByTagName('img'));
+      const promises = [];
+
+      // Prepare images
+      for (const image of images) {
+        const src = image.getAttribute('src');
+
+        // Check if changes are necessary and possible
+        if ((image.complete && image.naturalHeight !== 0) || image.getAttribute('loading') !== 'lazy' || !src) {
+          continue;
+        }
+
+        const newImage = document.createElement('img');
+        Array.from(image.attributes).forEach((attr) => {
+          if (attr.name !== 'loading' && attr.name !== 'src') {
+            newImage.setAttribute(attr.name, attr.value);
+          }
+        });
+        image.replaceWith(newImage);
+        promises.push(this.loadImage(newImage, src));
+      }
+
+      if (config.timeout) {
+        timeoutId = setTimeout(async () => {
+          resolved = true;
+          if (config.doneFunnction) {
+            await config.doneFunction();
+          }
+          resolve(undefined);
+        });
+      }
+
+      // Wait until all images loaded
+      Promise.all(promises)
+        .catch((e) => console.error('Error during image loading', e))
+        .finally(async () => {
+          // Check if already resolved
+          if (resolved) {
+            return;
+          }
+
+          // Stop timeout
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+
+          // Return result
+          let result;
+          if (config.doneFunnction) {
+            result = await config.doneFunction();
+          }
+          resolve(result);
+        });
+    });
+  }
+
+  /**
+   * Load image for image element
+   *
+   * @param imageElement
+   * @param src
+   * @protected
+   */
+  protected async loadImage(imageElement: HTMLImageElement, src?: string) {
+    src = src || imageElement.src;
+    return new Promise((resolve, reject) => {
+      imageElement.onload = () => resolve(imageElement);
+      imageElement.onerror = reject;
+      imageElement.src = src;
+    });
   }
 }

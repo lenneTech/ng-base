@@ -53,6 +53,12 @@ export interface BaseModuleConfig {
   scrollOffset?: number;
 
   /**
+   * Sampling rate for scroll done detection
+   * Default: 100
+   */
+  scrollSamplingRate?: number;
+
+  /**
    * Type of storage: 'session' or 'local'
    * Default: 'local'
    */
