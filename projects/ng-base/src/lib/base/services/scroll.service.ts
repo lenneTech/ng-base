@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-config.interface';
+import { ImageService } from './image.service';
 
 /**
  * Scroll service for autoscroll to specific fragments
@@ -56,7 +57,11 @@ export class ScrollService {
   /**
    * Initializer
    */
-  constructor(private router: Router, @Inject(BASE_MODULE_CONFIG) private moduleConfig: BaseModuleConfig) {
+  constructor(
+    protected router: Router,
+    @Inject(BASE_MODULE_CONFIG) protected moduleConfig: BaseModuleConfig,
+    protected imageService: ImageService
+  ) {
     const config = {
       scrollDetectionOffset: 200,
       scrollOffset: 100,
@@ -120,7 +125,7 @@ export class ScrollService {
 
     // Load images before scrolling (once)
     if (config.loadImagesBefore) {
-      await this.preLoadImages();
+      await this.imageService.preLoadImages();
     }
 
     // Get get bounding rect of target element
@@ -250,100 +255,5 @@ export class ScrollService {
 
     // Return promise
     return this.scrollPromise;
-  }
-
-  /**
-   * Preaload images (for lazy handling)
-   *
-   * @param options
-   * @protected
-   */
-  protected preLoadImages(options?: {
-    doneFunction?: () => Promise<any> | any | void;
-    timeout?: number;
-  }): Promise<any> {
-    // Init configuration
-    const config = {
-      doneFunnction: undefined,
-      timeout: undefined,
-      ...options,
-    };
-
-    return new Promise((resolve) => {
-      // Init variables
-      let resolved = false;
-      let timeoutId;
-
-      // Init loading
-      const images = Array.from(document.getElementsByTagName('img'));
-      const promises = [];
-
-      // Prepare images
-      for (const image of images) {
-        const src = image.getAttribute('src');
-
-        // Check if changes are necessary and possible
-        if ((image.complete && image.naturalHeight !== 0) || image.getAttribute('loading') !== 'lazy' || !src) {
-          continue;
-        }
-
-        const newImage = document.createElement('img');
-        Array.from(image.attributes).forEach((attr) => {
-          if (attr.name !== 'loading' && attr.name !== 'src') {
-            newImage.setAttribute(attr.name, attr.value);
-          }
-        });
-        image.replaceWith(newImage);
-        promises.push(this.loadImage(newImage, src));
-      }
-
-      if (config.timeout) {
-        timeoutId = setTimeout(async () => {
-          resolved = true;
-          if (config.doneFunnction) {
-            await config.doneFunction();
-          }
-          resolve(undefined);
-        });
-      }
-
-      // Wait until all images loaded
-      Promise.all(promises)
-        .catch((e) => console.error('Error during image loading', e))
-        .finally(async () => {
-          // Check if already resolved
-          if (resolved) {
-            return;
-          }
-
-          // Stop timeout
-          if (timeoutId) {
-            clearTimeout(timeoutId);
-          }
-
-          // Return result
-          let result;
-          if (config.doneFunnction) {
-            result = await config.doneFunction();
-          }
-          resolve(result);
-        });
-    });
-  }
-
-  /**
-   * Load image for image element
-   *
-   * @param imageElement
-   * @param src
-   * @protected
-   */
-  protected async loadImage(imageElement: HTMLImageElement, src?: string) {
-    src = src || imageElement.src;
-    return new Promise((resolve, reject) => {
-      imageElement.onload = () => resolve(imageElement);
-      imageElement.onerror = reject;
-      imageElement.src = src;
-    });
   }
 }
