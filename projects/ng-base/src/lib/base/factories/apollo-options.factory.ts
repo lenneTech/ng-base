@@ -11,9 +11,10 @@ import { getMainDefinition } from '@apollo/client/utilities';
  */
 export function apolloOptionsFactory(baseModuleConfig: BaseModuleConfig, httpLink: HttpLink, authService: AuthService) {
   const links = [];
+  const defaultUrl = 'api.' + window.location.href + '/graphql';
 
   const http = httpLink.create({
-    uri: baseModuleConfig.apiUrl,
+    uri: baseModuleConfig.apiUrl ? baseModuleConfig.apiUrl : 'https://' + defaultUrl,
   });
 
   const authMiddleware = new ApolloLink((operation, forward) => {

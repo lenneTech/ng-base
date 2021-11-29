@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 
+interface SEOData {
+  title: string;
+  description: string;
+  image?: string;
+  url?: string;
+  keywords?: string;
+}
+
 /**
  * SEO service for setting HTML meta data
  */
@@ -10,28 +18,88 @@ import { Meta, Title } from '@angular/platform-browser';
 export class SEOService {
   constructor(private titleService: Title, private metaTagService: Meta) {}
 
-  public initPageForSEO(title: string, description: string, keywords?: string) {
-    this.setPageTitle(title);
-    this.setPageDescription(description);
+  public initPageForSEO(input: SEOData) {
+    this.setGeneralData(input);
+    this.setTwitterData(input);
+    this.setTwitterData(input);
+    this.setFacebookData(input);
 
-    if (keywords) {
-      this.setPageKeywords(keywords);
+    if (input.keywords) {
+      this.setPageKeywords(input.keywords);
     }
   }
 
-  private setPageTitle(title: string) {
-    this.titleService.setTitle(title);
-    this.metaTagService.updateTag({property: 'og:title', content: title});
-    this.metaTagService.updateTag({name: 'twitter:title', content: title});
+  /**
+   * Set general metadata
+   *
+   * @param data
+   * @private
+   */
+  private setGeneralData(data: SEOData) {
+    this.titleService.setTitle(data.title);
+    this.metaTagService.updateTag({ name: 'description', content: data.description });
   }
 
-  private setPageDescription(description: string) {
-    this.metaTagService.updateTag({name: 'description', content: description});
-    this.metaTagService.updateTag({property: 'og:description', content: description});
-    this.metaTagService.updateTag({name: 'twitter:description', content: description});
+  /**
+   * Set metadata for twitter
+   *
+   * @param data
+   * @private
+   */
+  private setTwitterData(data: SEOData) {
+    this.metaTagService.updateTag({ name: 'twitter:title', content: data.title });
+    this.metaTagService.updateTag({ name: 'twitter:description', content: data.description });
+    this.metaTagService.updateTag({
+      property: 'twitter:url',
+      content: data.url ? data.url : window.location.href,
+    });
+
+    if (data.image) {
+      this.metaTagService.updateTag({
+        property: 'twitter:image',
+        content: data.image,
+      });
+
+      this.metaTagService.updateTag({
+        property: 'twitter:card',
+        content: 'summary_large_image',
+      });
+    }
   }
 
+  /**
+   * Set metadata for facebook
+   *
+   * @param data
+   * @private
+   */
+  private setFacebookData(data: SEOData) {
+    this.metaTagService.updateTag({ property: 'og:title', content: data.title });
+    this.metaTagService.updateTag({ property: 'og:description', content: data.description });
+    this.metaTagService.updateTag({
+      property: 'og:type',
+      content: 'website',
+    });
+    this.metaTagService.updateTag({
+      property: 'og:url',
+      content: data.url ? data.url : window.location.href,
+    });
+
+    if (data.image) {
+      this.metaTagService.updateTag({
+        property: 'og:image',
+        content: data.image,
+      });
+    }
+  }
+
+  /**
+   * Set page keywords
+   *
+   * @param keywords
+   * @private
+   */
   private setPageKeywords(keywords: string) {
-    this.metaTagService.updateTag({name: 'keywords', content: keywords});
+    this.metaTagService.updateTag({ name: 'keywords', content: keywords });
   }
 }
