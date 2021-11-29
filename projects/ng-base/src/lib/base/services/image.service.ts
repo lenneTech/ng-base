@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Helper } from '../classes/helper.class';
 
 /**
  * Image service
@@ -15,7 +16,15 @@ export class ImageService {
    */
   public preLoadImages(options?: {
     doneFunction?: () => Promise<any> | any | void;
-    elements?: Element | Element[] | HTMLCollectionOf<Element> | Document | HTMLElement | HTMLElement[];
+    elements?:
+      | Element
+      | Element[]
+      | HTMLCollectionOf<Element>
+      | Node
+      | NodeList
+      | Document
+      | HTMLElement
+      | HTMLElement[];
     regExp?: RegExp;
     timeout?: number;
   }): Promise<any> {
@@ -33,14 +42,17 @@ export class ImageService {
       let resolved = false;
       let timeoutId;
 
-      // HTMLCollection to array
-      if (config.elements instanceof HTMLCollection) {
-        config.elements = Array.from(config.elements);
-      }
-
-      // Single element to array
+      // Convert element(s) into array
       if (!Array.isArray(config.elements)) {
-        config.elements = [config.elements] as Element[];
+        // NodeList or HTMLCollection
+        if (Helper.isNodeList(config.elements)) {
+          config.elements = Array.from(config.elements as HTMLCollection | NodeList) as Element[];
+        }
+
+        // Single element
+        else {
+          config.elements = [config.elements] as Element[];
+        }
       }
 
       // Init loading

@@ -312,4 +312,24 @@ export class Helper {
     }
     return result;
   }
+
+  /**
+   * Check if propertie is type of HTMLCollection or NodeList
+   * See https://stackoverflow.com/a/7238344
+   *
+   * @param nodes
+   */
+  static isNodeList(nodes) {
+    try {
+      const stringRepr = Object.prototype.toString.call(nodes);
+      return (
+        typeof nodes === 'object' &&
+        /^\[object (HTMLCollection|NodeList|Object)\]$/.test(stringRepr) &&
+        typeof nodes.length === 'number' &&
+        (nodes.length === 0 || (typeof nodes[0] === 'object' && nodes[0].nodeType > 0))
+      );
+    } catch (e) {
+      return false;
+    }
+  }
 }
