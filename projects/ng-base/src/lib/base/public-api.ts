@@ -57,6 +57,7 @@ export * from './services/fullscreen.service';
 export * from './services/graphql.service';
 export * from './services/graphql-meta.service';
 export * from './services/graphql-plus.service';
+export * from './services/image.service';
 export * from './services/loader.service';
 export * from './services/scroll.service';
 export * from './services/seo.service';
