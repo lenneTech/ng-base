@@ -182,48 +182,20 @@ export class ScrollService {
   /**
    * Scroll done promise
    */
-  public scrollDone(options: { doneFunction?: () => Promise<any> | any | void; timeout?: number } = {}): Promise<any> {
+  public async scrollDone(options: { doneFunction?: () => any | void } = {}): Promise<any> {
     // Init configuration
     const config = {
       doneFunction: undefined,
-      timeout: undefined,
       ...options,
     };
 
-    // Return promise for scroll done
-    return new Promise(async (resolve, reject) => {
-      // Init variables
-      let rejected = false;
-      let timeoutId: number;
+    // Wait for scroll done
+    await this.scrollDoneDetection();
 
-      // Set timeout handling if necessary
-      if (config.timeout) {
-        timeoutId = window.setTimeout(() => {
-          rejected = true;
-          reject(new Error('Timeout for scrollDone after:' + config.timeout));
-        }, config.timeout);
-      }
-
-      // Wait for scroll done
-      await this.scrollDoneDetection();
-
-      // Resolve promise if not already rejected
-      if (!rejected) {
-        // Stop timeout if set
-        if (timeoutId) {
-          window.clearTimeout(timeoutId);
-        }
-
-        // Get result (if doneFunction is set)
-        let result;
-        if (config.doneFunction) {
-          result = await config.doneFunction();
-        }
-
-        // Scroll done
-        resolve(result);
-      }
-    });
+    // Get result
+    if (config.doneFunction) {
+      return config.doneFunction();
+    }
   }
 
   /**

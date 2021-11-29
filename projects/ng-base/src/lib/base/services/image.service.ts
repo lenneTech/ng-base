@@ -26,22 +26,16 @@ export class ImageService {
       | HTMLElement
       | HTMLElement[];
     regExp?: RegExp;
-    timeout?: number;
   }): Promise<any> {
     // Init configuration
     const config = {
       doneFunnction: undefined,
       elements: document,
       regExp: undefined,
-      timeout: undefined,
       ...options,
     };
 
     return new Promise((resolve) => {
-      // Init variables
-      let resolved = false;
-      let timeoutId;
-
       // Convert element(s) into array
       if (!Array.isArray(config.elements)) {
         // NodeList or HTMLCollection
@@ -65,13 +59,12 @@ export class ImageService {
       });
 
       // Prepare images
-      for (const image of images) {
+      for (let image of images) {
         const src = image.getAttribute('src');
 
         // Check if changes are necessary and possible
         if (
           (image.complete && image.naturalHeight !== 0) || // already laoded
-          image.getAttribute('loading') !== 'lazy' || // loading attribute !== lazy
           !src || // Image has no src
           config.regExp?.test(src) // Test if src matches regular expression
         ) {
@@ -79,42 +72,25 @@ export class ImageService {
         }
 
         // Replace lazy loading image with immediately loading image
-        const newImage = document.createElement('img');
-        Array.from(image.attributes).forEach((attr) => {
-          if (attr.name !== 'loading' && attr.name !== 'src') {
-            newImage.setAttribute(attr.name, attr.value);
-          }
-        });
-        image.replaceWith(newImage);
+        if (image.getAttribute('loading') === 'lazy') {
+          const newImage = document.createElement('img');
+          Array.from(image.attributes).forEach((attr) => {
+            if (attr.name !== 'loading' && attr.name !== 'src') {
+              newImage.setAttribute(attr.name, attr.value);
+            }
+          });
+          image.replaceWith(newImage);
+          image = newImage;
+        }
 
         // Wait for laoding
-        promises.push(this.loadImage(newImage, src));
-      }
-
-      if (config.timeout) {
-        timeoutId = setTimeout(async () => {
-          resolved = true;
-          if (config.doneFunnction) {
-            await config.doneFunction();
-          }
-          resolve(undefined);
-        });
+        promises.push(this.loadImage(image, src));
       }
 
       // Wait until all images loaded
       Promise.all(promises)
         .catch((e) => console.error('Error during image loading', e))
         .finally(async () => {
-          // Check if already resolved
-          if (resolved) {
-            return;
-          }
-
-          // Stop timeout
-          if (timeoutId) {
-            clearTimeout(timeoutId);
-          }
-
           // Return result
           let result;
           if (config.doneFunnction) {

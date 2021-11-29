@@ -1,4 +1,4 @@
-import { AfterViewChecked, Directive, ElementRef, HostListener, Inject, Input, PLATFORM_ID } from '@angular/core';
+import { Directive, ElementRef, HostListener, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
 import { ImageService } from '../services/image.service';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -8,14 +8,14 @@ import { isPlatformBrowser } from '@angular/common';
 @Directive({
   selector: '[ltMatchHeight]',
 })
-export class MatchHeightDirective implements AfterViewChecked {
+export class MatchHeightDirective implements OnInit {
   // class name to match height
   @Input()
   ltMatchHeight: string | string[];
 
   // Replace lazy loading images with immediate loading images
   @Input()
-  loadLazyImages = true;
+  loadImages = true;
 
   // Wether current platform is a browser
   readonly isBrowser: boolean;
@@ -29,23 +29,11 @@ export class MatchHeightDirective implements AfterViewChecked {
     this.matchHeight(this.el.nativeElement, this.ltMatchHeight);
   }
 
-  ngAfterViewChecked() {
+  ngOnInit() {
     this.matchHeight(this.el.nativeElement, this.ltMatchHeight);
   }
 
-  matchHeight(parent: HTMLElement, target: string | string[]) {
-    if (this.isBrowser) {
-      // Timeout is set to force Angular to wait for all actions and only continue once the process has run through.
-      // Otherwise, an infinite loop will occur.
-      setTimeout(() => {
-        this.matchHeightHelper(parent, target);
-      }, 1);
-    } else {
-      this.matchHeightHelper(parent, target);
-    }
-  }
-
-  protected async matchHeightHelper(parent: HTMLElement, target: string | string[]) {
+  async matchHeight(parent: HTMLElement, target: string | string[]) {
     if (!parent) {
       return;
     }
@@ -66,7 +54,7 @@ export class MatchHeightDirective implements AfterViewChecked {
       }
 
       // Load images of children
-      if (this.loadLazyImages) {
+      if (this.loadImages) {
         await this.imageService.preLoadImages({ elements: children });
       }
 
