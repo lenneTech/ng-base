@@ -1,0 +1,19 @@
+{
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },    {
+      "filename": "package-lock.json",
+      "type": "json"
+    },
+    {
+      "filename": "projects/ng-base/package.json",
+       "type": "json"
+    },
+    {
+       "filename": "projects/ng-base/package-lock.json",
+        "type": "json"
+    }
+  ]
+}

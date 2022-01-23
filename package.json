@@ -17,7 +17,10 @@
     "postinstall": "husky install .husky",
     "reinit": "rimraf package-lock.json && rimraf node_modules && npm cache clean --force && npm i",
     "start": "ng serve",
-    "test": "ng test"
+    "test": "ng test",
+    "release": "standard-version && git push --follow-tags origin main",
+    "release:minor": "standard-version --release-as minor && git push --follow-tags origin main",
+    "release:major": "standard-version --release-as major && git push --follow-tags origin main"
   },
   "private": true,
   "dependencies": {
