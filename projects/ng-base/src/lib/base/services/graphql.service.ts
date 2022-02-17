@@ -321,7 +321,7 @@ export class GraphQLService {
         }
 
         // Skip value if not exists
-        if (value === undefined && value === null) {
+        if (value === undefined || value === null) {
           continue;
         }
 

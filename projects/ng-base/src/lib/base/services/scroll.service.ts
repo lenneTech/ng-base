@@ -89,7 +89,7 @@ export class ScrollService {
   ) {
     // Prepare config
     const config = {
-      checkUrl: true,
+      checkUrl: false,
       loadImagesBefore: true,
       resetStyles: false,
       setOverflow: true,
