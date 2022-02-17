@@ -125,7 +125,7 @@ export class GraphQLService {
           console.log({ argsData, filtered, unused });
         }
 
-        const args = argsData.argsString || '';
+        const args = argsData?.argsString || '';
 
         // Log
         if (config.log) {
