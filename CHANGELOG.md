@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.9](https://github.com/lenneTech/ng-base/compare/v0.3.6...v0.3.9) (2022-02-22)
+
+### Bug Fixes
+
+- Fix naming of Authorization in ws header ([243fd1e](https://github.com/lenneTech/ng-base/commit/243fd1e023cf16948343ad8a3c6a5d0f91603652))
+
 ### [0.3.6](https://github.com/lenneTech/ng-base/compare/v0.0.4...v0.3.6) (2022-01-23)
 
 ### Features
