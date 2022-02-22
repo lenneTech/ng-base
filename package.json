@@ -12,7 +12,7 @@
     "format:fixAll": "prettier --write src",
     "lint": "ng lint",
     "ng": "ng",
-    "pack": "npm run build && cd dist/ng-base && npm pack",
+    "build:pack": "npm run build && cd dist/ng-base && npm pack",
     "publish": "npm run build && cd dist/ng-base && npm publish",
     "postinstall": "husky install .husky",
     "reinit": "rimraf package-lock.json && rimraf node_modules && npm cache clean --force && npm i",
