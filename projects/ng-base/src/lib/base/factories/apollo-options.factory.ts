@@ -39,7 +39,7 @@ export function apolloOptionsFactory(baseModuleConfig: BaseModuleConfig, httpLin
         options: {
           reconnect: true,
           connectionParams: {
-            authToken: token,
+            Authorization: token,
           },
         },
       });
