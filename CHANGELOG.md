@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.11](https://github.com/lenneTech/ng-base/compare/v0.3.10...v0.3.11) (2022-02-23)
+
+### Bug Fixes
+
+- Fix subscription auth header with new token ([742e8c7](https://github.com/lenneTech/ng-base/commit/742e8c75ba24682afcd0ec1a1d9248197ac21803))
+
 ### [0.3.10](https://github.com/lenneTech/ng-base/compare/v0.3.9...v0.3.10) (2022-02-22)
 
 ### Bug Fixes
