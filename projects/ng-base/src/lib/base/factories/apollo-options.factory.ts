@@ -30,27 +30,18 @@ export function apolloOptionsFactory(baseModuleConfig: BaseModuleConfig, httpLin
   });
 
   if (baseModuleConfig.wsUrl) {
-    let wsClient;
+    const wsLink = new WebSocketLink({
+      uri: baseModuleConfig.wsUrl,
+      options: {
+        reconnect: true,
+        connectionParams: () => ({
+          Authorization: authService.token ? 'Bearer ' + authService.token : undefined,
+        }),
+      },
+    });
 
-    if (localStorage) {
-      const token = authService.token || null;
-      wsClient = new WebSocketLink({
-        uri: baseModuleConfig.wsUrl,
-        options: {
-          reconnect: true,
-          connectionParams: {
-            Authorization: 'Bearer ' + token,
-          },
-        },
-      });
-    } else {
-      wsClient = new WebSocketLink({
-        uri: baseModuleConfig.wsUrl,
-        options: {
-          reconnect: true,
-        },
-      });
-    }
+    // Set client for reconnection on logout/login
+    authService.subscriptionClient = (wsLink as any).subscriptionClient;
 
     // using the ability to split links, you can send data to each link
     // depending on what kind of operation is being sent
@@ -62,7 +53,7 @@ export function apolloOptionsFactory(baseModuleConfig: BaseModuleConfig, httpLin
           const { kind, operation } = getMainDefinition(query);
           return kind === 'OperationDefinition' && operation === 'subscription';
         },
-        wsClient,
+        wsLink,
         concat(authMiddleware, http)
       )
     );
