@@ -62,6 +62,7 @@ export * from './services/loader.service';
 export * from './services/scroll.service';
 export * from './services/seo.service';
 export * from './services/storage.service';
+export * from './services/ws.service';
 
 // Types
 export * from './types/storage.type';
