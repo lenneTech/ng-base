@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-config.interface';
 import { BasicUser } from '../classes/basic-user.class';
 import { StorageService } from './storage.service';
-import { SubscriptionClient } from 'subscriptions-transport-ws';
+import { WsService } from './ws.service';
 
 /**
  * Authentication service
@@ -12,8 +12,6 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
   providedIn: 'root',
 })
 export class AuthService {
-  subscriptionClient: SubscriptionClient;
-
   // Subjects
   private _currentUser: BehaviorSubject<BasicUser> = new BehaviorSubject<BasicUser>(null);
   private _token: BehaviorSubject<string> = new BehaviorSubject<string>(null);
@@ -23,7 +21,8 @@ export class AuthService {
    */
   constructor(
     @Inject(BASE_MODULE_CONFIG) private moduleConfig: BaseModuleConfig,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private wsService: WsService
   ) {
     this.token = this.storageService.load('token') as string;
     this.currentUser = this.storageService.load('currentUser') as BasicUser;
@@ -66,9 +65,7 @@ export class AuthService {
   set token(token: string) {
     this._token.next(token);
     this.storageService.save('token', token);
-
-    this.subscriptionClient?.close();
-    (this.subscriptionClient as any)?.connect();
+    this.wsService.reconnect();
   }
 
   get tokenObservable(): Observable<string> {

@@ -5,11 +5,17 @@ import { ApolloLink, concat, split } from '@apollo/client/core';
 import { InMemoryCache } from '@apollo/client/cache';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
+import { WsService } from '../services/ws.service';
 
 /**
  * Factory for apollo-angular options
  */
-export function apolloOptionsFactory(baseModuleConfig: BaseModuleConfig, httpLink: HttpLink, authService: AuthService) {
+export function apolloOptionsFactory(
+  baseModuleConfig: BaseModuleConfig,
+  httpLink: HttpLink,
+  authService: AuthService,
+  wsService: WsService
+) {
   const links = [];
   const defaultUrl = 'api.' + window.location.href + '/graphql';
 
@@ -41,7 +47,7 @@ export function apolloOptionsFactory(baseModuleConfig: BaseModuleConfig, httpLin
     });
 
     // Set client for reconnection on logout/login
-    authService.subscriptionClient = (wsLink as any).subscriptionClient;
+    wsService.client = (wsLink as any).subscriptionClient;
 
     // using the ability to split links, you can send data to each link
     // depending on what kind of operation is being sent

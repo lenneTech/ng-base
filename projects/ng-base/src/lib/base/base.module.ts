@@ -10,6 +10,7 @@ import { MatchHeightDirective } from './directives/match-height.directive';
 import { ResizableDirective } from './directives/resizable.directive';
 import { EllipsesPipe } from './pipes/ellipses.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
+import { WsService } from './services/ws.service';
 
 // Imported and exported elements
 const elements = [
@@ -62,7 +63,7 @@ export class BaseModule {
       providers.push({
         provide: APOLLO_OPTIONS,
         useFactory: apolloOptionsFactory,
-        deps: [BASE_MODULE_CONFIG, HttpLink, AuthService],
+        deps: [BASE_MODULE_CONFIG, HttpLink, AuthService, WsService],
       });
     } else if (config.logging) {
       console.log('apiUrl is missing, ApolloLink is not initialized');
