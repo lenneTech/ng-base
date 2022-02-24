@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.12](https://github.com/lenneTech/ng-base/compare/v0.3.11...v0.3.12) (2022-02-24)
+
+### Features
+
+- Add wsService with current client and reconnect function ([303c10f](https://github.com/lenneTech/ng-base/commit/303c10f9609c85ceabcf7c44ac722f6808b7db04))
+
 ### [0.3.11](https://github.com/lenneTech/ng-base/compare/v0.3.10...v0.3.11) (2022-02-23)
 
 ### Bug Fixes
