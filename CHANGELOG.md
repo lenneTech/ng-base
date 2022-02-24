@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.13](https://github.com/lenneTech/ng-base/compare/v0.3.12...v0.3.13) (2022-02-24)
+
+### Bug Fixes
+
+- Fix missing export ([8e404b0](https://github.com/lenneTech/ng-base/commit/8e404b062285d07625062ae15a7a3209984cb4af))
+
 ### [0.3.12](https://github.com/lenneTech/ng-base/compare/v0.3.11...v0.3.12) (2022-02-24)
 
 ### Features
