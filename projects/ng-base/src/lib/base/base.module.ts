@@ -36,7 +36,7 @@ export class BaseModule {
   /**
    * Set configuration of base module in root module of the app
    */
-  static forRoot(baseModuleConfig: BaseModuleConfig = {}): ModuleWithProviders<BaseModule> {
+  static forRoot(baseModuleConfig: BaseModuleConfig = {}, AppAuthService?): ModuleWithProviders<BaseModule> {
     // Default config
     const config = {
       apiUrl: 'localhost:3000',
@@ -63,7 +63,7 @@ export class BaseModule {
       providers.push({
         provide: APOLLO_OPTIONS,
         useFactory: apolloOptionsFactory,
-        deps: [BASE_MODULE_CONFIG, HttpLink, AuthService, WsService],
+        deps: [BASE_MODULE_CONFIG, HttpLink, AppAuthService ? AppAuthService : AuthService, WsService],
       });
     } else if (config.logging) {
       console.log('apiUrl is missing, ApolloLink is not initialized');
