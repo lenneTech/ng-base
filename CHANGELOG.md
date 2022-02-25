@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.1.0](https://github.com/lenneTech/ng-base/compare/v0.3.13...v12.1.0) (2022-02-25)
+
+### Features
+
+- Implement optional auth service ([c243843](https://github.com/lenneTech/ng-base/commit/c243843486ff88233c6de52861e28fecf393aed7))
+- Sync version from ng-base to angular main versions ([e4e6874](https://github.com/lenneTech/ng-base/commit/e4e6874f8c151e6f01292142be0578e2899afa0e))
+
 ### [0.3.13](https://github.com/lenneTech/ng-base/compare/v0.3.12...v0.3.13) (2022-02-24)
 
 ### Bug Fixes
