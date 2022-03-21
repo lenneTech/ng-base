@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.0.0](https://github.com/lenneTech/ng-base/compare/v12.1.1...v13.0.0) (2022-03-21)
+
+### Features
+
+- Add standard-version ([76fab98](https://github.com/lenneTech/ng-base/commit/76fab98645227b6371355e78d7fda181410b020b))
+- Update to Angular 13 ([dd0a841](https://github.com/lenneTech/ng-base/commit/dd0a841184e88f93ecb5d04be83e7267ceaae82c))
+
 ## [12.1.0](https://github.com/lenneTech/ng-base/compare/v0.3.13...v12.1.0) (2022-02-25)
 
 ### Features
