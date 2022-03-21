@@ -1,6 +1,6 @@
 {
   "name": "ng-base",
-  "version": "12.1.0",
+  "version": "12.1.1",
   "author": "lenne.Tech <info@lenne.tech> (https://lenne.tech)",
   "homepage": "https://github.com/lenneTech/ng-base",
   "license": "MIT",
@@ -34,14 +34,14 @@
     "@angular/router": "12.2.12",
     "@apollo/client": "3.5.5",
     "apollo-angular": "2.6.0",
-    "graphql": "15.7.2",
+    "graphql": "15.8.0",
     "rxjs": "6.6.7",
     "subscriptions-transport-ws": "0.11.0",
     "tslib": "2.3.1",
     "zone.js": "0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "12.2.12",
+    "@angular-devkit/build-angular": "12.2.16",
     "@angular-eslint/builder": "12.7.0",
     "@angular-eslint/eslint-plugin": "12.7.0",
     "@angular-eslint/eslint-plugin-template": "12.7.0",
@@ -60,7 +60,7 @@
     "husky": "7.0.4",
     "jasmine-core": "3.10.1",
     "jasmine-spec-reporter": "7.0.0",
-    "karma": "6.3.9",
+    "karma": "6.3.17",
     "karma-chrome-launcher": "3.1.0",
     "karma-coverage": "2.0.3",
     "karma-jasmine": "4.0.1",

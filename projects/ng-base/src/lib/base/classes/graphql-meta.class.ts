@@ -1,6 +1,4 @@
-import { GraphQLSchema } from 'graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
-import { GraphQLNamedType } from 'graphql/type/definition';
+import { GraphQLSchema, GraphQLNamedType } from 'graphql';
 import { GraphQLRequestType } from '../enums/graphql-request-type.enum';
 import { Helper } from './helper.class';
 import { GraphQLType } from './graphql-type.class';
@@ -30,7 +28,7 @@ export class GraphQLMeta {
     functionName: string,
     options: { cache?: boolean; freeze?: boolean; type?: GraphQLRequestType } = {}
   ): IGraphQLTypeCollection {
-    const {cache, freeze, type} = {
+    const { cache, freeze, type } = {
       cache: true,
       freeze: true,
       type: undefined,
@@ -45,7 +43,7 @@ export class GraphQLMeta {
       }
     }
 
-    const func = this.getFunction(functionName, {type});
+    const func = this.getFunction(functionName, { type });
     const result = {};
     if (func?.args) {
       func.args.forEach((item) => {
@@ -68,7 +66,7 @@ export class GraphQLMeta {
     functionName: string,
     options: { cache?: boolean; freeze?: boolean; type?: GraphQLRequestType } = {}
   ): IGraphQLTypeCollection {
-    const {cache, freeze, type} = {
+    const { cache, freeze, type } = {
       cache: true,
       freeze: true,
       type: undefined,
@@ -135,7 +133,7 @@ export class GraphQLMeta {
   /**
    * Get type
    */
-  protected getType(name: string): Maybe<GraphQLNamedType> {
+  protected getType(name: string): GraphQLNamedType | null | undefined {
     return this.schema.getType(name);
   }
 
