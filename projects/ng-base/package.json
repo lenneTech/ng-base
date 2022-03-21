@@ -19,15 +19,15 @@
     "url": "https://github.com/lenneTech/ng-base"
   },
   "peerDependencies": {
-    "@angular/common": "^12.2.12",
-    "@angular/core": "^12.2.12",
-    "@angular/forms": "^12.2.12",
-    "@angular/platform-browser": "^12.2.12",
-    "@angular/router": "^12.2.12",
-    "rxjs": "^6.5.3 || ^7.0.0"
+    "@angular/common": "^13.3.0",
+    "@angular/core": "^13.3.0",
+    "@angular/forms": "^13.3.0",
+    "@angular/platform-browser": "^13.3.0",
+    "@angular/router": "^13.3.0",
+    "rxjs": "^6.6.7"
   },
   "dependencies": {
-    "@apollo/client": "^3.5.5",
+    "@apollo/client": "^3.5.10",
     "apollo-angular": "^2.6.0",
     "graphql": "^15.7.2",
     "subscriptions-transport-ws": "^0.11.0",
