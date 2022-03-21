@@ -24,13 +24,13 @@
     "@angular/forms": "^13.3.0",
     "@angular/platform-browser": "^13.3.0",
     "@angular/router": "^13.3.0",
-    "rxjs": "^6.6.7"
+    "rxjs": "7.5.5"
   },
   "dependencies": {
-    "@apollo/client": "^3.5.10",
-    "apollo-angular": "^2.6.0",
-    "graphql": "^15.7.2",
-    "subscriptions-transport-ws": "^0.11.0",
-    "tslib": "^2.3.1"
+    "@apollo/client": "3.5.10",
+    "apollo-angular": "3.0.0",
+    "graphql": "16.3.0",
+    "subscriptions-transport-ws": "0.11.0",
+    "tslib": "2.3.1"
   }
 }
