@@ -1,8 +1,10 @@
 import { APOLLO_OPTIONS } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
-import { AuthService } from './services/auth.service';
+
 import { BASE_MODULE_CONFIG, BaseModuleConfig } from './interfaces/base-module-config.interface';
+import { AuthService } from './services/auth.service';
+import { WsService } from './services/ws.service';
 import { apolloOptionsFactory } from './factories/apollo-options.factory';
 import { ContextMenuDirective } from './directives/context-menu.directive';
 import { LazyLoadDirective } from './directives/lazy-load.directive';
@@ -10,7 +12,7 @@ import { MatchHeightDirective } from './directives/match-height.directive';
 import { ResizableDirective } from './directives/resizable.directive';
 import { EllipsesPipe } from './pipes/ellipses.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
-import { WsService } from './services/ws.service';
+import { DateAgoPipe } from './pipes/date-ago.pipe';
 
 // Imported and exported elements
 const elements = [
@@ -23,6 +25,7 @@ const elements = [
   // Pipes
   EllipsesPipe,
   SafeHtmlPipe,
+  DateAgoPipe,
 ];
 
 /**

@@ -8,7 +8,7 @@
     "apollo-client",
     "apollo-angular",
     "angular-library",
-    "angular11+"
+    "angular13+"
   ],
   "version": "13.1.0",
   "author": "lenne.Tech <info@lenne.tech> (https://lenne.tech)",
@@ -19,16 +19,17 @@
     "url": "https://github.com/lenneTech/ng-base"
   },
   "peerDependencies": {
-    "@angular/common": "^13.3.0",
-    "@angular/core": "^13.3.0",
-    "@angular/forms": "^13.3.0",
-    "@angular/platform-browser": "^13.3.0",
-    "@angular/router": "^13.3.0",
+    "@angular/common": "13.3.*",
+    "@angular/core": "13.3.*",
+    "@angular/forms": "13.3.*",
+    "@angular/platform-browser": "13.3.*",
+    "@angular/router": "13.3.*",
+    "bootstrap": "5.*.*",
     "rxjs": "7.5.5"
   },
   "dependencies": {
     "@apollo/client": "3.5.10",
-    "apollo-angular": "3.0.0",
+    "apollo-angular": "3.0.1",
     "graphql": "16.3.0",
     "subscriptions-transport-ws": "0.11.0",
     "tslib": "2.3.1"

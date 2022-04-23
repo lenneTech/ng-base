@@ -1,0 +1,17 @@
+<div class="form-check">
+  <input
+    class="form-check-input"
+    type="checkbox"
+    [formControl]="control"
+    [required]="required"
+    [value]="value"
+    [id]="id"
+    [name]="name"
+    [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+  />
+  <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
+
+  <div class="invalid-feedback ms-0 m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">
+    <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
+  </div>
+</div>

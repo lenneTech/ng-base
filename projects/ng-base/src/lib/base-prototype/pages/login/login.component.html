@@ -1,0 +1,19 @@
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="d-flex flex-column login-container">
+    <div class="container">
+      <base-input [id]="'email'" [label]="'E-Mail Adresse'" [type]="'email'" [control]="form.get('email')"></base-input>
+      <base-input
+        [id]="'password'"
+        [label]="'Passwort'"
+        [type]="'password'"
+        [control]="form.get('password')"
+      ></base-input>
+      <div class="d-grid gap-2 text-center">
+        <button class="btn btn-primary" (click)="submit()">Einloggen</button>
+        <hr />
+        <a routerLink="../passwort-vergessen">Passwort vergessen</a>
+        <a routerLink="../registrieren">Noch kein Konto? Dann registiere Dich jetzt!</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="form-group mb-3">
+  <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
+  <textarea
+    class="form-control"
+    [id]="id"
+    [name]="name"
+    [rows]="rows"
+    [placeholder]="placeholder"
+    [formControl]="control"
+    [tabIndex]="tabIndex ?? null"
+    [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+  ></textarea>
+
+  <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">
+    <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
+    <div *ngIf="control?.errors?.['minlength']">
+      Die Mindestlänge für dieses Feld beträgt
+      {{control?.errors?.['minlength']?.requiredLength}} Zeichen.
+    </div>
+    <div *ngIf="control?.errors?.['maxlength']">
+      Die maximale Länge für dieses Feld beträgt
+      {{control?.errors?.['maxlength']?.requiredLength}} Zeichen.
+    </div>
+  </div>
+</div>

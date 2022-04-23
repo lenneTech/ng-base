@@ -1,24 +1,24 @@
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 /**
  * Custom validator to check that two fields match
  * (inspirated by https://jasonwatmore.com/post/2018/11/07/angular-7-reactive-forms-validation-example)
  */
-export function MustMatch(controlName: string, matchingControlName: string) {
+export const MustMatch: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   return (formGroup: FormGroup) => {
-    const control = formGroup.controls[controlName];
-    const matchingControl = formGroup.controls[matchingControlName];
+    const baseControl = control.get('password');
+    const matchingControl = control.get('passwordConfirm');
 
     if (matchingControl.errors && !matchingControl.errors.mustMatch) {
       // return if another validator has already found an error on the matchingControl
-      return;
+      return null;
     }
 
     // set error on matchingControl if validation fails
-    if (control.value !== matchingControl.value) {
-      matchingControl.setErrors({ mustMatch: true });
+    if (baseControl.value !== matchingControl.value) {
+      return { mustMatch: true };
     } else {
-      matchingControl.setErrors(null);
+      return null;
     }
   };
-}
+};

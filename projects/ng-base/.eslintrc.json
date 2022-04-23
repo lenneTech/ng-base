@@ -9,22 +9,8 @@
         "createDefaultProgram": true
       },
       "rules": {
-        "@angular-eslint/component-selector": [
-          "error",
-          {
-            "type": "element",
-            "prefix": "lt",
-            "style": "kebab-case"
-          }
-        ],
-        "@angular-eslint/directive-selector": [
-          "error",
-          {
-            "type": "attribute",
-            "prefix": "lt",
-            "style": "camelCase"
-          }
-        ],
+        "@angular-eslint/component-selector": "off",
+        "@angular-eslint/directive-selector": "off",
         "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/no-unused-expressions": "off",
         "@typescript-eslint/member-ordering": "off",

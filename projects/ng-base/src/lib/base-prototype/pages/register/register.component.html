@@ -1,0 +1,26 @@
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="d-flex flex-column register-container">
+    <div class="container">
+      <base-input [id]="'firstName'" [label]="'Vorname'" [type]="'text'" [control]="form.get('firstName')"></base-input>
+      <base-input [id]="'lastName'" [label]="'Nachname'" [type]="'text'" [control]="form.get('lastName')"></base-input>
+      <base-input [id]="'email'" [label]="'E-Mail Adresse'" [type]="'email'" [control]="form.get('email')"></base-input>
+      <base-input
+        [id]="'password'"
+        [label]="'Passwort'"
+        [type]="'password'"
+        [control]="form.get('password')"
+      ></base-input>
+      <base-input
+        [id]="'password-confirm'"
+        [label]="'Passwort bestätigen'"
+        [type]="'password'"
+        [control]="form.get('passwordConfirm')"
+      ></base-input>
+      <div class="d-grid gap-2 text-center">
+        <button class="btn btn-primary" (click)="submit()">Registrieren</button>
+        <hr />
+        <a routerLink="../login">Bereits ein Konto? Dann logge Dich hier ein!</a>
+      </div>
+    </div>
+  </div>
+</div>

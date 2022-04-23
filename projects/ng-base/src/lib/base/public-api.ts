@@ -43,6 +43,7 @@ export * from './interfaces/filter-input.interface';
 export * from './interfaces/graphql-options.interface';
 export * from './interfaces/graphql-plus-options.interfacen';
 export * from './interfaces/graphql-type-collection.interface';
+export * from './interfaces/graphql-fields-object.interface';
 export * from './interfaces/single-filter-input.interface';
 export * from './interfaces/sort-input.interface';
 export * from './interfaces/find-args.interface';
@@ -50,6 +51,7 @@ export * from './interfaces/find-args.interface';
 // Pipes
 export * from './pipes/ellipses.pipe';
 export * from './pipes/safe-html.pipe';
+export * from './pipes/date-ago.pipe';
 
 // Services
 export * from './services/auth.service';
@@ -63,9 +65,11 @@ export * from './services/scroll.service';
 export * from './services/seo.service';
 export * from './services/storage.service';
 export * from './services/ws.service';
+export * from './services/theme.service';
 
 // Types
 export * from './types/storage.type';
+export * from './types/graphql-fields.type';
 
 // Validators
 export * from './validators/must-match.validator';
