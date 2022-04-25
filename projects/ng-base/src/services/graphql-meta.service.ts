@@ -15,7 +15,6 @@ import { Helper } from '../classes/helper.class';
   providedIn: 'root',
 })
 export class GraphQLMetaService {
-
   // Caches
   protected _frozenSchema: GraphQLSchema;
   protected _frozenSchemaObservable: Observable<GraphQLSchema>;
@@ -68,7 +67,7 @@ export class GraphQLMetaService {
     // Request schema from server
     const observable = this.apollo
       .query({
-        query: gql(getIntrospectionQuery({descriptions: false})),
+        query: gql(getIntrospectionQuery({ descriptions: false })),
       })
       .pipe(
         map((schema: any) => {
@@ -123,7 +122,7 @@ export class GraphQLMetaService {
       map((schema: any) => {
         // Log
         if (config.log) {
-          console.log({schema});
+          console.log({ schema });
         }
 
         this._meta = new GraphQLMeta(schema);

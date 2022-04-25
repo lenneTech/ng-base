@@ -9,7 +9,6 @@ import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-
  */
 @Injectable()
 export class AuthGuard implements CanActivate, CanActivateChild {
-
   /**
    * Imports
    */

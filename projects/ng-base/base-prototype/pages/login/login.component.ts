@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsService } from '../../../base/services/forms.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormsService } from '@lenne.tech/ng-base';
 
 @Component({
   selector: 'base-login',

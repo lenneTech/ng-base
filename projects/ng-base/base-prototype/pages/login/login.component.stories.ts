@@ -3,7 +3,7 @@ import { Story, Meta } from '@storybook/angular/types-6-0';
 import { moduleMetadata } from '@storybook/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { LoginComponent } from '@lenne.tech/ng-base/src/lib/base-prototype';
+import { LoginComponent } from './login.component';
 import { RouterTestingModule } from '@angular/router/testing';
 
 // More on default export: https://storybook.js.org/docs/angular/writing-stories/introduction#default-export
