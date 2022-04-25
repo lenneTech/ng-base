@@ -24,7 +24,7 @@
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "predeploy": "npm run build-storybook",
     "storybook": "npm run docs:json && start-storybook -p 6006",
-    "build-storybook": "npm run docs:json && build-storybook -o ./docs",
+    "build-storybook": "npm run docs:json && build-storybook --no-dll -o ./docs",
     "deploy-storybook": "gh-pages -d docs"
   },
   "private": true,
