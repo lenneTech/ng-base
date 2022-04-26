@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { FormsService } from '@lenne.tech/ng-base';
-import { MustMatch } from '@lenne.tech/ng-base';
+import { FormsService, MustMatch } from '@lenne.tech/ng-base';
 
 @Component({
   selector: 'base-register',
