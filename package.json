@@ -2,7 +2,7 @@
   "name": "ng-base",
   "version": "13.1.0",
   "author": "lenne.Tech <info@lenne.tech> (https://lenne.tech)",
-  "homepage": "https://lennetech.github.io/ng-base",
+  "homepage": "https://lennetech.github.io/ng-base/",
   "license": "MIT",
   "scripts": {
     "build": "ng build --configuration production",
@@ -25,7 +25,7 @@
     "predeploy": "npm run build-storybook",
     "storybook": "npm run docs:json && start-storybook -p 6006",
     "build-storybook": "npm run docs:json && build-storybook --no-dll -o ./docs",
-    "deploy-storybook": "storybook-to-ghpages"
+    "deploy-storybook": "gh-pages -d docs"
   },
   "private": true,
   "dependencies": {
