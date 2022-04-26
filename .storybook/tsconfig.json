@@ -4,8 +4,8 @@
     "types": ["node"],
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@lenne.tech/ng-base/*": ["../projects/ng-base/*", "../projects/ng-base"],
-      "@lenne.tech/ng-base": ["../dist/ng-base/*", "../dist/ng-base"]
+      "@lenne.tech/ng-base/*": ["projects/ng-base/*", "projects/ng-base"],
+      "@lenne.tech/ng-base": ["dist/ng-base/*", "dist/ng-base"]
     }
   },
   "exclude": ["../src/test.ts", "../src/**/*.spec.ts", "../projects/**/*.spec.ts"],
