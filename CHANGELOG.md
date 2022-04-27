@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.2.0](https://github.com/lenneTech/ng-base/compare/v13.1.0...v13.2.0) (2022-04-27)
+
+### ⚠ BREAKING CHANGES
+
+- Fix structure for sub entries
+- Add Components and storybook
+
+### Features
+
+- Add Components and storybook ([ee71271](https://github.com/lenneTech/ng-base/commit/ee712719024f80e7a1b4c8e92af94bee17ed52b4))
+- Add fixed version numbers ([1db172d](https://github.com/lenneTech/ng-base/commit/1db172daf923643d89d4f346dafa5e26a59b93a7))
+- Add github pages workflow ([b8a6537](https://github.com/lenneTech/ng-base/commit/b8a65372c43583ba75ad083dca38f6d548494974))
+- Add Slack webhook ([68d34af](https://github.com/lenneTech/ng-base/commit/68d34afe002a02e77f4f76890423a0e695ed17ac))
+- Change env name ([51e241c](https://github.com/lenneTech/ng-base/commit/51e241c23aa68f7a9908695185dcd76c0981f0e8))
+
+### Bug Fixes
+
+- Fix storybook pipeline ([c560871](https://github.com/lenneTech/ng-base/commit/c560871aa0ec1a0a6c84a1aaf4e1d6893a66fa37))
+- Fix storybook pipeline ([b3baa6c](https://github.com/lenneTech/ng-base/commit/b3baa6c5471e05ca0458348176b70b2e0de9423e))
+- Fix storybook pipeline ([46e7467](https://github.com/lenneTech/ng-base/commit/46e7467478857dafd58aecb8e91043cf8e5e5232))
+- Fix storybook pipeline ([5749eb8](https://github.com/lenneTech/ng-base/commit/5749eb8062c05960a308e601777b4669011bd3d4))
+- Fix storybook pipeline ([6f5f25d](https://github.com/lenneTech/ng-base/commit/6f5f25dc058f09798f30b02c2f4fd318442b0297))
+- Fix storybook pipeline ([36844ba](https://github.com/lenneTech/ng-base/commit/36844ba54d4c52b900dab7a0df5d2cacb6617898))
+- Fix storybook pipeline ([e7ffd16](https://github.com/lenneTech/ng-base/commit/e7ffd16e4fb7d01fb736ffa01881ec3581a02664))
+- Fix structure for sub entries ([49a9330](https://github.com/lenneTech/ng-base/commit/49a9330dada6989c16139f060f2dab6f94e9d533))
+
 ## [13.1.0](https://github.com/lenneTech/ng-base/compare/v13.0.0...v13.1.0) (2022-03-21)
 
 ### ⚠ BREAKING CHANGES
