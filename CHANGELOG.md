@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.3.0](https://github.com/lenneTech/ng-base/compare/v13.2.1...v13.3.0) (2022-05-10)
+
+### Features
+
+- Some optimizations for debounce decorator ([6ae62c0](https://github.com/lenneTech/ng-base/commit/6ae62c08c20531a05556a8b56f8ebb7f74f373af))
+
 ### [13.2.1](https://github.com/lenneTech/ng-base/compare/v13.2.0...v13.2.1) (2022-05-10)
 
 ### Bug Fixes
