@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.3.1](https://github.com/lenneTech/ng-base/compare/v13.3.0...v13.3.1) (2022-05-10)
+
+### Bug Fixes
+
+- Fix missing module import ([71d1a1d](https://github.com/lenneTech/ng-base/commit/71d1a1da054e6b9e7f2eb6f4072b290e072d22eb))
+
 ## [13.3.0](https://github.com/lenneTech/ng-base/compare/v13.2.1...v13.3.0) (2022-05-10)
 
 ### Features
