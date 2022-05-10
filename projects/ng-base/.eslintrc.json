@@ -15,7 +15,8 @@
         "@typescript-eslint/no-unused-expressions": "off",
         "@typescript-eslint/member-ordering": "off",
         "arrow-body-style": "off",
-        "prefer-arrow/prefer-arrow-functions": "off"
+        "prefer-arrow/prefer-arrow-functions": "off",
+        "space-before-function-paren": "off"
       }
     },
     {
