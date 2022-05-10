@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RegisterComponent } from './register.component';
+import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
 
 // More on default export: https://storybook.js.org/docs/angular/writing-stories/introduction#default-export
 export default {
@@ -12,7 +13,13 @@ export default {
   component: RegisterComponent,
   decorators: [
     moduleMetadata({
-      imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterTestingModule.withRoutes([])],
+      imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BaseComponentsModule,
+        RouterTestingModule.withRoutes([]),
+      ],
     }),
   ],
   parameters: {
