@@ -19,6 +19,9 @@ export * from './src/directives/lazy-load.directive';
 export * from './src/directives/match-height.directive';
 export * from './src/directives/resizable.directive';
 
+// Decorators
+export * from './src/decorators/debounce.decorator';
+
 // Factories
 export * from './src/factories/apollo-options.factory';
 
