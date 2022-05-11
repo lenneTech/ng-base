@@ -1,0 +1,35 @@
+<Meta title="Getting Started" />
+
+# Integration into an Angular project
+
+Installation
+
+```
+cd path/to/your/angular-project
+npm i @lenne.tech/ng-base
+```
+
+Include BaseModule into your AppModule
+
+```
+...
+BaseModule.forRoot(environment),
+...
+```
+
+Extend your environment with following options:
+
+```
+export const environment = {
+  production: false,
+  ...
+  apiUrl: 'http://localhost:3000/graphql',
+  wsUrl: 'ws://localhost:3000/graphql',
+  authGuardRedirectUrl: '/path/to/login', // optional (default: '/auth')
+  prefix: 'prefixForLocalStorageKeys', // optional (default: '')
+  scrollDetectionOffset: 200, // should be >= scrollOffset, optional (default: 200)
+  scrollOffset: 100, // optional (default: 100)
+  storageType: 'local' as StorageType, // optional (default: 'local')
+  version: '0.1', // to set version for storage keys, optional (default: '')
+};
+```

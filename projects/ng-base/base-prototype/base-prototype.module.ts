@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 
 // Modules
 const imports = [FormsModule, RouterModule, ReactiveFormsModule, CommonModule, BaseComponentsModule];
@@ -15,6 +16,7 @@ const elements = [
   // Components
   LoginComponent,
   RegisterComponent,
+  ForgotPasswordComponent,
 ];
 
 @NgModule({
