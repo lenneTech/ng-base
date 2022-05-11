@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.4.0](https://github.com/lenneTech/ng-base/compare/v13.3.1...v13.4.0) (2022-05-11)
+
+### Features
+
+- Add password-forgot component for test ([f3c092c](https://github.com/lenneTech/ng-base/commit/f3c092c07dd869a7d9767fdbeab3462addb5928e))
+
 ### [13.3.1](https://github.com/lenneTech/ng-base/compare/v13.3.0...v13.3.1) (2022-05-10)
 
 ### Bug Fixes
