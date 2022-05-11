@@ -12,10 +12,11 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v2
+      - name: Set git HEAD
+        run: git symbolic-ref HEAD refs/heads/main
       - name: Create release notes
         run: diff --changed-group-format='%>' --unchanged-group-format='' <( git show HEAD~1:CHANGELOG.md ) CHANGELOG.md > RELEASE_NOTES.md || true
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: './dist/ng-base'
           bodyFile: 'RELEASE_NOTES.md'
           token: ${{ secrets.GITHUB_TOKEN }}
