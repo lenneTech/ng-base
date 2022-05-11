@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.6.0](https://github.com/lenneTech/ng-base/compare/v13.5.0...v13.6.0) (2022-05-11)
+
+### Features
+
+- Add better release notes in pipeline ([b351aef](https://github.com/lenneTech/ng-base/commit/b351aefec167a2bb26d8fcfc29bb2fe48cbb4412))
+
+### Bug Fixes
+
+- Optimizations for github actions ([c196802](https://github.com/lenneTech/ng-base/commit/c196802b850d6f9ded0a6b3335d2965baf99832a))
+
 ## [13.5.0](https://github.com/lenneTech/ng-base/compare/v13.4.1...v13.5.0) (2022-05-11)
 
 ### Features
