@@ -29,6 +29,6 @@ jobs:
         with:
           channel: '#deployments'
           status: ${{ job.status }}
-          success_text: 'Version (#${{github.event.release.tag_name}}) von @lenne.tech/ng-base wurde erfolgreich released.'
-          failure_text: 'Release (#${{github.event.release.tag_name}}) von @lenne.tech/ng-base ist fehlgeschlagen.'
-          cancelled_text: 'Release (#${{github.event.release.tag_name}}) von @lenne.tech/ng-base wurde abgebrochen.'
+          success_text: 'Version (#${{github.ref_name}}) von @lenne.tech/ng-base wurde erfolgreich released.'
+          failure_text: 'Release (#${{github.ref_name}}) von @lenne.tech/ng-base ist fehlgeschlagen.'
+          cancelled_text: 'Release (#${{github.ref_name}}) von @lenne.tech/ng-base wurde abgebrochen.'
