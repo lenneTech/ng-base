@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.5.0](https://github.com/lenneTech/ng-base/compare/v13.4.1...v13.5.0) (2022-05-11)
+
+### Features
+
+- Add release pipeline ([8418558](https://github.com/lenneTech/ng-base/commit/84185580e1820fc46da865301abf8c0623e62e95))
+
+### Bug Fixes
+
+- Fix subscription-transport ([337f7c8](https://github.com/lenneTech/ng-base/commit/337f7c8d170c8bdf4b8df1c470f67be4eec2221f))
+
 ### [13.4.1](https://github.com/lenneTech/ng-base/compare/v13.4.0...v13.4.1) (2022-05-11)
 
 ### Bug Fixes
