@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.6.6](https://github.com/lenneTech/ng-base/compare/v13.6.5...v13.6.6) (2022-05-16)
+
+### Bug Fixes
+
+- Fix missing user service mock ([c3569d5](https://github.com/lenneTech/ng-base/commit/c3569d5f86a30657fe6fc2cc2e81a10cf1711042))
+
 ### [13.6.5](https://github.com/lenneTech/ng-base/compare/v13.6.4...v13.6.5) (2022-05-16)
 
 ### [13.6.4](https://github.com/lenneTech/ng-base/compare/v13.6.3...v13.6.4) (2022-05-11)
