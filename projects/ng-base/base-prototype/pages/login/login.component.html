@@ -1,22 +1,37 @@
 <div class="d-flex justify-content-center align-items-center h-100 py-5">
   <div class="d-flex flex-column login-container">
     <div class="container">
-      <div id="register-error" class="alert alert-danger" role="alert" *ngIf="error">
-        {{ error }}
-      </div>
-      <base-input [id]="'email'" [label]="'E-Mail Adresse'" [type]="'email'" [control]="form.get('email')"></base-input>
-      <base-input
-        [id]="'password'"
-        [label]="'Passwort'"
-        [type]="'password'"
-        [control]="form.get('password')"
-      ></base-input>
-      <div class="d-grid gap-2 text-center">
-        <button class="btn btn-primary" (click)="submit()">Einloggen</button>
-        <hr />
-        <a routerLink="../passwort-vergessen">Passwort vergessen</a>
-        <a routerLink="../registrieren">Noch kein Konto? Dann registiere Dich jetzt!</a>
-      </div>
+      <form [formGroup]="form">
+        <div class="alert alert-danger" role="alert" *ngIf="error">
+          {{ error }}
+        </div>
+        <base-input
+          [id]="'email'"
+          [name]="'email'"
+          [label]="'E-Mail Adresse'"
+          [type]="'email'"
+          [control]="form.get('email')"
+          [autocomplete]="'email'"
+        ></base-input>
+        <base-input
+          [id]="'password'"
+          [name]="'password'"
+          [label]="'Passwort'"
+          [type]="'password'"
+          [autocomplete]="'current-password'"
+          [control]="form.get('password')"
+        ></base-input>
+        <div class="d-grid gap-2 text-center">
+          <button class="btn btn-primary" (click)="submit()" *ngIf="!loading">Einloggen</button>
+          <button class="btn btn-primary" type="button" disabled *ngIf="loading">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+          </button>
+          <hr />
+          <a routerLink="../passwort-vergessen">Passwort vergessen</a>
+          <a routerLink="../registrieren">Noch kein Konto? Dann registiere Dich jetzt!</a>
+        </div>
+      </form>
     </div>
   </div>
 </div>

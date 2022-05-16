@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 export class RegisterComponent implements OnInit {
   form: FormGroup;
   error: string;
+  loading: boolean;
 
   constructor(private formsService: FormsService, private userService: UserService, private router: Router) {}
 
@@ -42,10 +43,12 @@ export class RegisterComponent implements OnInit {
    */
   submit() {
     this.error = '';
+    this.loading = true;
 
     if (this.form.invalid) {
       this.formsService.validateAllFormFields(this.form);
       this.scrollToTop();
+      this.loading = false;
       return;
     }
 
@@ -60,6 +63,7 @@ export class RegisterComponent implements OnInit {
           this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';
           this.scrollToTop();
         }
+        this.loading = false;
       },
       error: (err) => {
         if (err?.message?.includes('already exists')) {
@@ -67,6 +71,8 @@ export class RegisterComponent implements OnInit {
             'Mit dieser E-Mail gibt es bereits ein Konto. Bitte wähle eine andere E-Mail Adresse oder logge dich mit deinem Passwort ein.';
           this.scrollToTop();
         }
+
+        this.loading = false;
       },
     });
   }

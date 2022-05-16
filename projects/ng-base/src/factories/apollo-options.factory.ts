@@ -1,9 +1,15 @@
 import { HttpLink } from 'apollo-angular/http';
 import { ApolloLink, concat, split } from '@apollo/client/core';
 import { InMemoryCache } from '@apollo/client/cache';
-import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { AuthService, BaseModuleConfig, WsService } from '@lenne.tech/ng-base/shared';
+import {
+  AuthService,
+  BaseModuleConfig,
+  RestartableClient,
+  WsService,
+  createRestartableClient,
+} from '@lenne.tech/ng-base/shared';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 
 /**
  * Factory for apollo-angular options
@@ -14,12 +20,10 @@ export function apolloOptionsFactory(
   authService: AuthService,
   wsService: WsService
 ) {
-  console.log('Config before apollo configuration:', baseModuleConfig);
   const links = [];
-  const defaultUrl = 'https://' + 'api.' + window.location.href + '/graphql';
 
   const http = httpLink.create({
-    uri: baseModuleConfig.apiUrl ? baseModuleConfig.apiUrl : defaultUrl,
+    uri: baseModuleConfig.apiUrl,
   });
 
   const authMiddleware = new ApolloLink((operation, forward) => {
@@ -35,23 +39,23 @@ export function apolloOptionsFactory(
   });
 
   if (baseModuleConfig.logging) {
-    console.log('Config before apollo configuration:');
     console.log(baseModuleConfig);
   }
 
   if (baseModuleConfig.wsUrl) {
-    const wsLink = new WebSocketLink({
-      uri: baseModuleConfig.wsUrl,
-      options: {
-        reconnect: true,
-        connectionParams: () => ({
-          Authorization: authService.token ? 'Bearer ' + authService.token : undefined,
-        }),
-      },
-    });
+    const wsLink = new GraphQLWsLink(
+      createRestartableClient({
+        url: baseModuleConfig.wsUrl,
+        connectionParams: () => {
+          return {
+            Authorization: authService.token ? 'Bearer ' + authService.token : undefined,
+          };
+        },
+      })
+    );
 
     // Set client for reconnection on logout/login
-    wsService.client = (wsLink as any).subscriptionClient;
+    wsService.client = wsLink.client as RestartableClient;
 
     // using the ability to split links, you can send data to each link
     // depending on what kind of operation is being sent
@@ -71,8 +75,6 @@ export function apolloOptionsFactory(
     links.push(http);
     links.push(authMiddleware);
   }
-
-  console.log(links);
 
   return {
     link: ApolloLink.from(links),

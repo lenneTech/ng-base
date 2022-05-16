@@ -69,4 +69,18 @@ export class UserService extends GraphQLPlusService {
       })
     );
   }
+
+  /**
+   * Request password reset mail
+   *
+   * @param email
+   */
+  requestPasswordResetMail(email: string) {
+    return this.graphQl('requestPasswordResetMail', {
+      arguments: { email },
+      fields: [],
+      type: GraphQLRequestType.QUERY,
+      loading: true,
+    });
+  }
 }

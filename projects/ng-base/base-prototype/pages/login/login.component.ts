@@ -11,6 +11,7 @@ import { FormsService, UserService } from '@lenne.tech/ng-base/shared';
 export class LoginComponent implements OnInit {
   form: FormGroup;
   error: string;
+  loading: boolean;
 
   constructor(private formsService: FormsService, private userService: UserService, private router: Router) {}
 
@@ -33,9 +34,12 @@ export class LoginComponent implements OnInit {
    */
   submit() {
     this.error = '';
+    this.loading = true;
 
     if (this.form.invalid) {
       this.formsService.validateAllFormFields(this.form);
+      this.scrollToTop();
+      this.loading = false;
       return;
     }
 
@@ -48,6 +52,7 @@ export class LoginComponent implements OnInit {
           this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';
           this.scrollToTop();
         }
+        this.loading = false;
       },
       error: (error) => {
         this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';
@@ -58,11 +63,12 @@ export class LoginComponent implements OnInit {
         }
 
         // User not found
-        if (error?.message?.includes('Not Found')) {
+        if (error?.message?.includes('Not user found')) {
           this.error = 'Es konnte kein Konto mit der E-Mail gefunden werden. Bitte gib eine gültige E-Mail ein!';
         }
 
         this.scrollToTop();
+        this.loading = false;
       },
     });
   }

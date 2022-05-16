@@ -52,3 +52,6 @@ export * from './types/graphql-fields.type';
 
 // Validators
 export * from './validators/match.validator';
+
+// Functions
+export * from './functions/ws-client.function';

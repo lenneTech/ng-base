@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import { SubscriptionClient } from 'subscriptions-transport-ws';
+import { RestartableClient } from '../functions/ws-client.function';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WsService {
-  client: SubscriptionClient;
+  client: RestartableClient;
 
   reconnect() {
-    this.client?.close();
-    (this.client as any)?.connect();
+    this.client?.restart();
   }
 }
