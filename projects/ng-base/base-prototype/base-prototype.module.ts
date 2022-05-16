@@ -3,13 +3,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
+import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
-import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { BaseModule } from '@lenne.tech/ng-base';
 
 // Modules
-const imports = [FormsModule, RouterModule, ReactiveFormsModule, CommonModule, BaseComponentsModule];
+const imports = [BaseModule, FormsModule, RouterModule, ReactiveFormsModule, CommonModule, BaseComponentsModule];
 
 // Imported and exported elements
 const elements = [

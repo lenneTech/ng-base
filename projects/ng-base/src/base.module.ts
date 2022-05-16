@@ -1,10 +1,7 @@
-import { APOLLO_OPTIONS } from 'apollo-angular';
+import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 
-import { BASE_MODULE_CONFIG, BaseModuleConfig } from './interfaces/base-module-config.interface';
-import { AuthService } from './services/auth.service';
-import { WsService } from './services/ws.service';
 import { apolloOptionsFactory } from './factories/apollo-options.factory';
 import { ContextMenuDirective } from './directives/context-menu.directive';
 import { LazyLoadDirective } from './directives/lazy-load.directive';
@@ -13,6 +10,8 @@ import { ResizableDirective } from './directives/resizable.directive';
 import { EllipsesPipe } from './pipes/ellipses.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { DateAgoPipe } from './pipes/date-ago.pipe';
+import { AuthService, BaseModuleConfig, BASE_MODULE_CONFIG, WsService } from '@lenne.tech/ng-base/shared';
+import { HttpClientModule } from '@angular/common/http';
 
 // Imported and exported elements
 const elements = [
@@ -32,8 +31,9 @@ const elements = [
  * Base module
  */
 @NgModule({
+  imports: [ApolloModule, HttpClientModule],
   declarations: elements,
-  exports: elements,
+  exports: [...elements, ApolloModule, HttpClientModule],
 })
 export class BaseModule {
   /**
@@ -42,7 +42,7 @@ export class BaseModule {
   static forRoot(baseModuleConfig: BaseModuleConfig = {}, AppAuthService?): ModuleWithProviders<BaseModule> {
     // Default config
     const config = {
-      apiUrl: 'localhost:3000',
+      apiUrl: '',
       authGuardRedirectUrl: '/auth',
       logging: false,
       version: null,
@@ -53,11 +53,15 @@ export class BaseModule {
       ...baseModuleConfig,
     };
 
+    if (config.logging) {
+      console.log('Config:', config);
+    }
+
     // Prepare providers
     const providers: Provider[] = [
       {
         provide: BASE_MODULE_CONFIG,
-        useValue: baseModuleConfig,
+        useValue: config,
       },
     ];
 

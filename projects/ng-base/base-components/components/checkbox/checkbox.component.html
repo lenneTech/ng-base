@@ -9,7 +9,12 @@
     [name]="name"
     [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
   />
-  <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
+  <label [for]="id" class="form-label" [ngClass]="{ required: required }">
+    <ng-container *ngIf="label">
+      {{ label }}
+    </ng-container>
+    <ng-content></ng-content>
+  </label>
 
   <div class="invalid-feedback ms-0 m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">
     <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>

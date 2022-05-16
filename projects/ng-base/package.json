@@ -10,7 +10,7 @@
     "angular-library",
     "angular13+"
   ],
-  "version": "13.6.4",
+  "version": "13.6.11",
   "author": "lenne.Tech <info@lenne.tech> (https://lenne.tech)",
   "homepage": "https://github.com/lenneTech/ng-base",
   "license": "MIT",
@@ -31,7 +31,7 @@
     "@apollo/client": "3.5.10",
     "apollo-angular": "3.0.1",
     "graphql": "16.3.0",
-    "subscriptions-transport-ws": "0.11.0",
+    "graphql-ws": "5.8.2",
     "tslib": "2.3.1"
   }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { FormsService, MustMatch } from '@lenne.tech/ng-base';
+import { FormsService, UserService, Validation } from '@lenne.tech/ng-base/shared';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'base-register',
@@ -9,8 +10,10 @@ import { FormsService, MustMatch } from '@lenne.tech/ng-base';
 })
 export class RegisterComponent implements OnInit {
   form: FormGroup;
+  error: string;
+  loading: boolean;
 
-  constructor(private formsService: FormsService) {}
+  constructor(private formsService: FormsService, private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
     this.createForm();
@@ -27,9 +30,10 @@ export class RegisterComponent implements OnInit {
         email: new FormControl('', [Validators.required, Validators.email]),
         password: new FormControl('', Validators.required),
         passwordConfirm: new FormControl('', Validators.required),
+        privacy: new FormControl(false, Validators.requiredTrue),
       },
       {
-        validators: MustMatch,
+        validators: [Validation.match('password', 'passwordConfirm')],
       }
     );
   }
@@ -38,9 +42,42 @@ export class RegisterComponent implements OnInit {
    * Submit login form
    */
   submit() {
+    this.error = '';
+    this.loading = true;
+
     if (this.form.invalid) {
       this.formsService.validateAllFormFields(this.form);
+      this.scrollToTop();
+      this.loading = false;
       return;
     }
+
+    const input = this.form.value;
+    delete input.privacy;
+
+    this.userService.register(input).subscribe({
+      next: (auth) => {
+        if (auth) {
+          this.router.navigate(['/main']);
+        } else {
+          this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';
+          this.scrollToTop();
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        if (err?.message?.includes('already exists')) {
+          this.error =
+            'Mit dieser E-Mail gibt es bereits ein Konto. Bitte wähle eine andere E-Mail Adresse oder logge dich mit deinem Passwort ein.';
+          this.scrollToTop();
+        }
+
+        this.loading = false;
+      },
+    });
+  }
+
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
