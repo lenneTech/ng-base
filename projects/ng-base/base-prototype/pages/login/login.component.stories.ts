@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { LoginComponent } from './login.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
-import { ApolloModule } from 'apollo-angular';
 import { of } from 'rxjs';
 import { UserService } from '@lenne.tech/ng-base/shared';
 
