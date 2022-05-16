@@ -1,11 +1,10 @@
-import { TimeComponents } from '../interfaces/time-components.interface';
+import { TimeComponents } from '@lenne.tech/ng-base/shared';
 
 // Usage for Countdown
 //     this.timeLeft$ = interval(1000).pipe(
 //       map((x) => calcDateDiff(new Date(2021, 11, 1))),
 //       shareReplay(1)
 //     );
-
 export function calcDateDiff(endDay: Date = new Date(2021, 12, 1)): TimeComponents {
   const dDay = endDay.valueOf();
 

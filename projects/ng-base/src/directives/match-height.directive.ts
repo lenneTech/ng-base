@@ -1,5 +1,5 @@
 import { Directive, ElementRef, HostListener, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
-import { ImageService } from '../services/image.service';
+import { ImageService } from '@lenne.tech/ng-base/shared';
 import { isPlatformBrowser } from '@angular/common';
 
 /**

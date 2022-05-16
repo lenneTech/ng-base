@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from '../services/auth.service';
-import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-config.interface';
+import { AuthService, BaseModuleConfig, BASE_MODULE_CONFIG } from '@lenne.tech/ng-base/shared';
 
 /**
  * Authentication guard

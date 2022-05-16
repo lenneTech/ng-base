@@ -25,7 +25,7 @@ export interface BaseModuleConfig {
   /**
    * Whether logging is enabled or not
    */
-  logging?: false;
+  logging?: boolean;
 
   /**
    * Version of the App (for storage handling)
