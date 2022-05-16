@@ -9,7 +9,7 @@ import { ForgotPasswordComponent } from './forgot-password.component';
 import { UserService } from '@lenne.tech/ng-base/shared';
 import { of } from 'rxjs';
 
-export class MockUserService {
+class MockUserService {
   requestPasswordResetMail() {
     return of(false);
   }

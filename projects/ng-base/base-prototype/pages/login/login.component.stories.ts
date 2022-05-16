@@ -9,7 +9,7 @@ import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
 import { of } from 'rxjs';
 import { UserService } from '@lenne.tech/ng-base/shared';
 
-export class MockUserService {
+class MockUserService {
   login() {
     return of(false);
   }
