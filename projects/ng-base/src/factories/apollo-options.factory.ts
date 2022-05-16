@@ -72,6 +72,8 @@ export function apolloOptionsFactory(
     links.push(authMiddleware);
   }
 
+  console.log(links);
+
   return {
     link: ApolloLink.from(links),
     cache: new InMemoryCache(),

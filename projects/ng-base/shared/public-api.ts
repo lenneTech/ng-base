@@ -21,6 +21,8 @@ export * from './services/storage.service';
 export * from './services/ws.service';
 export * from './services/user.service';
 export * from './services/loader.service';
+export * from './services/scroll.service';
+export * from './services/image.service';
 
 // Enums
 export * from './enums/comparison-operator.enum';
@@ -42,10 +44,11 @@ export * from './interfaces/graphql-fields-object.interface';
 export * from './interfaces/single-filter-input.interface';
 export * from './interfaces/sort-input.interface';
 export * from './interfaces/find-args.interface';
+export * from './interfaces/time-components.interface';
 
 // Types
 export * from './types/storage.type';
 export * from './types/graphql-fields.type';
 
 // Validators
-export * from './validators/must-match.validator';
+export * from './validators/match.validator';

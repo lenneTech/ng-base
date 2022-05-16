@@ -29,7 +29,5 @@ export * from './src/pipes/date-ago.pipe';
 
 // Services
 export * from './src/services/fullscreen.service';
-export * from './src/services/image.service';
-export * from './src/services/scroll.service';
 export * from './src/services/seo.service';
 export * from './src/services/theme.service';

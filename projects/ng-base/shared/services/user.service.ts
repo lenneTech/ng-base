@@ -19,7 +19,6 @@ export class UserService extends GraphQLPlusService {
     protected loaderService: LoaderService,
     protected authService: AuthService
   ) {
-    console.log('UserService::constructor');
     super(apollo, graphqlMetaService, loaderService);
   }
 

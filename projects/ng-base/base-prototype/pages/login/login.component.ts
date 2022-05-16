@@ -10,6 +10,7 @@ import { FormsService, UserService } from '@lenne.tech/ng-base/shared';
 })
 export class LoginComponent implements OnInit {
   form: FormGroup;
+  error: string;
 
   constructor(private formsService: FormsService, private userService: UserService, private router: Router) {}
 
@@ -31,6 +32,8 @@ export class LoginComponent implements OnInit {
    * Submit login form
    */
   submit() {
+    this.error = '';
+
     if (this.form.invalid) {
       this.formsService.validateAllFormFields(this.form);
       return;
@@ -42,32 +45,29 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/main']);
           this.form.reset();
         } else {
-          // this.loaderService.stop(LoadingState.ERROR);
+          this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';
+          this.scrollToTop();
         }
       },
       error: (error) => {
+        this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';
+
         // Wrong password
         if (error?.message?.includes('Unauthorized')) {
-          // this.loaderService.error({
-          //   title: 'Oops!',
-          //   text: 'Dein Passwort ist leider falsch. Bitte überprüfe deine Eingabe!',
-          //   duration: 5000,
-          // });
-          // return;
+          this.error = 'Dein Passwort ist leider falsch. Bitte überprüfe deine Eingabe!';
         }
 
         // User not found
         if (error?.message?.includes('Not Found')) {
-          // this.loaderService.error({
-          //   title: 'Oops!',
-          //   text: 'Es konnte kein Konto mit der E-Mail gefunden werden. Bitte gib eine gültige E-Mail ein!',
-          //   duration: 5000,
-          // });
-          // return;
+          this.error = 'Es konnte kein Konto mit der E-Mail gefunden werden. Bitte gib eine gültige E-Mail ein!';
         }
 
-        // this.loaderService.error();
+        this.scrollToTop();
       },
     });
+  }
+
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

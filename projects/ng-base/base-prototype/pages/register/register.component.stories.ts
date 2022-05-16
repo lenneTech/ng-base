@@ -6,6 +6,14 @@ import { CommonModule } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RegisterComponent } from './register.component';
 import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
+import { UserService } from '@lenne.tech/ng-base/shared';
+import { of } from 'rxjs';
+
+export class MockUserService {
+  register() {
+    return of(false);
+  }
+}
 
 // More on default export: https://storybook.js.org/docs/angular/writing-stories/introduction#default-export
 export default {
@@ -19,6 +27,12 @@ export default {
         ReactiveFormsModule,
         BaseComponentsModule,
         RouterTestingModule.withRoutes([]),
+      ],
+      providers: [
+        {
+          provide: UserService,
+          useClass: MockUserService,
+        },
       ],
     }),
   ],

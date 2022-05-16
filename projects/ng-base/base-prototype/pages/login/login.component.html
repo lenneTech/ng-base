@@ -1,6 +1,9 @@
-<div class="d-flex justify-content-center align-items-center vh-100">
+<div class="d-flex justify-content-center align-items-center h-100 py-5">
   <div class="d-flex flex-column login-container">
     <div class="container">
+      <div id="register-error" class="alert alert-danger" role="alert" *ngIf="error">
+        {{ error }}
+      </div>
       <base-input [id]="'email'" [label]="'E-Mail Adresse'" [type]="'email'" [control]="form.get('email')"></base-input>
       <base-input
         [id]="'password'"

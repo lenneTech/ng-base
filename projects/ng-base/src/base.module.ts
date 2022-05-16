@@ -1,4 +1,4 @@
-import { APOLLO_OPTIONS } from 'apollo-angular';
+import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 
@@ -11,6 +11,7 @@ import { EllipsesPipe } from './pipes/ellipses.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { DateAgoPipe } from './pipes/date-ago.pipe';
 import { AuthService, BaseModuleConfig, BASE_MODULE_CONFIG, WsService } from '@lenne.tech/ng-base/shared';
+import { HttpClientModule } from '@angular/common/http';
 
 // Imported and exported elements
 const elements = [
@@ -30,8 +31,9 @@ const elements = [
  * Base module
  */
 @NgModule({
+  imports: [ApolloModule, HttpClientModule],
   declarations: elements,
-  exports: elements,
+  exports: [...elements, ApolloModule, HttpClientModule],
 })
 export class BaseModule {
   /**
