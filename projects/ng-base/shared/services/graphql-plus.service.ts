@@ -22,6 +22,7 @@ export class GraphQLPlusService extends GraphQLService {
     protected graphqlMetaService: GraphQLMetaService,
     protected loaderService: LoaderService
   ) {
+    console.log('GraphQLPlusService::constructor');
     super(apollo, graphqlMetaService);
   }
 

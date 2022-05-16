@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { FormsService } from '@lenne.tech/ng-base';
+import { FormsService } from '@lenne.tech/ng-base/shared';
 
 @Component({
   selector: 'base-forgot-password',

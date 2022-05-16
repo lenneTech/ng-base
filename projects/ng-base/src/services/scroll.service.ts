@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-config.interface';
+import { BASE_MODULE_CONFIG, BaseModuleConfig } from '@lenne.tech/ng-base/shared';
 import { ImageService } from './image.service';
 
 /**

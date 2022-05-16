@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanDeactivate } from '@angular/router';
-import { ICanComponentDeactivate } from '../interfaces/can-component-deactivate.interface';
+import { ICanComponentDeactivate } from '@lenne.tech/ng-base/shared';
 
 /**
  * Guard to check if a component can be deactivated

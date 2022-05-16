@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Helper } from '../classes/helper.class';
+import { Helper } from '@lenne.tech/ng-base/shared';
 
 /**
  * Image service

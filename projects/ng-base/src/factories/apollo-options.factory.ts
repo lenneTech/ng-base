@@ -1,11 +1,9 @@
 import { HttpLink } from 'apollo-angular/http';
-import { BaseModuleConfig } from '../interfaces/base-module-config.interface';
-import { AuthService } from '../services/auth.service';
 import { ApolloLink, concat, split } from '@apollo/client/core';
 import { InMemoryCache } from '@apollo/client/cache';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { WsService } from '../services/ws.service';
+import { AuthService, BaseModuleConfig, WsService } from '@lenne.tech/ng-base/shared';
 
 /**
  * Factory for apollo-angular options
@@ -16,11 +14,12 @@ export function apolloOptionsFactory(
   authService: AuthService,
   wsService: WsService
 ) {
+  console.log('Config before apollo configuration:', baseModuleConfig);
   const links = [];
-  const defaultUrl = 'api.' + window.location.href + '/graphql';
+  const defaultUrl = 'https://' + 'api.' + window.location.href + '/graphql';
 
   const http = httpLink.create({
-    uri: baseModuleConfig.apiUrl ? baseModuleConfig.apiUrl : 'https://' + defaultUrl,
+    uri: baseModuleConfig.apiUrl ? baseModuleConfig.apiUrl : defaultUrl,
   });
 
   const authMiddleware = new ApolloLink((operation, forward) => {
@@ -34,6 +33,11 @@ export function apolloOptionsFactory(
     }
     return forward(operation);
   });
+
+  if (baseModuleConfig.logging) {
+    console.log('Config before apollo configuration:');
+    console.log(baseModuleConfig);
+  }
 
   if (baseModuleConfig.wsUrl) {
     const wsLink = new WebSocketLink({

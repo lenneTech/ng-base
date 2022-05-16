@@ -3,9 +3,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
+import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
-import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 
 // Modules

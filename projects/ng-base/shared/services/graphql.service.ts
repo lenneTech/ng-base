@@ -18,7 +18,9 @@ export class GraphQLService {
   /**
    * Include services
    */
-  constructor(protected apollo: Apollo, protected graphQLMetaService: GraphQLMetaService) {}
+  constructor(protected apollo: Apollo, protected graphQLMetaService: GraphQLMetaService) {
+    console.log('GraphQLService::constructor');
+  }
 
   /**
    * GraphQL request
