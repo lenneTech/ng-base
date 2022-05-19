@@ -1,0 +1,58 @@
+:host {
+  --lt-loading-bar-color: #f28c18;
+  --lt-loading-bar-height: 5px;
+}
+
+.slider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--lt-loading-bar-height);
+  overflow-x: hidden;
+  z-index: 999999999;
+  background-color: white;
+}
+
+.line {
+  position: absolute;
+  opacity: 0.6;
+  background: var(--lt-loading-bar-color);
+  width: 150%;
+  height: var(--lt-loading-bar-height);
+}
+
+.subline {
+  position: absolute;
+  background: var(--lt-loading-bar-color);
+  height: var(--lt-loading-bar-height);
+}
+
+.inc {
+  animation: increase 2s infinite;
+}
+
+.dec {
+  animation: decrease 2s 0.5s infinite;
+}
+
+@keyframes increase {
+  from {
+    left: -5%;
+    width: 5%;
+  }
+  to {
+    left: 130%;
+    width: 100%;
+  }
+}
+
+@keyframes decrease {
+  from {
+    left: -80%;
+    width: 80%;
+  }
+  to {
+    left: 110%;
+    width: 10%;
+  }
+}

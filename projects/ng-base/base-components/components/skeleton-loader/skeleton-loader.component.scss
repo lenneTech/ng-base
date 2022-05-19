@@ -1,0 +1,33 @@
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+@mixin loading {
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+
+.line-loader-wrapper {
+  > :not(:first-of-type) {
+    margin-top: 10px;
+  }
+
+  .line-loader {
+    @include loading;
+    height: 18px;
+    border-radius: 5px;
+  }
+}
+
+.line-rectangle {
+  @include loading;
+  border-radius: 5px;
+}
+
+.line-avatar {
+  @include loading;
+  border-radius: 50%;
+}

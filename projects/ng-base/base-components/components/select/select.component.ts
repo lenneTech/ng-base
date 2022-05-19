@@ -19,5 +19,6 @@ export class SelectComponent {
   @Input() tabIndex?: number;
   @Input() required = false;
   @Input() multiple = false;
+  @Input() search = false;
   @Input() options: Option[] = [];
 }

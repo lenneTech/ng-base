@@ -1,0 +1,32 @@
+.tag-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  column-gap: 10px;
+  row-gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+
+  .tag {
+    background-color: var(--bs-light);
+    color: var(--bs-dark);
+    padding: 10px 15px;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 140%;
+
+    span {
+      margin-left: 20px;
+      cursor: pointer;
+
+      .bi {
+        color: var(--bs-black);
+
+        &:before {
+          vertical-align: -0.175em;
+        }
+      }
+    }
+  }
+}
