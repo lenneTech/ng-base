@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.7.0](https://github.com/lenneTech/ng-base/compare/v13.6.7...v13.7.0) (2022-05-19)
+
+### Features
+
+- Add new components (Loadingbar, Skeleton loader, breadcrumb, tags, toasts) ([4b70b3e](https://github.com/lenneTech/ng-base/commit/4b70b3e3f45eed6eabb0d24e4747b79efeba24a7))
+
+### Bug Fixes
+
+- Fix error on build ([6feb08f](https://github.com/lenneTech/ng-base/commit/6feb08fe61ff673395b3a94ebf52443295e2c21b))
+
 ### [13.6.7](https://github.com/lenneTech/ng-base/compare/v13.6.6...v13.6.7) (2022-05-16)
 
 ### Bug Fixes
