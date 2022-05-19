@@ -3,7 +3,7 @@ import { Story, Meta } from '@storybook/angular/types-6-0';
 import { componentWrapperDecorator, moduleMetadata } from '@storybook/angular';
 import { CommonModule } from '@angular/common';
 import { SkeletonLoaderComponent } from '@lenne.tech/ng-base/base-components';
-import { ForNumberPipe, SkeletonType } from '@lenne.tech/ng-base/shared';
+import { SkeletonType } from '@lenne.tech/ng-base/shared';
 
 // More on default export: https://storybook.js.org/docs/angular/writing-stories/introduction#default-export
 export default {
@@ -12,7 +12,6 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [CommonModule],
-      declarations: [ForNumberPipe],
     }),
     componentWrapperDecorator(
       (story) =>
@@ -37,7 +36,7 @@ const Template: Story<SkeletonLoaderComponent> = (args: SkeletonLoaderComponent)
 export const Default = Template.bind({});
 Default.args = {
   type: SkeletonType.LINE,
-  count: 5,
+  size: 5,
 };
 
 export const Avatar = Template.bind({});

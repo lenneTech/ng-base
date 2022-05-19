@@ -61,6 +61,3 @@ export * from './validators/match.validator';
 
 // Functions
 export * from './functions/ws-client.function';
-
-// Pipes
-export * from './pipes/for-number.pipe';

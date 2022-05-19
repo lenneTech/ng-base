@@ -4,7 +4,7 @@ import { Breadcrumb, BreadcrumbService } from '@lenne.tech/ng-base/shared';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'lc-breadcrumb',
+  selector: 'base-breadcrumb',
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss'],
 })

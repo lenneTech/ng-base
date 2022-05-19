@@ -1,15 +1,15 @@
-<ng-container [ngSwitch]="type">
-  <ng-container *ngSwitchCase="SkeletonType.LINE">
+<ng-container *ngIf="type" [ngSwitch]="type">
+  <div *ngSwitchCase="'LINE'">
     <div class="line-loader-wrapper">
-      <div class="line-loader" *ngFor="let key of count | forNumberPipe"></div>
+      <div class="line-loader" *ngFor="let key of convertToArray(count)"></div>
     </div>
-  </ng-container>
+  </div>
 
-  <ng-container *ngSwitchCase="SkeletonType.RECTANGLE">
+  <div *ngSwitchCase="'RECTANGLE'">
     <div class="line-rectangle" [ngStyle]="{ height: size + 'px' }"></div>
-  </ng-container>
+  </div>
 
-  <ng-container *ngSwitchCase="SkeletonType.AVATAR">
+  <div *ngSwitchCase="'AVATAR'">
     <div class="line-avatar" [ngStyle]="{ height: size + 'px', width: size + 'px' }"></div>
-  </ng-container>
+  </div>
 </ng-container>

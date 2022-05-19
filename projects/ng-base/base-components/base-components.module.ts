@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ForNumberPipe } from '@lenne.tech/ng-base/shared';
 
 import { InputComponent } from './components/input/input.component';
 import { SelectComponent } from './components/select/select.component';
@@ -31,8 +30,8 @@ const elements = [
 ];
 
 @NgModule({
-  declarations: [elements, ForNumberPipe],
+  declarations: elements,
   imports,
-  exports: [elements, ForNumberPipe],
+  exports: elements,
 })
 export class BaseComponentsModule {}
