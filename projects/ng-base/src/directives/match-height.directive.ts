@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, HostListener, Inject, Input, PLATFORM_ID } from '@angular/core';
 import { ImageService } from '@lenne.tech/ng-base/shared';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -8,7 +8,7 @@ import { isPlatformBrowser } from '@angular/common';
 @Directive({
   selector: '[ltMatchHeight]',
 })
-export class MatchHeightDirective implements OnInit {
+export class MatchHeightDirective implements AfterViewInit {
   // class name to match height
   @Input()
   ltMatchHeight: string | string[];
@@ -29,7 +29,7 @@ export class MatchHeightDirective implements OnInit {
     this.matchHeight(this.el.nativeElement, this.ltMatchHeight);
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.matchHeight(this.el.nativeElement, this.ltMatchHeight);
   }
 
