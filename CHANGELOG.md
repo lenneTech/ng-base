@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.9.3](https://github.com/lenneTech/ng-base/compare/v13.9.2...v13.9.3) (2022-05-24)
+
+### Bug Fixes
+
+- Fix initial matchHeight not working ([72fb7ac](https://github.com/lenneTech/ng-base/commit/72fb7ace84c2b5ec9dbe6c2d13574c274bcf0440))
+
 ### [13.9.2](https://github.com/lenneTech/ng-base/compare/v13.9.1...v13.9.2) (2022-05-24)
 
 ### Bug Fixes
