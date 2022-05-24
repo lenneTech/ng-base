@@ -49,6 +49,8 @@ export class ToastComponent implements OnInit, OnDestroy {
         return 'Info';
       case ToastType.WARNING:
         return 'Achtung';
+      case ToastType.SUCCESS:
+        return 'Erfolgreich';
     }
   }
 
@@ -60,6 +62,8 @@ export class ToastComponent implements OnInit, OnDestroy {
         return 'Info';
       case ToastType.WARNING:
         return 'Warning';
+      case ToastType.SUCCESS:
+        return 'Die Änderungen wurden erfolgreich gespeichert.';
     }
   }
 

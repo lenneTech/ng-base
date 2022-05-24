@@ -15,6 +15,7 @@ import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
         <button class="btn btn-danger" (click)="addError()">Show Error Toast</button>
         <button class="btn btn-warning" (click)="addWarning()">Show Warning Toast</button>
         <button class="btn btn-info" (click)="addInfo()">Show Info Toast</button>
+        <button class="btn btn-success" (click)="addSuccess()">Show Success Toast</button>
       </div>
     </div>
   `,
@@ -27,6 +28,16 @@ class ToastWrapperComponent {
       {
         id: 'info',
         type: ToastType.INFO,
+      },
+      5000
+    );
+  }
+
+  addSuccess() {
+    this.toastService.show(
+      {
+        id: 'success',
+        type: ToastType.SUCCESS,
       },
       5000
     );

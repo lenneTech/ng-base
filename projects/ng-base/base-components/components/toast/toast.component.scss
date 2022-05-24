@@ -32,3 +32,10 @@
     color: var(--bs-white);
   }
 }
+
+.success {
+  .toast-header {
+    background-color: var(--bs-success);
+    color: var(--bs-white);
+  }
+}
