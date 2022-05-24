@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.9.1](https://github.com/lenneTech/ng-base/compare/v13.9.0...v13.9.1) (2022-05-24)
+
+### Bug Fixes
+
+- Add BrowserAdnimationsModule to components module ([fea9f1c](https://github.com/lenneTech/ng-base/commit/fea9f1cc4d40d2955fbdc57593dba6805c8311a2))
+
 ## [13.9.0](https://github.com/lenneTech/ng-base/compare/v13.8.0...v13.9.0) (2022-05-24)
 
 ### Features
