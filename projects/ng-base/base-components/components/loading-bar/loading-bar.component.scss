@@ -1,30 +1,31 @@
 :host {
-  --lt-loading-bar-color: #f28c18;
-  --lt-loading-bar-height: 5px;
+  --base-loading-bar-color: #f28c18;
+  --base-loading-bar-height: 5px;
+  --base-loading-bar-z-index: 999999999;
 }
 
 .slider {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
-  height: var(--lt-loading-bar-height);
+  height: var(--base-loading-bar-height);
   overflow-x: hidden;
-  z-index: 999999999;
+  z-index: var(--base-loading-bar-z-index);
   background-color: white;
 }
 
 .line {
   position: absolute;
   opacity: 0.6;
-  background: var(--lt-loading-bar-color);
+  background: var(--base-loading-bar-color);
   width: 150%;
-  height: var(--lt-loading-bar-height);
+  height: var(--base-loading-bar-height);
 }
 
 .subline {
   position: absolute;
-  background: var(--lt-loading-bar-color);
-  height: var(--lt-loading-bar-height);
+  background: var(--base-loading-bar-color);
+  height: var(--base-loading-bar-height);
 }
 
 .inc {
