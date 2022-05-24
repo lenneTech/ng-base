@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.9.0](https://github.com/lenneTech/ng-base/compare/v13.8.0...v13.9.0) (2022-05-24)
+
+### Features
+
+- Add success toast type ([5d13d8c](https://github.com/lenneTech/ng-base/commit/5d13d8c6de8bce4faf1e994e6b34c2fb8e78a969))
+- Add top and bottom position for toast ([e5e8aeb](https://github.com/lenneTech/ng-base/commit/e5e8aeb37edacde11b6ea03d756061db34b3fbb7))
+
 ## [13.8.0](https://github.com/lenneTech/ng-base/compare/v13.7.0...v13.8.0) (2022-05-24)
 
 ### Features
