@@ -1,3 +1,18 @@
+.toast-wrapper {
+  position: fixed;
+  padding: 10px;
+}
+
+.bottom-right {
+  bottom: 0;
+  right: 0;
+}
+
+.top-right {
+  top: 0;
+  right: 0;
+}
+
 .toast {
   border-radius: 0;
   border: 0;

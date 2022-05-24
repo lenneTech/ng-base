@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { animate, query, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { Toast, ToastService, ToastType } from '@lenne.tech/ng-base/shared';
@@ -24,6 +24,7 @@ export class ToastComponent implements OnInit, OnDestroy {
   toasts: Toast[] = [];
   ToastType = ToastType;
   subscriptions = new Subscription();
+  @Input() position: 'top-right' | 'bottom-right' = 'bottom-right';
 
   constructor(private toastService: ToastService) {}
 

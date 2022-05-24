@@ -9,7 +9,7 @@ import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
 @Component({
   template: `
     <div class="w-100">
-      <base-toast></base-toast>
+      <base-toast [position]="position"></base-toast>
 
       <div style="display: flex; flex-direction: row; justify-content: space-around;">
         <button class="btn btn-danger" (click)="addError()">Show Error Toast</button>
@@ -21,6 +21,7 @@ import { BaseComponentsModule } from '@lenne.tech/ng-base/base-components';
   `,
 })
 class ToastWrapperComponent {
+  position: 'top-right' | 'bottom-right' = 'bottom-right';
   constructor(private toastService: ToastService) {}
 
   addInfo() {
