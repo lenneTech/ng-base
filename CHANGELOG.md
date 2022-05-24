@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.8.0](https://github.com/lenneTech/ng-base/compare/v13.7.0...v13.8.0) (2022-05-24)
+
+### Features
+
+- Some loading bar optimizations ([f0697e1](https://github.com/lenneTech/ng-base/commit/f0697e140b17a870b4c334cde6c66e9051499d00))
+
 ## [13.7.0](https://github.com/lenneTech/ng-base/compare/v13.6.7...v13.7.0) (2022-05-19)
 
 ### Features
