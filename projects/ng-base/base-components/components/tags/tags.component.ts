@@ -14,8 +14,12 @@ export class TagsComponent {
   @Input() autocomplete?: string;
   @Input() tabIndex?: number;
   @Input() control: FormControl | AbstractControl;
+  @Input() options?: string[] = [];
+  @Input() custom = true;
+  @Input() removeByKey = true;
   @Input() required = false;
   inputValue = '';
+  selectedElement: HTMLElement;
 
   /**
    * Listen to enter keys
@@ -23,13 +27,12 @@ export class TagsComponent {
    * @param event
    */
   enterKey(event: KeyboardEvent): void {
-    if (event.code === 'Backspace' && !this.inputValue) {
+    if (this.removeByKey && event.code === 'Backspace' && !this.inputValue) {
       this.removeTag();
       return;
     } else {
       if (event.code === 'Comma' || event.code === 'Space' || event.code === 'Enter') {
         this.addTag(this.inputValue);
-        this.inputValue = '';
       }
     }
   }
@@ -43,13 +46,19 @@ export class TagsComponent {
     if (!this.control.value) {
       this.control.setValue([]);
     }
+    this.selectedElement = null;
 
     if (tag.endsWith(',') || tag.endsWith(' ')) {
       tag = tag.slice(0, -1);
     }
 
+    if (!this.custom && !this.options.find((e) => e === tag)) {
+      return;
+    }
+
     if (tag.length > 0 && this.control.value && !this.control.value.some((item: string) => item === tag)) {
       this.control.value.push(tag);
+      this.inputValue = '';
       this.control.setErrors(null);
     }
   }
@@ -60,6 +69,7 @@ export class TagsComponent {
    * @param tag
    */
   removeTag(tag?: string): void {
+    this.selectedElement = null;
     if (tag) {
       this.control.setValue(this.control.value.filter((item: string) => item !== tag));
     } else {
@@ -68,6 +78,34 @@ export class TagsComponent {
 
     if (this.control.value.length === 0) {
       this.control.setErrors({ required: true });
+    }
+  }
+
+  /**
+   * Filter options for drop down
+   */
+  filteredOptions() {
+    return this.options
+      ? this.options.filter((e) => e?.includes(this.inputValue) && !this.control.value.includes(e))
+      : [];
+  }
+
+  /**
+   * Show dropdownon focus
+   *
+   * @param event
+   */
+  onFocus(event?) {
+    if (!this.options) {
+      return;
+    }
+
+    if (event) {
+      this.selectedElement = event.target;
+    } else {
+      setTimeout(() => {
+        this.selectedElement = null;
+      }, 100);
     }
   }
 }

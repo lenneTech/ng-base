@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { InputComponent } from './components/input/input.component';
 import { SelectComponent } from './components/select/select.component';
@@ -14,7 +13,7 @@ import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-l
 import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
 
 // Modules
-const imports = [FormsModule, ReactiveFormsModule, CommonModule, BrowserAnimationsModule];
+const imports = [FormsModule, ReactiveFormsModule, CommonModule];
 
 // Imported and exported elements
 const elements = [

@@ -41,3 +41,14 @@ Default.args = {
   name: 'name',
   control: new FormControl(['test']),
 };
+
+export const WithOptions = Template.bind({});
+WithOptions.args = {
+  id: 'default',
+  label: 'Label',
+  name: 'name',
+  custom: false,
+  removeByKey: false,
+  control: new FormControl(['test']),
+  options: ['test', 'bifi', 'chicken'],
+};
