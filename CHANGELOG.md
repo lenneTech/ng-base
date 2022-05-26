@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.10.2](https://github.com/lenneTech/ng-base/compare/v13.10.1...v13.10.2) (2022-05-26)
+
+### Bug Fixes
+
+- GraphQL string values with multiple line breaks ([f59db92](https://github.com/lenneTech/ng-base/commit/f59db92b1d81fa4c54099df42c97613fd05d1041))
+
 ### [13.10.1](https://github.com/lenneTech/ng-base/compare/v13.10.0...v13.10.1) (2022-05-26)
 
 ### Bug Fixes
