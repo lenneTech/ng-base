@@ -371,7 +371,7 @@ export class GraphQLService {
 
           // String
           else {
-            additionalResult += `"${value.replace(/"/g, '\\"').replace(/\n/, '\\n')}"`;
+            additionalResult += `"${value.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`;
           }
         }
 
