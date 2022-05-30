@@ -1,4 +1,4 @@
-<div class="form-group mb-3 position-relative" *ngIf="control">
+<div class="form-group position-relative" *ngIf="control">
   <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
 
   <div class="tag-wrapper" *ngIf="control?.value">
@@ -22,8 +22,8 @@
     (keyup)="enterKey($event)"
   />
 
-  <div class="tag-options" *ngIf="filteredOptions && selectedElement">
-    <div class="tag-option-item" *ngFor="let option of filteredOptions" (click)="addTag(option)">{{ option }}</div>
+  <div class="tag-options" *ngIf="options && selectedElement">
+    <div class="tag-option-item" *ngFor="let option of filterOptions()" (click)="addTag(option)">{{ option }}</div>
   </div>
 
   <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">

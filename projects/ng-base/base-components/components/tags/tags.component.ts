@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 
 @Component({
@@ -6,7 +6,7 @@ import { AbstractControl, FormControl } from '@angular/forms';
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss'],
 })
-export class TagsComponent implements OnInit, OnChanges {
+export class TagsComponent {
   @Input() id: string;
   @Input() name: string;
   @Input() label?: string = '';
@@ -19,18 +19,7 @@ export class TagsComponent implements OnInit, OnChanges {
   @Input() removeByKey = true;
   @Input() required = false;
   inputValue = '';
-  filteredOptions: string[] = [];
   selectedElement: HTMLElement;
-
-  ngOnInit() {
-    this.setFilteredOptions();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['options']?.currentValue && changes['options']?.currentValue?.length > 0) {
-      this.setFilteredOptions();
-    }
-  }
 
   /**
    * Listen to enter keys
@@ -102,11 +91,10 @@ export class TagsComponent implements OnInit, OnChanges {
   /**
    * Filter options for drop down
    */
-  setFilteredOptions() {
-    if (this.options) {
-      this.filteredOptions =
-        this.options.filter((e) => e?.includes(this.inputValue) && !this.control.value.includes(e)) || [];
-    }
+  filterOptions() {
+    return this.options
+      ? this.options.filter((e) => e?.includes(this.inputValue) && !this.control.value.includes(e))
+      : [];
   }
 
   /**
@@ -115,16 +103,12 @@ export class TagsComponent implements OnInit, OnChanges {
    * @param event
    */
   onFocus(event?) {
-    if (!this.filteredOptions) {
-      return;
-    }
-
     if (event) {
       this.selectedElement = event.target;
     } else {
       setTimeout(() => {
         this.selectedElement = null;
-      }, 100);
+      }, 250);
     }
   }
 }
