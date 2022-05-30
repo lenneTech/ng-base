@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.10.5](https://github.com/lenneTech/ng-base/compare/v13.10.4...v13.10.5) (2022-05-30)
+
+### Bug Fixes
+
+- Fix missing z-index on tag options ([76bbb02](https://github.com/lenneTech/ng-base/commit/76bbb02afb7dbf0a78aaf1a032824eb841dd2beb))
+
 ### [13.10.4](https://github.com/lenneTech/ng-base/compare/v13.10.3...v13.10.4) (2022-05-30)
 
 ### Bug Fixes
