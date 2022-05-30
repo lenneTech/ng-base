@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.10.4](https://github.com/lenneTech/ng-base/compare/v13.10.3...v13.10.4) (2022-05-30)
+
+### Bug Fixes
+
+- Fix options for tag input 2 ([5e81046](https://github.com/lenneTech/ng-base/commit/5e81046660b87dea02d1eb1f97c2c0a32ebc90ac))
+
 ### [13.10.3](https://github.com/lenneTech/ng-base/compare/v13.10.2...v13.10.3) (2022-05-30)
 
 ### Bug Fixes
