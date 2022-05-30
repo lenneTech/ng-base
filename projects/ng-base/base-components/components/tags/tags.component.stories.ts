@@ -40,6 +40,7 @@ Default.args = {
   label: 'Label',
   name: 'name',
   control: new FormControl(['test']),
+  options: [],
 };
 
 export const WithOptions = Template.bind({});
@@ -49,6 +50,6 @@ WithOptions.args = {
   name: 'name',
   custom: false,
   removeByKey: false,
-  control: new FormControl(['test']),
+  control: new FormControl([]),
   options: ['test', 'bifi', 'chicken'],
 };

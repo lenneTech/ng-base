@@ -12,6 +12,7 @@
         "@angular-eslint/component-selector": "off",
         "@angular-eslint/directive-selector": "off",
         "@typescript-eslint/naming-convention": "off",
+        "@typescript-eslint/dot-notation": "off",
         "@typescript-eslint/no-unused-expressions": "off",
         "@typescript-eslint/member-ordering": "off",
         "arrow-body-style": "off",

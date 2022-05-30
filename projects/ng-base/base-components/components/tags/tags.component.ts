@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 
 @Component({
@@ -6,7 +6,7 @@ import { AbstractControl, FormControl } from '@angular/forms';
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss'],
 })
-export class TagsComponent {
+export class TagsComponent implements OnInit, OnChanges {
   @Input() id: string;
   @Input() name: string;
   @Input() label?: string = '';
@@ -19,7 +19,18 @@ export class TagsComponent {
   @Input() removeByKey = true;
   @Input() required = false;
   inputValue = '';
+  filteredOptions: string[] = [];
   selectedElement: HTMLElement;
+
+  ngOnInit() {
+    this.setFilteredOptions();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['options']?.currentValue && changes['options']?.currentValue?.length > 0) {
+      this.setFilteredOptions();
+    }
+  }
 
   /**
    * Listen to enter keys
@@ -56,6 +67,13 @@ export class TagsComponent {
       return;
     }
 
+    if (this.control.value?.length === 0) {
+      this.control.setValue([tag]);
+      this.inputValue = '';
+      this.control.setErrors(null);
+      return;
+    }
+
     if (tag.length > 0 && this.control.value && !this.control.value.some((item: string) => item === tag)) {
       this.control.value.push(tag);
       this.inputValue = '';
@@ -84,19 +102,20 @@ export class TagsComponent {
   /**
    * Filter options for drop down
    */
-  filteredOptions() {
-    return this.options
-      ? this.options.filter((e) => e?.includes(this.inputValue) && !this.control.value.includes(e))
-      : [];
+  setFilteredOptions() {
+    if (this.options) {
+      this.filteredOptions =
+        this.options.filter((e) => e?.includes(this.inputValue) && !this.control.value.includes(e)) || [];
+    }
   }
 
   /**
-   * Show dropdownon focus
+   * Show dropdown focus
    *
    * @param event
    */
   onFocus(event?) {
-    if (!this.options) {
+    if (!this.filteredOptions) {
       return;
     }
 
