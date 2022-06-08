@@ -1,4 +1,4 @@
-import { GraphQLSchema, GraphQLNamedType } from 'graphql';
+import { GraphQLNamedType, GraphQLSchema } from 'graphql';
 import { GraphQLRequestType } from '../enums/graphql-request-type.enum';
 import { Helper } from './helper.class';
 import { GraphQLType } from './graphql-type.class';
@@ -19,6 +19,55 @@ export class GraphQLMeta {
     if (!schema) {
       throw Error('Missing schema');
     }
+  }
+
+  /**
+   * We're going to get the query and mutation types from the schema, then we're going to loop through the fields of each
+   * type and check if the field name starts with `find`, `create`, `update`, or `delete`. If it does, we're going to add
+   * the model name to the `possibleTypes` array
+   *
+   * @returns An array of objects with the name of the model, and the CRUD operations that are available for that model.
+   */
+  getTypes(): [{ name: string; create: boolean; update: boolean; delete: boolean }] {
+    const possibleTypes: [{ name: string; create: boolean; update: boolean; delete: boolean }] = [] as any;
+    const mutationType = this.schema.getMutationType();
+    const queryType = this.schema.getQueryType();
+
+    for (const [key, value] of Object.entries(queryType.getFields())) {
+      if (key.startsWith('find')) {
+        possibleTypes.push({
+          name: key.split('find').pop().slice(0, -1),
+          create: false,
+          update: false,
+          delete: false,
+        });
+      }
+    }
+
+    for (const [key, value] of Object.entries(mutationType.getFields())) {
+      if (key.startsWith('create')) {
+        const model = key.split('create').pop();
+        if (possibleTypes.find((e) => e.name === model)) {
+          possibleTypes.find((item) => item.name === model).create = true;
+        }
+      }
+
+      if (key.startsWith('update')) {
+        const model = key.split('update').pop();
+        if (possibleTypes.find((e) => e.name === model)) {
+          possibleTypes.find((item) => item.name === model).update = true;
+        }
+      }
+
+      if (key.startsWith('delete')) {
+        const model = key.split('delete').pop();
+        if (possibleTypes.find((e) => e.name === model)) {
+          possibleTypes.find((item) => item.name === model).delete = true;
+        }
+      }
+    }
+
+    return possibleTypes;
   }
 
   /**
