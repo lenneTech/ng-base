@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.11.0](https://github.com/lenneTech/ng-base/compare/v13.10.5...v13.11.0) (2022-06-08)
+
+### Features
+
+- Add function to get all possible types from schema with crud operations ([4ae0066](https://github.com/lenneTech/ng-base/commit/4ae00664e49a4e8a7f79b26cfc36c951cb50dea8))
+
 ### [13.10.5](https://github.com/lenneTech/ng-base/compare/v13.10.4...v13.10.5) (2022-05-30)
 
 ### Bug Fixes
