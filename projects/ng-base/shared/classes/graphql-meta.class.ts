@@ -3,6 +3,7 @@ import { GraphQLRequestType } from '../enums/graphql-request-type.enum';
 import { Helper } from './helper.class';
 import { GraphQLType } from './graphql-type.class';
 import { IGraphQLTypeCollection } from '../interfaces/graphql-type-collection.interface';
+import { GraphqlCrudType } from '../interfaces/graphql-crud-type.interface';
 
 /**
  * GraphQL meta
@@ -28,8 +29,8 @@ export class GraphQLMeta {
    *
    * @returns An array of objects with the name of the model, and the CRUD operations that are available for that model.
    */
-  getTypes(): [{ name: string; create: boolean; update: boolean; delete: boolean }] {
-    const possibleTypes: [{ name: string; create: boolean; update: boolean; delete: boolean }] = [] as any;
+  getTypes(): GraphqlCrudType[] {
+    const possibleTypes: GraphqlCrudType[] = [] as any;
     const mutationType = this.schema.getMutationType();
     const queryType = this.schema.getQueryType();
 

@@ -51,6 +51,7 @@ export * from './interfaces/find-args.interface';
 export * from './interfaces/time-components.interface';
 export * from './interfaces/toast.interface';
 export * from './interfaces/breadcrumb.interface';
+export * from './interfaces/graphql-crud-type.interface';
 
 // Types
 export * from './types/storage.type';
