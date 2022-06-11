@@ -1,0 +1,27 @@
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.table > :not(:first-child) {
+  border-top: 0;
+}
+
+table {
+  border-radius: 0.25rem;
+  border-color: #e2e8f0 !important;
+
+  thead {
+    text-transform: uppercase;
+    font-size: 12px;
+
+    th {
+      padding: 12px 24px;
+    }
+  }
+
+  tbody tr td {
+    font-weight: normal !important;
+    font-size: 16px;
+    padding: 16px 24px;
+  }
+}

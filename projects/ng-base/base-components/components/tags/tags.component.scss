@@ -1,3 +1,7 @@
+.required:after {
+  content: ' *';
+}
+
 .tag-options {
   position: absolute;
   display: block;

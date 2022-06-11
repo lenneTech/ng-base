@@ -15,3 +15,5 @@ export * from './components/toast/toast.component';
 export * from './components/loading-bar/loading-bar.component';
 export * from './components/skeleton-loader/skeleton-loader.component';
 export * from './components/breadcrumb/breadcrumb.component';
+export * from './components/model-form/model-form.component';
+export * from './components/model-table/model-table.component';

@@ -11,6 +11,8 @@ import { TagsComponent } from './components/tags/tags.component';
 import { LoadingBarComponent } from './components/loading-bar/loading-bar.component';
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
 import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
+import { ModelTableComponent } from './components/model-table/model-table.component';
+import { ModelFormComponent } from './components/model-form/model-form.component';
 
 // Modules
 const imports = [FormsModule, ReactiveFormsModule, CommonModule];
@@ -27,6 +29,8 @@ const elements = [
   LoadingBarComponent,
   SkeletonLoaderComponent,
   BreadcrumbComponent,
+  ModelFormComponent,
+  ModelTableComponent,
 ];
 
 @NgModule({
