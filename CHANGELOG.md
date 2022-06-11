@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.13.0](https://github.com/lenneTech/ng-base/compare/v13.12.0...v13.13.0) (2022-06-11)
+
+### Features
+
+- Add model-form and model-table ([e3d7789](https://github.com/lenneTech/ng-base/commit/e3d7789de3ee0301db8754ce3f3b82283d88694d))
+
 ## [13.12.0](https://github.com/lenneTech/ng-base/compare/v13.11.0...v13.12.0) (2022-06-10)
 
 ### Features
