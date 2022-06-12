@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.15.0](https://github.com/lenneTech/ng-base/compare/v13.14.2...v13.15.0) (2022-06-12)
+
+### Features
+
+- Add first version of base-cms module ([4d2c2cd](https://github.com/lenneTech/ng-base/commit/4d2c2cd482caff3aedc9de98770e5803921c95d6))
+
+### Bug Fixes
+
+- Fix validator required on form ([7dbee22](https://github.com/lenneTech/ng-base/commit/7dbee2248992a29dadfde9c988e5dba989db711e))
+
 ### [13.14.2](https://github.com/lenneTech/ng-base/compare/v13.14.1...v13.14.2) (2022-06-12)
 
 ### Bug Fixes
