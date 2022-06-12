@@ -85,7 +85,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
       })
       .subscribe({
         next: (value) => {
-          this.form.patchValue(value);
+          this.form.patchValue({ ...{}, ...value });
         },
         error: (err) => {
           console.error('Error on load object', err);
