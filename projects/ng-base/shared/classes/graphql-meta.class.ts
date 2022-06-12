@@ -4,6 +4,7 @@ import { Helper } from './helper.class';
 import { GraphQLType } from './graphql-type.class';
 import { IGraphQLTypeCollection } from '../interfaces/graphql-type-collection.interface';
 import { GraphqlCrudType } from '../interfaces/graphql-crud-type.interface';
+import { cloneDeep } from '@apollo/client/utilities';
 
 /**
  * GraphQL meta
@@ -207,7 +208,7 @@ export class GraphQLMeta {
     if (typeof type === 'object') {
       const preparedType = prepared.get(type);
       if (preparedType) {
-        const clone = JSON.parse(JSON.stringify(preparedType));
+        const clone = cloneDeep(preparedType);
 
         if (type.type && setMetaData) {
           if (type.type instanceof GraphQLNonNull) {

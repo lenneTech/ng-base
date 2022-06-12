@@ -58,7 +58,6 @@ export class ModelTableComponent implements OnInit, OnChanges {
   init() {
     this.availableFields = [];
     const possibleFields = this.meta.getFields('find' + this.capitalizeFirstLetter(this.modelName) + 's');
-
     const keys = Object.keys(possibleFields);
     this.tableFields?.forEach((field) => {
       if (keys.includes(field)) {
