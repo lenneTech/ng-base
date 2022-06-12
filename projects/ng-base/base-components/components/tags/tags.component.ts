@@ -64,7 +64,7 @@ export class TagsComponent {
     }
 
     if (tag.length > 0 && this.control.value && !this.control.value.some((item: string) => item === tag)) {
-      this.control.value.push(tag);
+      this.control.setValue([...this.control.value, tag]);
       this.inputValue = '';
       this.control.setErrors(null);
     }
