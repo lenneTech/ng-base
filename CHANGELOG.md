@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.14.1](https://github.com/lenneTech/ng-base/compare/v13.14.0...v13.14.1) (2022-06-12)
+
+### Bug Fixes
+
+- Fix missing fields ([ed5e105](https://github.com/lenneTech/ng-base/commit/ed5e10531664655261121b5ffa85c198bc2fb439))
+
 ## [13.14.0](https://github.com/lenneTech/ng-base/compare/v13.13.0...v13.14.0) (2022-06-12)
 
 ### Features
