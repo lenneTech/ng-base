@@ -104,7 +104,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
     for (const [key, value] of Object.entries(fields)) {
       if (fields[key]?.type) {
-        group[key] = new FormControl('', Validators.required);
+        group[key] = new FormControl('', value.isRequired ? Validators.required : []);
       }
     }
 
