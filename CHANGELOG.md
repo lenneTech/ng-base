@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.14.0](https://github.com/lenneTech/ng-base/compare/v13.13.0...v13.14.0) (2022-06-12)
+
+### Features
+
+- Add required and list flag to graphql-type.class ([d5b1c50](https://github.com/lenneTech/ng-base/commit/d5b1c50473f94b39c9f4c30a3347b81eb921ed17))
+
+### Bug Fixes
+
+- Object not extensible in tag input ([19812ec](https://github.com/lenneTech/ng-base/commit/19812ec454e7f4043ece401831dcecf2e5fef649))
+- Replace deepClone in graphql-meta.class.ts ([7c133fe](https://github.com/lenneTech/ng-base/commit/7c133fe627bc0c873894cc48520ca93d121350e2))
+
 ## [13.13.0](https://github.com/lenneTech/ng-base/compare/v13.12.0...v13.13.0) (2022-06-11)
 
 ### Features
