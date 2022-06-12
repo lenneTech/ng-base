@@ -207,7 +207,7 @@ export class GraphQLMeta {
     if (typeof type === 'object') {
       const preparedType = prepared.get(type);
       if (preparedType) {
-        const clone = cloneDeep(preparedType);
+        const clone = JSON.parse(JSON.stringify(preparedType));
 
         if (type.type && setMetaData) {
           if (type.type instanceof GraphQLNonNull) {
