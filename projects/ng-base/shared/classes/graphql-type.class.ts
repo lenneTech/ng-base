@@ -5,6 +5,9 @@ import { Standard } from './standard.class';
  */
 export class GraphQLType extends Standard {
   type = '';
+  isRequired = false;
+  isItemRequired = false;
+  isList = false;
   isEnum = false;
   validEnums: string[] = [];
 }

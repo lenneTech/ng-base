@@ -1,4 +1,4 @@
-import { GraphQLNamedType, GraphQLSchema } from 'graphql';
+import { GraphQLList, GraphQLNamedType, GraphQLNonNull, GraphQLSchema } from 'graphql';
 import { GraphQLRequestType } from '../enums/graphql-request-type.enum';
 import { Helper } from './helper.class';
 import { GraphQLType } from './graphql-type.class';
@@ -190,7 +190,11 @@ export class GraphQLMeta {
   /**
    * Get deep type data
    */
-  protected getDeepType(type: any, prepared: WeakMap<any, any> = new WeakMap()): IGraphQLTypeCollection | GraphQLType {
+  protected getDeepType(
+    type: any,
+    prepared: WeakMap<any, any> = new WeakMap(),
+    setMetaData = false
+  ): IGraphQLTypeCollection | GraphQLType {
     // Check type
     if (!type) {
       return type;
@@ -203,7 +207,33 @@ export class GraphQLMeta {
     if (typeof type === 'object') {
       const preparedType = prepared.get(type);
       if (preparedType) {
-        return preparedType;
+        const clone = cloneDeep(preparedType);
+
+        if (type.type && setMetaData) {
+          if (type.type instanceof GraphQLNonNull) {
+            clone.isRequired = true;
+            if (type.type.ofType instanceof GraphQLList) {
+              clone.isList = true;
+              clone.isItemRequired = type.type.ofType.ofType instanceof GraphQLNonNull;
+            } else {
+              clone.isList = false;
+              clone.isItemRequired = false;
+            }
+          } else {
+            clone.isRequired = false;
+
+            // List first
+            if (type.type instanceof GraphQLList) {
+              clone.isList = true;
+              clone.isItemRequired = type.ofType instanceof GraphQLNonNull;
+            } else {
+              clone.isList = false;
+              clone.isItemRequired = false;
+            }
+          }
+        }
+
+        return clone;
       }
 
       // Set prepared
@@ -212,7 +242,7 @@ export class GraphQLMeta {
 
     // Search deeper
     if (type.ofType) {
-      const ofTypeResult = this.getDeepType(type.ofType, prepared);
+      const ofTypeResult = this.getDeepType(type.ofType, prepared, setMetaData);
       Object.assign(preparedObject, ofTypeResult);
       return ofTypeResult;
     }
@@ -221,7 +251,7 @@ export class GraphQLMeta {
     if (type._fields) {
       const result = {};
       for (const [key, value] of Object.entries(type._fields)) {
-        result[key] = this.getDeepType(value, prepared);
+        result[key] = this.getDeepType(value, prepared, true);
       }
       Object.assign(preparedObject, result);
       return result;
@@ -229,7 +259,32 @@ export class GraphQLMeta {
 
     // Get type name
     if (type.type) {
-      const typeResult = this.getDeepType(type.type, prepared);
+      const typeResult = this.getDeepType(type.type, prepared, setMetaData);
+
+      if (setMetaData) {
+        if (type.type instanceof GraphQLNonNull) {
+          typeResult.isRequired = true;
+          if (type.type.ofType instanceof GraphQLList) {
+            typeResult.isList = true;
+            typeResult.isItemRequired = type.type.ofType.ofType instanceof GraphQLNonNull;
+          } else {
+            typeResult.isList = false;
+            typeResult.isItemRequired = false;
+          }
+        } else {
+          typeResult.isRequired = false;
+
+          // List first
+          if (type.type instanceof GraphQLList) {
+            typeResult.isList = true;
+            typeResult.isItemRequired = type.ofType instanceof GraphQLNonNull;
+          } else {
+            typeResult.isList = false;
+            typeResult.isItemRequired = false;
+          }
+        }
+      }
+
       Object.assign(preparedObject, typeResult);
       return typeResult;
     }

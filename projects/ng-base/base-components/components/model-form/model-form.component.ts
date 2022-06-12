@@ -24,7 +24,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   meta: GraphQLMeta;
   form: FormGroup;
   loading = false;
-  fields: IGraphQLTypeCollection;
+  fields: any;
   operation: string;
   keys: string[] = [];
 
@@ -58,10 +58,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
     if (this.modelName && this.meta) {
       this.operation = this.id ? 'update' : 'create';
       this.fields = this.meta.getArgs(this.operation + this.capitalizeFirstLetter(this.modelName), {
+        cache: false,
         type: GraphQLRequestType.MUTATION,
       });
-      this.fields = this.fields['input'] as IGraphQLTypeCollection;
-
+      this.fields = this.fields['input'] as any;
       this.keys = Object.keys(this.fields);
       this.createForm(this.fields);
 
@@ -115,20 +115,22 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * It calls the graphQLService to delete the object with the id of the object that is currently being edited
    */
   deleteObject() {
-    this.graphQLService
-      .graphQl('delete' + this.capitalizeFirstLetter(this.modelName), {
-        arguments: { id: this.id },
-        fields: ['id'],
-        type: GraphQLRequestType.MUTATION,
-      })
-      .subscribe({
-        next: (value) => {
-          this.finished.emit(true);
-        },
-        error: (err) => {
-          console.error('Error on delete object', err);
-        },
-      });
+    if (confirm('Möchtest du das Objekt wirklich löschen?')) {
+      this.graphQLService
+        .graphQl('delete' + this.capitalizeFirstLetter(this.modelName), {
+          arguments: { id: this.id },
+          fields: ['id'],
+          type: GraphQLRequestType.MUTATION,
+        })
+        .subscribe({
+          next: (value) => {
+            this.finished.emit(true);
+          },
+          error: (err) => {
+            console.error('Error on delete object', err);
+          },
+        });
+    }
   }
 
   /**
