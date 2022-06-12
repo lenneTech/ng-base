@@ -1,0 +1,37 @@
+.active {
+  color: var(--bs-primary) !important;
+  background-color: rgba(var(--bs-primary-rgb), 0.2) !important;
+  font-weight: 700;
+}
+
+.nav-link {
+  color: var(--bs-body-color);
+}
+
+.sidebar {
+  box-shadow: rgb(112 144 176 / 8%) 14px 17px 40px 4px;
+  transition: all 0.2s linear 0s;
+  z-index: 99;
+}
+
+.main {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  height: 100%;
+
+  .sidebar {
+    flex: 1 0 22%;
+    max-width: 300px;
+  }
+
+  .sidebar-content {
+    flex-grow: 999;
+    overflow-y: auto;
+    background-color: #f5f7fe;
+  }
+}
+
+.nav-flush .nav-link {
+  border-radius: 0;
+}

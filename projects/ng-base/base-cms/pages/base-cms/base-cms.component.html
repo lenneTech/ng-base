@@ -1,0 +1,41 @@
+<div class="main">
+  <div class="sidebar">
+    <div class="d-flex flex-column flex-shrink-0 p-3 h-100">
+      <ng-container *ngIf="moduleConfig.branding">
+        <a href="/" class="d-flex flex-column align-items-start mb-3 mt-3 me-md-auto link-dark text-decoration-none">
+          <span class="d-block fs-4"><b class="text-primary">Base</b>CMS</span>
+          <small class="fw-lighter">The auto generated GraphQL CMS</small>
+        </a>
+        <hr />
+      </ng-container>
+      <ul class="nav nav-pills flex-column mb-auto" *ngIf="types">
+        <li class="nav-item" *ngFor="let type of types">
+          <a
+            class="nav-link"
+            aria-current="page"
+            [routerLink]="(id ? '../../' : '../') + type?.name?.toLowerCase()"
+            [ngClass]="{ active: type?.name?.toLowerCase() === this.modelName?.toLowerCase() }"
+          >
+            {{ type.name + 's' }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sidebar-content">
+    <div class="p-5">
+      <base-model-table
+        [tableFields]="moduleConfig?.tableFields ?? ['name']"
+        [modelName]="modelName"
+        [objectId]="id !== 'new' ? id : ''"
+        [createMode]="id === 'new'"
+        (createModeChanged)="onCreateModeChanged($event)"
+        (idSelected)="idSelected($event)"
+        [create]="isCreatePossible()"
+        [update]="isUpdatePossible()"
+        [delete]="isDeletePossible()"
+      ></base-model-table>
+    </div>
+  </div>
+</div>
