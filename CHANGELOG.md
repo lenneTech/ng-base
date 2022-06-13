@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.16.0](https://github.com/lenneTech/ng-base/compare/v13.15.0...v13.16.0) (2022-06-13)
+
+### Features
+
+- Add logging option for baseCMS ([0a53ec3](https://github.com/lenneTech/ng-base/commit/0a53ec387ab07037cfc5f2a7e38850711a400e02))
+
 ## [13.15.0](https://github.com/lenneTech/ng-base/compare/v13.14.2...v13.15.0) (2022-06-12)
 
 ### Features
