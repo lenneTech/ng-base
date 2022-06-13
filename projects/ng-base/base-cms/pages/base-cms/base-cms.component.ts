@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AuthService, GraphqlCrudType, GraphQLMeta, GraphQLMetaService } from '@lenne.tech/ng-base/shared';
+import { AuthService, BasicUser, GraphqlCrudType, GraphQLMeta, GraphQLMetaService } from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BASE_CMS_MODULE_CONFIG, BaseCMSModuleConfig } from '../../interfaces/base-cms-module-config.interface';
 
@@ -73,15 +73,21 @@ export class BaseCmsComponent implements OnInit {
           );
 
           if (foundRestrict) {
-            if (!this.authService.currentUser) {
+            if (!this.authService?.currentUser) {
               return false;
             }
+            const user = this.authService?.currentUser;
+            const mappedUser = BasicUser.map(user);
 
-            return this.authService.currentUser.hasAllRoles(foundRestrict.roles);
+            return mappedUser?.hasAllRoles(foundRestrict.roles);
           } else {
             return true;
           }
         });
+
+        if (this.moduleConfig?.logging) {
+          console.log('BaseCmsComponent::init->types', this.types);
+        }
 
         resolve(this.types);
 

@@ -18,6 +18,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   @Input() modelName: string;
   @Input() id: string | null;
   @Input() delete = true;
+  @Input() logging = false;
 
   @Output() finished = new EventEmitter();
 
@@ -63,6 +64,11 @@ export class ModelFormComponent implements OnInit, OnChanges {
       this.fields = this.fields['input'] as any;
       this.keys = Object.keys(this.fields);
 
+      if (this.logging) {
+        console.log('ModelFormComponent::init->fields', this.fields);
+        console.log('ModelFormComponent::init->keys', this.keys);
+      }
+
       this.createForm(this.fields);
 
       if (this.id) {
@@ -77,6 +83,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * @param id - The id of the object to be loaded
    */
   getObjectById(id: string) {
+    if (this.logging) {
+      console.log('ModelFormComponent::getObjectById->id', id);
+    }
+
     this.graphQLService
       .graphQl('get' + this.capitalizeFirstLetter(this.modelName), {
         arguments: { id },
@@ -85,6 +95,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
       })
       .subscribe({
         next: (value) => {
+          if (this.logging) {
+            console.log('ModelFormComponent::get->value', value);
+          }
+
           this.form.patchValue({ ...{}, ...value });
         },
         error: (err) => {

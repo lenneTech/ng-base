@@ -13,6 +13,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
   @Input() create = true;
   @Input() update = true;
   @Input() delete = true;
+  @Input() logging = false;
   @Input() tableFields = ['id', 'name', 'title', 'description', 'email', 'createdAt', 'updatedAt'];
 
   @Output() idSelected = new EventEmitter<string>();
@@ -46,6 +47,10 @@ export class ModelTableComponent implements OnInit, OnChanges {
 
     if (changes['objectId'] && this.meta) {
       if (this.selectedId !== this.objectId) {
+        if (this.logging) {
+          console.log('ModelTableComponent::ngOnChanges->selectedId', this.selectedId);
+        }
+
         this.selectedId = this.objectId;
       }
     }
@@ -64,6 +69,12 @@ export class ModelTableComponent implements OnInit, OnChanges {
         this.availableFields.push(field);
       }
     });
+
+    if (this.logging) {
+      console.log('ModelTableComponent::init->possibleFields', possibleFields);
+      console.log('ModelTableComponent::init->keys', keys);
+      console.log('ModelTableComponent::init->availableFields', this.availableFields);
+    }
 
     this.loadObjects(this.availableFields);
   }
@@ -91,6 +102,10 @@ export class ModelTableComponent implements OnInit, OnChanges {
       })
       .subscribe({
         next: (value) => {
+          if (this.logging) {
+            console.log('ModelTableComponent::loadObjects->value', value);
+          }
+
           this.objects = value;
         },
         error: (err) => {

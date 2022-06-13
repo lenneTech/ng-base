@@ -28,6 +28,7 @@
       <base-model-table
         [tableFields]="moduleConfig?.tableFields ?? ['name']"
         [modelName]="modelName"
+        [logging]="moduleConfig?.logging"
         [objectId]="id !== 'new' ? id : ''"
         [createMode]="id === 'new'"
         (createModeChanged)="onCreateModeChanged($event)"

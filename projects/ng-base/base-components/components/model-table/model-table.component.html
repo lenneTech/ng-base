@@ -25,6 +25,7 @@
   <button class="btn btn-outline-primary mb-3" (click)="selectId('')">Zurück</button>
   <base-model-form
     [modelName]="modelName"
+    [logging]="logging"
     [id]="selectedId"
     (finished)="selectId('')"
     [delete]="delete"
