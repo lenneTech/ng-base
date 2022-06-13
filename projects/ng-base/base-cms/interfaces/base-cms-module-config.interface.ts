@@ -3,7 +3,7 @@ import { InjectionToken } from '@angular/core';
 export interface BaseCMSModuleConfig {
   tableFields?: string[];
   excludedModels?: string[];
-  restrictedModels?: [{ model: string; roles: string[] }];
+  restrictedModels?: { model: string; roles: string[] }[];
   logging?: boolean;
   branding?: boolean;
 }
