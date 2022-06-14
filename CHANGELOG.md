@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.17.0](https://github.com/lenneTech/ng-base/compare/v13.16.0...v13.17.0) (2022-06-14)
+
+### Features
+
+- Add sha256 for password transport ([cd49445](https://github.com/lenneTech/ng-base/commit/cd49445fd32939916c50a3d68a13bd23a8b453b2))
+
+### Bug Fixes
+
+- Fix wrong restrictedModels type ([385843a](https://github.com/lenneTech/ng-base/commit/385843a4603cef983d17dcb2c56c2911b170d5aa))
+
 ## [13.16.0](https://github.com/lenneTech/ng-base/compare/v13.15.0...v13.16.0) (2022-06-13)
 
 ### Features
