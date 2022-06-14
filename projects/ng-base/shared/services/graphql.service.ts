@@ -7,6 +7,7 @@ import { GraphQLMetaService } from './graphql-meta.service';
 import { GraphQLEnum } from '../classes/graphql-enum.class';
 import { GraphQLType } from '../classes/graphql-type.class';
 import { IGraphQLTypeCollection } from '../interfaces/graphql-type-collection.interface';
+import { sha256 } from 'js-sha256';
 
 /**
  * GraphQL service
@@ -331,6 +332,11 @@ export class GraphQLService {
         // Process GraphQLEnum
         if (value instanceof GraphQLEnum) {
           result.push(key + ':' + value.value);
+          continue;
+        }
+
+        if (key === 'password') {
+          result.push(key + ':' + sha256(value as string));
           continue;
         }
 
