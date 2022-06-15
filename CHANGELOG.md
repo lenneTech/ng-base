@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.18.0](https://github.com/lenneTech/ng-base/compare/v13.17.0...v13.18.0) (2022-06-15)
+
+### Features
+
+- Add profile in prototype module ([16d14bd](https://github.com/lenneTech/ng-base/commit/16d14bd2d3b1531def1c5e766767de8549549510))
+
 ## [13.17.0](https://github.com/lenneTech/ng-base/compare/v13.16.0...v13.17.0) (2022-06-14)
 
 ### Features
