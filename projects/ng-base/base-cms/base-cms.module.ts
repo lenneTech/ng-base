@@ -8,9 +8,8 @@ import { BASE_CMS_MODULE_CONFIG, BaseCMSModuleConfig } from './interfaces/base-c
 
 export function CMSConfigFactory() {
   return {
-    tableFields: ['id', 'name', 'title', 'description', 'email', 'createdAt', 'updatedAt'],
-    excludedModels: [],
-    restrictedModels: [],
+    modelConfig: {},
+    fieldConfig: {},
     branding: true,
     logging: false,
     ...BaseCMSModule.config,

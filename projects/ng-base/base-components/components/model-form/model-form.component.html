@@ -1,54 +1,10 @@
 <div class="w-100" *ngIf="form">
-  <h1>{{ capitalizeFirstLetter(modelName) }} {{ operation === 'update' ? 'bearbeiten' : 'erstellen' }}</h1>
+  <h2>
+    {{ label ? label : capitalizeFirstLetter(modelName) }} {{ operation === 'update' ? 'bearbeiten' : 'erstellen' }}
+  </h2>
 
   <form [formGroup]="form">
-    <div class="mt-3" *ngFor="let key of keys">
-      <ng-container [ngSwitch]="fields[key]?.type">
-        <ng-container *ngSwitchCase="'String'">
-          <ng-container *ngIf="fields[key]?.isList">
-            <base-tags
-              [id]="key"
-              [name]="key"
-              [label]="capitalizeFirstLetter(key)"
-              [control]="transformToControl(form?.get(key))"
-              [required]="fields[key].isRequired"
-            ></base-tags>
-          </ng-container>
-
-          <ng-container *ngIf="!fields[key]?.isList">
-            <base-input
-              [id]="key"
-              [name]="key"
-              [label]="capitalizeFirstLetter(key)"
-              [type]="'text'"
-              [control]="transformToControl(form?.get(key))"
-              [required]="fields[key].isRequired"
-            ></base-input>
-          </ng-container>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'Boolean'">
-          <base-checkbox
-            [id]="key"
-            [name]="key"
-            [label]="capitalizeFirstLetter(key)"
-            [control]="transformToControl(form?.get(key))"
-            [required]="true"
-          ></base-checkbox>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'DateTime'">
-          <base-input
-            [id]="key"
-            [name]="key"
-            [label]="capitalizeFirstLetter(key)"
-            [type]="'datetime-local'"
-            [control]="transformToControl(form?.get(key))"
-            [required]="true"
-          ></base-input>
-        </ng-container>
-      </ng-container>
-    </div>
+    <base-model-form-sub [fields]="fields" [config]="config" [form]="form"></base-model-form-sub>
 
     <div class="d-flex mt-4" [ngClass]="id && delete ? 'justify-content-between' : 'justify-content-end'">
       <div *ngIf="id && delete">

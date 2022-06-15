@@ -33,6 +33,7 @@ export class UserService extends GraphQLPlusService {
       fields: ['token', { user: ['id', 'firstName', 'lastName', 'email', 'roles'] }],
       type: GraphQLRequestType.QUERY,
       loading: true,
+      log: true,
     }).pipe(
       map((response: Auth) => {
         this.authService.token = response.token;

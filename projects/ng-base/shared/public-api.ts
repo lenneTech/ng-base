@@ -10,6 +10,10 @@ export * from './classes/graphql-type.class';
 export * from './classes/helper.class';
 export * from './classes/standard.class';
 export * from './classes/auth.class';
+export * from './classes/sort.class';
+
+// Directives
+export * from './directives/sort.directive';
 
 // Services
 export * from './services/auth.service';

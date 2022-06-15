@@ -23,7 +23,9 @@ export class BaseCmsComponent implements OnInit {
   ) {
     this.route.params.subscribe((value) => {
       if (value['modelName']) {
-        if (!this.checkModelIsExcludedOrRestrcited(value['modelName'])) {
+        const restricted = this.moduleConfig.modelConfig[value['modelName']]?.restricted;
+        const excluded = this.moduleConfig.modelConfig[value['modelName']]?.excluded;
+        if ((restricted !== null && !restricted) || (excluded !== null && !excluded)) {
           this.modelName = value['modelName'];
         } else {
           this.init().then((types: GraphqlCrudType[]) => {
@@ -60,26 +62,21 @@ export class BaseCmsComponent implements OnInit {
           this.id = this.route.snapshot?.params?.['id'];
         }
 
-        const excludedModels = this.moduleConfig.excludedModels?.map((e) => e.toLowerCase());
         const types = meta.getTypes();
 
         // Check for excluded types
-        const filteredTypes = types.filter((e) => !excludedModels?.includes(e.name.toLowerCase()));
+        const filteredTypes = types.filter((e) => !this.moduleConfig?.modelConfig[e.name.toLowerCase()]?.excluded);
 
         // Check for restricted types
         this.types = filteredTypes.filter((e) => {
-          const foundRestrict = this.moduleConfig.restrictedModels?.find(
-            (v) => v.model.toLowerCase() === e.name.toLowerCase()
-          );
-
-          if (foundRestrict) {
+          if (this.moduleConfig?.modelConfig[e.name.toLowerCase()]?.restricted) {
             if (!this.authService?.currentUser) {
               return false;
             }
             const user = this.authService?.currentUser;
             const mappedUser = BasicUser.map(user);
 
-            return mappedUser?.hasAllRoles(foundRestrict.roles);
+            return mappedUser?.hasAllRoles(this.moduleConfig?.modelConfig[e.name.toLowerCase()]?.roles);
           } else {
             return true;
           }
@@ -96,23 +93,6 @@ export class BaseCmsComponent implements OnInit {
         }
       });
     });
-  }
-
-  /**
-   * It checks if the model is excluded or restricted
-   *
-   * @param model - The name of the model you want to check.
-   * @returns A boolean value.
-   */
-  checkModelIsExcludedOrRestrcited(model: string): boolean {
-    if (!model) {
-      return false;
-    }
-    const excludedModels = this.moduleConfig.excludedModels?.map((e) => e.toLowerCase());
-    return !!(
-      excludedModels?.includes(model?.toLowerCase()) ||
-      this.moduleConfig.restrictedModels?.find((e) => e.model.toLowerCase() === model.toLowerCase())
-    );
   }
 
   /**
@@ -136,7 +116,7 @@ export class BaseCmsComponent implements OnInit {
    */
   onCreateModeChanged(createMode: boolean) {
     if (createMode) {
-      this.router.navigate(['./' + 'new'], { relativeTo: this.route });
+      this.router.navigate(['./' + 'neu'], { relativeTo: this.route });
     }
   }
 

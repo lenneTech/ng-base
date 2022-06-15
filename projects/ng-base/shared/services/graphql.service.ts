@@ -336,7 +336,7 @@ export class GraphQLService {
         }
 
         if (key === 'password') {
-          result.push(key + ':' + sha256(value as string));
+          result.push(key + ':' + `"${sha256(value as string)}"`);
           continue;
         }
 

@@ -9,3 +9,4 @@ export * from './base-prototype.module';
 export * from './pages/login/login.component';
 export * from './pages/register/register.component';
 export * from './pages/forgot-password/forgot-password.component';
+export * from './pages/profile/profile.component';

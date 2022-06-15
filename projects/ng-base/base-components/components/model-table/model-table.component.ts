@@ -13,12 +13,13 @@ export class ModelTableComponent implements OnInit, OnChanges {
   @Input() create = true;
   @Input() update = true;
   @Input() delete = true;
-  @Input() logging = false;
-  @Input() tableFields = ['id', 'name', 'title', 'description', 'email', 'createdAt', 'updatedAt'];
+  @Input() config: any = {};
+  @Input() fieldConfig: any = {};
 
   @Output() idSelected = new EventEmitter<string>();
   @Output() createModeChanged = new EventEmitter<boolean>();
 
+  tableFields = ['id', 'name', 'title', 'description', 'email', 'createdAt', 'updatedAt'];
   meta!: GraphQLMeta;
   objects: any[] = [];
   availableFields: string[] = [];
@@ -47,7 +48,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
 
     if (changes['objectId'] && this.meta) {
       if (this.selectedId !== this.objectId) {
-        if (this.logging) {
+        if (this.config?.logging) {
           console.log('ModelTableComponent::ngOnChanges->selectedId', this.selectedId);
         }
 
@@ -62,6 +63,11 @@ export class ModelTableComponent implements OnInit, OnChanges {
    */
   init() {
     this.availableFields = [];
+
+    if (this.config?.tableFields) {
+      this.tableFields = this.config.tableFields;
+    }
+
     const possibleFields = this.meta.getFields('find' + this.capitalizeFirstLetter(this.modelName) + 's');
     const keys = Object.keys(possibleFields);
     this.tableFields?.forEach((field) => {
@@ -70,7 +76,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
       }
     });
 
-    if (this.logging) {
+    if (this.config?.logging) {
       console.log('ModelTableComponent::init->possibleFields', possibleFields);
       console.log('ModelTableComponent::init->keys', keys);
       console.log('ModelTableComponent::init->availableFields', this.availableFields);
@@ -102,7 +108,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
       })
       .subscribe({
         next: (value) => {
-          if (this.logging) {
+          if (this.config?.logging) {
             console.log('ModelTableComponent::loadObjects->value', value);
           }
 

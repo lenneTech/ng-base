@@ -16,9 +16,11 @@ import { IGraphQLTypeCollection } from '@lenne.tech/ng-base/shared';
 })
 export class ModelFormComponent implements OnInit, OnChanges {
   @Input() modelName: string;
+  @Input() label: string;
   @Input() id: string | null;
   @Input() delete = true;
   @Input() logging = false;
+  @Input() config: any = {};
 
   @Output() finished = new EventEmitter();
 
@@ -69,12 +71,16 @@ export class ModelFormComponent implements OnInit, OnChanges {
         console.log('ModelFormComponent::init->keys', this.keys);
       }
 
-      this.createForm(this.fields);
+      this.form = this.createForm(this.fields);
 
       if (this.id) {
         this.getObjectById(this.id);
       }
     }
+  }
+
+  getKeysFromSubObject(key: string) {
+    return Object.keys(this.fields[key]);
   }
 
   /**
@@ -85,12 +91,13 @@ export class ModelFormComponent implements OnInit, OnChanges {
   getObjectById(id: string) {
     if (this.logging) {
       console.log('ModelFormComponent::getObjectById->id', id);
+      console.log('ModelFormComponent::getObjectById->requestFields', this.createRequestObject(this.fields));
     }
 
     this.graphQLService
       .graphQl('get' + this.capitalizeFirstLetter(this.modelName), {
         arguments: { id },
-        fields: this.keys,
+        fields: this.createRequestObject(this.fields),
         type: GraphQLRequestType.QUERY,
       })
       .subscribe({
@@ -109,6 +116,30 @@ export class ModelFormComponent implements OnInit, OnChanges {
   }
 
   /**
+   * It takes a GraphQL type collection and returns an array of strings and objects
+   *
+   * @param fields - IGraphQLTypeCollection - This is the object that is returned from the
+   * introspection query.
+   * @returns An array of strings and objects.
+   */
+  createRequestObject(fields: IGraphQLTypeCollection) {
+    const requestFields: any = [];
+
+    for (const [key, value] of Object.entries(fields)) {
+      if (fields[key]?.type) {
+        requestFields.push(key);
+      } else {
+        const subkeys = this.createRequestObject(fields[key] as IGraphQLTypeCollection);
+        const resultObject = {};
+        resultObject[key] = subkeys;
+        requestFields.push(resultObject);
+      }
+    }
+
+    return requestFields;
+  }
+
+  /**
    * It takes a collection of GraphQL types and creates a form group with a form control for each type
    *
    * @param fields - IGraphQLTypeCollection
@@ -118,11 +149,16 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
     for (const [key, value] of Object.entries(fields)) {
       if (fields[key]?.type) {
-        group[key] = new FormControl('', value.isRequired ? Validators.required : []);
+        group[key] = new FormControl(
+          fields[key]?.type === 'Float' ? 0 : '',
+          value.isRequired ? Validators.required : []
+        );
+      } else {
+        group[key] = this.createForm(fields[key] as IGraphQLTypeCollection);
       }
     }
 
-    this.form = new FormGroup(group);
+    return new FormGroup(group);
   }
 
   /**
@@ -184,6 +220,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
       console.error('ID is missing for update!');
       this.loading = false;
       return;
+    }
+
+    if (this.logging) {
+      console.log('ModelFormComponent::submit->formValue', this.form.value);
     }
 
     this.graphQLService

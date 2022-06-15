@@ -1,6 +1,8 @@
 <div *ngIf="!selectedId && !createMode">
   <div class="w-100 d-flex flex-row justify-content-between mb-4">
-    <h1 *ngIf="modelName">{{ capitalizeFirstLetter(modelName) }}s</h1>
+    <h2 *ngIf="modelName">
+      {{ config?.plural ? config?.plural : config?.label ? config?.label : capitalizeFirstLetter(modelName) + 's' }}
+    </h2>
     <div class="d-flex align-items-center">
       <button class="btn btn-primary" (click)="createNewObject()" *ngIf="create">Erstellen</button>
     </div>
@@ -25,7 +27,9 @@
   <button class="btn btn-outline-primary mb-3" (click)="selectId('')">Zurück</button>
   <base-model-form
     [modelName]="modelName"
-    [logging]="logging"
+    [label]="config?.label"
+    [config]="fieldConfig"
+    [logging]="config?.logging"
     [id]="selectedId"
     (finished)="selectId('')"
     [delete]="delete"

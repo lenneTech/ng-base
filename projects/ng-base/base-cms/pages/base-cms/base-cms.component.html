@@ -16,7 +16,13 @@
             [routerLink]="(id ? '../../' : '../') + type?.name?.toLowerCase()"
             [ngClass]="{ active: type?.name?.toLowerCase() === this.modelName?.toLowerCase() }"
           >
-            {{ type.name + 's' }}
+            {{
+              moduleConfig?.modelConfig[type?.name?.toLowerCase()]?.plural
+                ? moduleConfig?.modelConfig[type?.name?.toLowerCase()]?.plural
+                : moduleConfig?.modelConfig[type?.name?.toLowerCase()]?.label
+                ? moduleConfig?.modelConfig[type?.name?.toLowerCase()]?.label
+                : type.name + 's'
+            }}
           </a>
         </li>
       </ul>
@@ -26,11 +32,11 @@
   <div class="sidebar-content">
     <div class="p-5">
       <base-model-table
-        [tableFields]="moduleConfig?.tableFields ?? ['name']"
+        [config]="moduleConfig?.modelConfig[modelName?.toLowerCase()]"
+        [fieldConfig]="moduleConfig?.fieldConfig[modelName?.toLowerCase()] || {}"
         [modelName]="modelName"
-        [logging]="moduleConfig?.logging"
-        [objectId]="id !== 'new' ? id : ''"
-        [createMode]="id === 'new'"
+        [objectId]="id !== 'neu' ? id : ''"
+        [createMode]="id === 'neu'"
         (createModeChanged)="onCreateModeChanged($event)"
         (idSelected)="idSelected($event)"
         [create]="isCreatePossible()"

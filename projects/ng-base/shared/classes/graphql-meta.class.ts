@@ -1,4 +1,4 @@
-import { GraphQLList, GraphQLNamedType, GraphQLNonNull, GraphQLSchema } from 'graphql';
+import { GraphQLInputObjectType, GraphQLList, GraphQLNamedType, GraphQLNonNull, GraphQLSchema } from 'graphql';
 import { GraphQLRequestType } from '../enums/graphql-request-type.enum';
 import { Helper } from './helper.class';
 import { GraphQLType } from './graphql-type.class';
@@ -210,6 +210,15 @@ export class GraphQLMeta {
       if (preparedType) {
         const clone = cloneDeep(preparedType);
 
+        // Disable meta flags for sub objects
+        if (
+          type?.type instanceof GraphQLInputObjectType ||
+          (type?.type instanceof GraphQLNonNull && type?.type?.ofType instanceof GraphQLInputObjectType && setMetaData)
+        ) {
+          setMetaData = false;
+        }
+
+        // Check for meta flags
         if (type.type && setMetaData) {
           if (type.type instanceof GraphQLNonNull) {
             clone.isRequired = true;
@@ -262,6 +271,15 @@ export class GraphQLMeta {
     if (type.type) {
       const typeResult = this.getDeepType(type.type, prepared, setMetaData);
 
+      // Disable meta flags for sub objects
+      if (
+        type?.type instanceof GraphQLInputObjectType ||
+        (type?.type instanceof GraphQLNonNull && type?.type?.ofType instanceof GraphQLInputObjectType && setMetaData)
+      ) {
+        setMetaData = false;
+      }
+
+      // Check for meta flags
       if (setMetaData) {
         if (type.type instanceof GraphQLNonNull) {
           typeResult.isRequired = true;

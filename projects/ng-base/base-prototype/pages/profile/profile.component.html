@@ -1,0 +1,11 @@
+<div class="container">
+  <div class="py-5">
+    <base-model-form
+      [id]="currentUser?.id"
+      [modelName]="'user'"
+      [label]="'Mein Profil'"
+      [config]="profileConfig || {}"
+      [delete]="false"
+    ></base-model-form>
+  </div>
+</div>

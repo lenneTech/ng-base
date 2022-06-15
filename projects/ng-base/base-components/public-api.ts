@@ -17,3 +17,4 @@ export * from './components/skeleton-loader/skeleton-loader.component';
 export * from './components/breadcrumb/breadcrumb.component';
 export * from './components/model-form/model-form.component';
 export * from './components/model-table/model-table.component';
+export * from './components/model-form-sub/model-form-sub.component';

@@ -1,0 +1,77 @@
+<div class="mt-3" *ngFor="let key of keys">
+  <ng-container *ngIf="!fields[key]?.type">
+    <fieldset class="border rounded-3 p-3">
+      <legend class="float-none w-auto px-3">
+        {{ config[key]?.label ? config[key].label : capitalizeFirstLetter(key) }}
+      </legend>
+      <base-model-form-sub
+        [fields]="fields[key]"
+        [config]="config[key]?.fields || {}"
+        [form]="form.get(key)"
+      ></base-model-form-sub>
+    </fieldset>
+  </ng-container>
+
+  <ng-container *ngIf="fields[key]?.type">
+    <ng-container [ngSwitch]="fields[key]?.type">
+      <ng-container *ngSwitchCase="'String'">
+        <ng-container *ngIf="fields[key]?.isList && !config[key]?.exclude">
+          <base-tags
+            [id]="key"
+            [name]="key"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [placeholder]="config[key]?.placeholder || ''"
+            [control]="transformToControl(form?.get(key))"
+            [required]="fields[key].isRequired"
+          ></base-tags>
+        </ng-container>
+
+        <ng-container *ngIf="!fields[key]?.isList && !config[key]?.exclude">
+          <base-input
+            [id]="key"
+            [name]="key"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [placeholder]="config[key]?.placeholder || ''"
+            [type]="'text'"
+            [control]="transformToControl(form?.get(key))"
+            [required]="fields[key].isRequired"
+          ></base-input>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'Boolean'">
+        <base-checkbox
+          [id]="key"
+          [name]="key"
+          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+          [control]="transformToControl(form?.get(key))"
+          [required]="fields[key].isRequired"
+        ></base-checkbox>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'Float'">
+        <base-input
+          [id]="key"
+          [name]="key"
+          [type]="'number'"
+          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+          [placeholder]="config[key]?.placeholder || ''"
+          [control]="transformToControl(form?.get(key))"
+          [required]="fields[key].isRequired"
+        ></base-input>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'DateTime'">
+        <base-input
+          [id]="key"
+          [name]="key"
+          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+          [placeholder]="config[key]?.placeholder || ''"
+          [type]="'datetime-local'"
+          [control]="transformToControl(form?.get(key))"
+          [required]="fields[key].isRequired"
+        ></base-input>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</div>

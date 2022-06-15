@@ -1,9 +1,8 @@
 import { InjectionToken } from '@angular/core';
 
 export interface BaseCMSModuleConfig {
-  tableFields?: string[];
-  excludedModels?: string[];
-  restrictedModels?: { model: string; roles: string[] }[];
+  modelConfig?: { [key: string]: any };
+  fieldConfig?: { [key: string]: any };
   logging?: boolean;
   branding?: boolean;
 }
