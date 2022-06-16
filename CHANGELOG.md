@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.19.0](https://github.com/lenneTech/ng-base/compare/v13.18.0...v13.19.0) (2022-06-16)
+
+### Features
+
+- Add upload-image component and image support for cms ([77ec2dc](https://github.com/lenneTech/ng-base/commit/77ec2dcf7a1f46ab673fa234c22825e015ff75ec))
+
 ## [13.18.0](https://github.com/lenneTech/ng-base/compare/v13.17.0...v13.18.0) (2022-06-15)
 
 ### Features
