@@ -14,6 +14,7 @@ import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.componen
 import { ModelTableComponent } from './components/model-table/model-table.component';
 import { ModelFormComponent } from './components/model-form/model-form.component';
 import { ModelFormSubComponent } from './components/model-form-sub/model-form-sub.component';
+import { UploadImageComponent } from './components/upload-image/upload-image.component';
 
 // Modules
 const imports = [FormsModule, ReactiveFormsModule, CommonModule];
@@ -33,6 +34,7 @@ const elements = [
   ModelFormComponent,
   ModelTableComponent,
   ModelFormSubComponent,
+  UploadImageComponent,
 ];
 
 @NgModule({

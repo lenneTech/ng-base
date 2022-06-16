@@ -13,7 +13,7 @@
   </ng-container>
 
   <ng-container *ngIf="fields[key]?.type">
-    <ng-container [ngSwitch]="fields[key]?.type">
+    <ng-container [ngSwitch]="config[key]?.type ? config[key]?.type : fields[key]?.type">
       <ng-container *ngSwitchCase="'String'">
         <ng-container *ngIf="fields[key]?.isList && !config[key]?.exclude">
           <base-tags
@@ -37,6 +37,23 @@
             [required]="fields[key].isRequired"
           ></base-input>
         </ng-container>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'Image'">
+        <base-upload-image
+          [id]="key"
+          [name]="key"
+          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+          [control]="transformToControl(form?.get(key))"
+          [url]="config[key]?.url"
+          [path]="config[key]?.path || '/files/'"
+          [uploadPath]="config[key]?.uploadPath || '/files/upload'"
+          [deletePath]="config[key]?.deletePath || '/files/'"
+          [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
+          [dragText]="config[key]?.dragText || 'Drag & Drop'"
+          [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png']"
+          [required]="fields[key].isRequired"
+        ></base-upload-image>
       </ng-container>
 
       <ng-container *ngSwitchCase="'Boolean'">

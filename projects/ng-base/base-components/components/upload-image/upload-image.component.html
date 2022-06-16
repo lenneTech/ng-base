@@ -1,0 +1,31 @@
+<div class="mt-3">
+  <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
+  <div
+    class="drag-area"
+    (dragover)="dragOver($event)"
+    (dragleave)="dragLeave($event)"
+    (drop)="drop($event)"
+    [ngClass]="{ active: dragActive }"
+  >
+    <ng-container *ngIf="selectedFile && !control?.value">
+      <img [src]="fileUrl" *ngIf="selectedFile" />
+      <button class="btn btn-danger" (click)="deleteFile()">Löschen</button>
+    </ng-container>
+
+    <ng-container *ngIf="control?.value">
+      <img [src]="url + path + control?.value" />
+      <button class="btn btn-danger" (click)="deleteFile(control?.value)">Löschen</button>
+    </ng-container>
+
+    <ng-container *ngIf="!selectedFile && !control?.value">
+      <div class="icon">
+        <i class="bi bi-images"></i>
+      </div>
+
+      <span class="header">{{ dragText }}</span>
+      <span class="header">or <span class="button" (click)="fileInput.click()">browse</span></span>
+      <input type="file" (change)="selectFile($event)" hidden #fileInput />
+      <span class="support">{{ supportText }}</span>
+    </ng-container>
+  </div>
+</div>
