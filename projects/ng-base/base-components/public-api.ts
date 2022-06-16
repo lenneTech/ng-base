@@ -19,3 +19,4 @@ export * from './components/model-form/model-form.component';
 export * from './components/model-table/model-table.component';
 export * from './components/model-form-sub/model-form-sub.component';
 export * from './components/upload-image/upload-image.component';
+export * from './components/refence-input/refence-input.component';

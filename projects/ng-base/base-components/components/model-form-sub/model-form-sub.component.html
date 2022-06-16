@@ -56,6 +56,20 @@
         ></base-upload-image>
       </ng-container>
 
+      <ng-container *ngSwitchCase="'Reference'">
+        <base-refence-input
+          [id]="key"
+          [name]="key"
+          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+          [control]="transformToControl(form?.get(key))"
+          [method]="config[key]?.method || 'find'"
+          [fields]="config[key]?.fields || ['id', 'name']"
+          [valueField]="config[key]?.valueField || 'id'"
+          [nameField]="config[key]?.nameField || 'name'"
+          [required]="fields[key].isRequired"
+        ></base-refence-input>
+      </ng-container>
+
       <ng-container *ngSwitchCase="'Boolean'">
         <base-checkbox
           [id]="key"

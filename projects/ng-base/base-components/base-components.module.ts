@@ -15,6 +15,7 @@ import { ModelTableComponent } from './components/model-table/model-table.compon
 import { ModelFormComponent } from './components/model-form/model-form.component';
 import { ModelFormSubComponent } from './components/model-form-sub/model-form-sub.component';
 import { UploadImageComponent } from './components/upload-image/upload-image.component';
+import { RefenceInputComponent } from './components/refence-input/refence-input.component';
 
 // Modules
 const imports = [FormsModule, ReactiveFormsModule, CommonModule];
@@ -35,6 +36,7 @@ const elements = [
   ModelTableComponent,
   ModelFormSubComponent,
   UploadImageComponent,
+  RefenceInputComponent,
 ];
 
 @NgModule({
