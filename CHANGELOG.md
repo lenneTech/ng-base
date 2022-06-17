@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.21.0](https://github.com/lenneTech/ng-base/compare/v13.20.0...v13.21.0) (2022-06-17)
+
+### Features
+
+- Add field restriction roles and label option for table fields - CMS ([9b516d5](https://github.com/lenneTech/ng-base/commit/9b516d5cbcd35d3d4012ac05bcc16debf05e2623))
+
 ## [13.20.0](https://github.com/lenneTech/ng-base/compare/v13.19.0...v13.20.0) (2022-06-16)
 
 ### Features
