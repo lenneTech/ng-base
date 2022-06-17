@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
+import { AuthService, BasicUser } from '@lenne.tech/ng-base/shared';
 
 @Component({
   selector: 'base-model-form-sub',
@@ -12,9 +13,13 @@ export class ModelFormSubComponent implements OnInit {
   @Input() config: any = {};
 
   keys: string[] = [];
+  user: BasicUser;
+
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     this.keys = Object.keys(this.fields);
+    this.user = this.authService.currentUser;
   }
 
   /**

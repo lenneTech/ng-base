@@ -19,7 +19,15 @@ export class ModelTableComponent implements OnInit, OnChanges {
   @Output() idSelected = new EventEmitter<string>();
   @Output() createModeChanged = new EventEmitter<boolean>();
 
-  tableFields = ['id', 'name', 'title', 'description', 'email', 'createdAt', 'updatedAt'];
+  tableFields = {
+    id: { label: 'ID' },
+    name: { label: 'Name' },
+    title: { label: 'Titel' },
+    description: { label: 'Beschreibung' },
+    email: { label: 'E-Mail' },
+    createdAt: { label: 'Erstellt am' },
+    updatedAt: { label: 'Bearbeitet am' },
+  };
   meta!: GraphQLMeta;
   objects: any[] = [];
   availableFields: string[] = [];
@@ -70,7 +78,8 @@ export class ModelTableComponent implements OnInit, OnChanges {
 
     const possibleFields = this.meta.getFields('find' + this.capitalizeFirstLetter(this.modelName) + 's');
     const keys = Object.keys(possibleFields);
-    this.tableFields?.forEach((field) => {
+    const tableFieldKeys = Object.keys(this.tableFields);
+    tableFieldKeys?.forEach((field) => {
       if (keys.includes(field)) {
         this.availableFields.push(field);
       }

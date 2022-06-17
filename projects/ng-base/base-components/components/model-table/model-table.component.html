@@ -10,7 +10,9 @@
   <table class="table table-hover table-responsive bg-white">
     <thead>
       <tr>
-        <th scope="col" *ngFor="let field of availableFields">{{ capitalizeFirstLetter(field) }}</th>
+        <th scope="col" *ngFor="let field of availableFields">
+          {{ tableFields[field]?.label ? tableFields[field]?.label : capitalizeFirstLetter(field) }}
+        </th>
       </tr>
     </thead>
     <tbody>
