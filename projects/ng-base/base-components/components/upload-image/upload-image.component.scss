@@ -1,10 +1,17 @@
+:host {
+  --base-upload-image-area-bg: #ffffff;
+  --base-upload-image-area-border-color: #e1e1e1;
+  --base-upload-image-area-height: 400px;
+}
+
 .required:after {
   content: ' *';
 }
 
 .drag-area {
-  height: 400px;
-  border: 2px dashed #e1e1e1;
+  height: var(--base-upload-image-area-height);
+  border: 2px dashed var(--base-upload-image-area-border-color);
+  background-color: var(--base-upload-image-area-bg);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,6 +23,7 @@
     height: 100%;
     max-height: 300px;
     max-width: 100%;
+    object-fit: scale-down;
   }
 
   .btn-danger {

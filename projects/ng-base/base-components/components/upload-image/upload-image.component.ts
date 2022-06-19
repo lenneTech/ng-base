@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -19,9 +19,14 @@ export class UploadImageComponent {
   @Input() uploadPath = '/files/upload';
   @Input() deletePath = '/files/';
   @Input() path = '/files/';
+
+  @Output() imageUploaded = new EventEmitter();
+  @Output() imageDeleted = new EventEmitter();
+
   dragActive = false;
   selectedFile: File;
   fileUrl: string;
+  loading = false;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -73,6 +78,7 @@ export class UploadImageComponent {
     if (this.validExtensions.includes(file.type)) {
       const fileReader = new FileReader();
       fileReader.onload = () => {
+        this.loading = true;
         this.fileUrl = fileReader.result as string;
         this.selectedFile = file;
         this.upload();
@@ -100,7 +106,9 @@ export class UploadImageComponent {
     this.httpClient.post(this.url + this.uploadPath, data).subscribe((result: any) => {
       if (result?.id) {
         this.control.setValue(result.id);
+        this.imageUploaded.emit(result.id);
       }
+      this.loading = false;
     });
   }
 
@@ -110,6 +118,7 @@ export class UploadImageComponent {
    * @param [id] - The id of the file to delete.
    */
   deleteFile(id?: string) {
+    this.loading = true;
     this.selectedFile = null;
     this.fileUrl = null;
 
@@ -118,6 +127,8 @@ export class UploadImageComponent {
         this.selectedFile = null;
         this.fileUrl = null;
         this.control.setValue('');
+        this.imageDeleted.emit();
+        this.loading = false;
       });
     }
   }

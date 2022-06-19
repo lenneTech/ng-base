@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { AuthService, BasicUser } from '@lenne.tech/ng-base/shared';
 
@@ -12,14 +12,24 @@ export class ModelFormSubComponent implements OnInit {
   @Input() form: any;
   @Input() config: any = {};
 
+  @Output() imageChanged = new EventEmitter();
+
   keys: string[] = [];
   user: BasicUser;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.keys = Object.keys(this.fields);
-    this.user = this.authService.currentUser;
+    // Get keys
+    const unsortedKeys = Object.keys(this.fields);
+
+    // Sort keys by config order
+    this.keys = unsortedKeys.sort((a, b) => {
+      return (this.config[b]?.order ? this.config[b]?.order : 0) - (this.config[a]?.order ? this.config[a]?.order : 0);
+    });
+
+    // Set user for roles check
+    this.user = BasicUser.map(this.authService.currentUser);
   }
 
   /**
@@ -30,6 +40,26 @@ export class ModelFormSubComponent implements OnInit {
    */
   capitalizeFirstLetter(value: string) {
     return value.charAt(0).toUpperCase() + value.slice(1);
+  }
+
+  /**
+   * It takes an array of values and returns an array of objects with a value and text property
+   *
+   * @param values - any[] - the array of values that you want to convert to a selectable list
+   * @param config
+   * @returns An array of objects with a value and text property.
+   */
+  prepareEnumForSelect(values: any[], config = {}) {
+    return values
+      .filter((i) => {
+        return !(config && config[i]?.roles && !this.user.hasAllRoles(config[i]?.roles));
+      })
+      .map((e) => {
+        return {
+          value: e,
+          text: config && config[e]?.text ? config[e].text : e,
+        };
+      });
   }
 
   /**

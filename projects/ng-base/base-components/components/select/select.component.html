@@ -1,6 +1,7 @@
 <div class="form-group mb-3">
   <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
   <select
+    #select
     [id]="id"
     [name]="name"
     class="form-select"
@@ -9,7 +10,6 @@
     [formControl]="control"
     [required]="required"
     [tabIndex]="tabIndex ?? null"
-    [multiple]="multiple"
     [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
   >
     <option [ngValue]="null" selected>{{ placeholder }}</option>

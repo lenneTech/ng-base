@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
 interface Option {
   text: string;
@@ -10,7 +10,9 @@ interface Option {
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
 })
-export class SelectComponent {
+export class SelectComponent implements OnInit {
+  @ViewChild('select') select: ElementRef;
+
   @Input() id: string;
   @Input() name: string;
   @Input() label?: string;
@@ -21,4 +23,10 @@ export class SelectComponent {
   @Input() multiple = false;
   @Input() search = false;
   @Input() options: Option[] = [];
+
+  ngOnInit() {
+    if (this.multiple) {
+      this.select.nativeElement.setAttribute('multiple', true);
+    }
+  }
 }

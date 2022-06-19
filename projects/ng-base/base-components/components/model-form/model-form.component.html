@@ -4,14 +4,19 @@
   </h2>
 
   <form [formGroup]="form">
-    <base-model-form-sub [fields]="fields" [config]="config" [form]="form"></base-model-form-sub>
+    <base-model-form-sub
+      [fields]="fields"
+      [config]="config"
+      [form]="form"
+      (imageChanged)="submit(true)"
+    ></base-model-form-sub>
 
     <div class="d-flex mt-4" [ngClass]="id && delete ? 'justify-content-between' : 'justify-content-end'">
       <div *ngIf="id && delete">
         <button class="btn btn-danger" type="button" (click)="deleteObject()">Löschen</button>
       </div>
       <div>
-        <button class="btn btn-primary" type="button" (click)="submit()" *ngIf="!loading">
+        <button class="btn btn-primary" type="button" (click)="submit(false)" *ngIf="!loading">
           {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}
         </button>
         <button class="btn btn-primary" type="button" disabled *ngIf="loading">

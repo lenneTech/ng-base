@@ -1,5 +1,5 @@
 <div class="mt-3" *ngFor="let key of keys">
-  <ng-container *ngIf="!fields[key]?.type && (fields[key]?.roles ? user?.hasAllRoles(fields[key]?.roles) : true)">
+  <ng-container *ngIf="!fields[key]?.type && (config[key]?.roles ? user?.hasAllRoles(config[key]?.roles) : true)">
     <fieldset class="border rounded-3 p-3">
       <legend class="float-none w-auto px-3">
         {{ config[key]?.label ? config[key].label : capitalizeFirstLetter(key) }}
@@ -12,96 +12,126 @@
     </fieldset>
   </ng-container>
 
-  <ng-container *ngIf="fields[key]?.type && (fields[key]?.roles ? user?.hasAllRoles(fields[key]?.roles) : true)">
-    <ng-container [ngSwitch]="config[key]?.type ? config[key]?.type : fields[key]?.type">
-      <ng-container *ngSwitchCase="'String'">
-        <ng-container *ngIf="fields[key]?.isList && !config[key]?.exclude">
-          <base-tags
+  <ng-container *ngIf="fields[key]?.type && (config[key]?.roles ? user?.hasAllRoles(config[key]?.roles) : true)">
+    <ng-container *ngIf="fields[key]?.isEnum">
+      <base-select
+        [id]="key"
+        [name]="key"
+        [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+        [placeholder]="config[key]?.placeholder || 'Bitte einen Wert auswählen'"
+        [options]="prepareEnumForSelect(fields[key]?.validEnums, config[key]?.enumValues)"
+        [control]="transformToControl(form?.get(key))"
+        [required]="config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired"
+      ></base-select>
+    </ng-container>
+
+    <ng-container *ngIf="!fields[key]?.isEnum">
+      <ng-container [ngSwitch]="config[key]?.type ? config[key]?.type : fields[key]?.type">
+        <ng-container *ngSwitchCase="'String'">
+          <ng-container *ngIf="fields[key]?.isList && !config[key]?.exclude">
+            <base-tags
+              [id]="key"
+              [name]="key"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [placeholder]="config[key]?.placeholder || ''"
+              [control]="transformToControl(form?.get(key))"
+              [required]="
+                config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+              "
+            ></base-tags>
+          </ng-container>
+
+          <ng-container *ngIf="!fields[key]?.isList && !config[key]?.exclude">
+            <base-input
+              [id]="key"
+              [name]="key"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [placeholder]="config[key]?.placeholder || ''"
+              [type]="'text'"
+              [control]="transformToControl(form?.get(key))"
+              [required]="
+                config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+              "
+            ></base-input>
+          </ng-container>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'Image'">
+          <base-upload-image
             [id]="key"
             [name]="key"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [placeholder]="config[key]?.placeholder || ''"
             [control]="transformToControl(form?.get(key))"
-            [required]="fields[key].isRequired"
-          ></base-tags>
+            [url]="config[key]?.url"
+            [path]="config[key]?.path || '/files/'"
+            [uploadPath]="config[key]?.uploadPath || '/files/upload'"
+            [deletePath]="config[key]?.deletePath || '/files/'"
+            [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
+            [dragText]="config[key]?.dragText || 'Drag & Drop'"
+            [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png']"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+            (imageDeleted)="imageChanged.emit()"
+            (imageUploaded)="imageChanged.emit()"
+          ></base-upload-image>
         </ng-container>
 
-        <ng-container *ngIf="!fields[key]?.isList && !config[key]?.exclude">
+        <ng-container *ngSwitchCase="'Reference'">
+          <base-refence-input
+            [id]="key"
+            [name]="key"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [control]="transformToControl(form?.get(key))"
+            [method]="config[key]?.method || 'find'"
+            [fields]="config[key]?.fields || ['id', 'name']"
+            [valueField]="config[key]?.valueField || 'id'"
+            [nameField]="config[key]?.nameField || 'name'"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+          ></base-refence-input>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'Boolean'">
+          <base-checkbox
+            [id]="key"
+            [name]="key"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+          ></base-checkbox>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'Float'">
+          <base-input
+            [id]="key"
+            [name]="key"
+            [type]="'number'"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [placeholder]="config[key]?.placeholder || ''"
+            [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+          ></base-input>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'DateTime'">
           <base-input
             [id]="key"
             [name]="key"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [placeholder]="config[key]?.placeholder || ''"
-            [type]="'text'"
+            [type]="'datetime-local'"
             [control]="transformToControl(form?.get(key))"
-            [required]="fields[key].isRequired"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
           ></base-input>
         </ng-container>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'Image'">
-        <base-upload-image
-          [id]="key"
-          [name]="key"
-          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-          [control]="transformToControl(form?.get(key))"
-          [url]="config[key]?.url"
-          [path]="config[key]?.path || '/files/'"
-          [uploadPath]="config[key]?.uploadPath || '/files/upload'"
-          [deletePath]="config[key]?.deletePath || '/files/'"
-          [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
-          [dragText]="config[key]?.dragText || 'Drag & Drop'"
-          [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png']"
-          [required]="fields[key].isRequired"
-        ></base-upload-image>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'Reference'">
-        <base-refence-input
-          [id]="key"
-          [name]="key"
-          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-          [control]="transformToControl(form?.get(key))"
-          [method]="config[key]?.method || 'find'"
-          [fields]="config[key]?.fields || ['id', 'name']"
-          [valueField]="config[key]?.valueField || 'id'"
-          [nameField]="config[key]?.nameField || 'name'"
-          [required]="fields[key].isRequired"
-        ></base-refence-input>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'Boolean'">
-        <base-checkbox
-          [id]="key"
-          [name]="key"
-          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-          [control]="transformToControl(form?.get(key))"
-          [required]="fields[key].isRequired"
-        ></base-checkbox>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'Float'">
-        <base-input
-          [id]="key"
-          [name]="key"
-          [type]="'number'"
-          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-          [placeholder]="config[key]?.placeholder || ''"
-          [control]="transformToControl(form?.get(key))"
-          [required]="fields[key].isRequired"
-        ></base-input>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'DateTime'">
-        <base-input
-          [id]="key"
-          [name]="key"
-          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-          [placeholder]="config[key]?.placeholder || ''"
-          [type]="'datetime-local'"
-          [control]="transformToControl(form?.get(key))"
-          [required]="fields[key].isRequired"
-        ></base-input>
       </ng-container>
     </ng-container>
   </ng-container>

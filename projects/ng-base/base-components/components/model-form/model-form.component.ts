@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import {
+  AuthService,
+  BasicUser,
   FormsService,
   GraphQLMeta,
   GraphQLMetaService,
@@ -30,14 +32,19 @@ export class ModelFormComponent implements OnInit, OnChanges {
   fields: any;
   operation: string;
   keys: string[] = [];
+  user: BasicUser;
 
   constructor(
     private graphQLMetaService: GraphQLMetaService,
     private graphQLService: GraphQLService,
-    private formsService: FormsService
+    private formsService: FormsService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    // Set user for roles check
+    this.user = BasicUser.map(this.authService.currentUser);
+
     this.graphQLMetaService.getMeta().subscribe((meta) => {
       this.meta = meta;
 
@@ -101,12 +108,19 @@ export class ModelFormComponent implements OnInit, OnChanges {
         type: GraphQLRequestType.QUERY,
       })
       .subscribe({
-        next: (value) => {
+        next: (response) => {
           if (this.logging) {
-            console.log('ModelFormComponent::get->value', value);
+            console.log('ModelFormComponent::get->value', response);
           }
 
-          this.form.patchValue({ ...{}, ...value });
+          this.form.patchValue({ ...{}, ...response });
+
+          // Process patchFields for reference input
+          for (const [key, value] of Object.entries(this.config)) {
+            if (this.config[key]?.patchField) {
+              this.form.get(key).patchValue(response[this.config[key]?.patchField]?.id);
+            }
+          }
         },
         error: (err) => {
           console.error('Error on load object', err);
@@ -127,7 +141,11 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
     for (const [key, value] of Object.entries(fields)) {
       if (fields[key]?.type) {
-        requestFields.push(key);
+        if (!this.config[key]?.patchField) {
+          requestFields.push(key);
+        } else {
+          requestFields.push({ [this.config[key]?.patchField]: ['id'] });
+        }
       } else {
         const subkeys = this.createRequestObject(fields[key] as IGraphQLTypeCollection);
         const resultObject = {};
@@ -208,9 +226,12 @@ export class ModelFormComponent implements OnInit, OnChanges {
    *
    * @returns The id of the newly created or updated object.
    */
-  submit() {
-    this.loading = true;
-    if (this.form.invalid) {
+  submit(secret = false) {
+    if (!secret) {
+      this.loading = true;
+    }
+
+    if (this.form.invalid && !secret) {
       this.formsService.validateAllFormFields(this.form as any);
       this.loading = false;
       return;
@@ -226,20 +247,34 @@ export class ModelFormComponent implements OnInit, OnChanges {
       console.log('ModelFormComponent::submit->formValue', this.form.value);
     }
 
+    const data = Object.assign({}, this.form.value);
+    for (const [key, value] of Object.entries(data)) {
+      if (
+        (this.config[key]?.roles ? !this.user.hasAllRoles(this.config[key]?.roles) : false) ||
+        this.config[key]?.exclude
+      ) {
+        delete data[key];
+      }
+    }
+
     this.graphQLService
       .graphQl(this.operation + this.capitalizeFirstLetter(this.modelName), {
-        arguments: this.operation === 'update' ? { id: this.id, input: this.form.value } : { input: this.form.value },
+        arguments: this.operation === 'update' ? { id: this.id, input: data } : { input: data },
         fields: ['id'],
         type: GraphQLRequestType.MUTATION,
       })
       .subscribe({
         next: (value) => {
-          this.loading = false;
-          this.finished.emit(true);
+          if (!secret) {
+            this.loading = false;
+            this.finished.emit(true);
+          }
         },
         error: (err) => {
-          console.error('Failed on ' + this.operation, err);
-          this.loading = false;
+          if (!secret) {
+            console.error('Failed on ' + this.operation, err);
+            this.loading = false;
+          }
         },
       });
   }
