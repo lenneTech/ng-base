@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.23.0](https://github.com/lenneTech/ng-base/compare/v13.22.1...v13.23.0) (2022-06-20)
+
+### Features
+
+- Date format and custom find query for cms ([771999b](https://github.com/lenneTech/ng-base/commit/771999b7b5cf46d19f653c2a01e872464095b9c5))
+
 ### [13.22.1](https://github.com/lenneTech/ng-base/compare/v13.22.0...v13.22.1) (2022-06-20)
 
 ### Bug Fixes
