@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.22.1](https://github.com/lenneTech/ng-base/compare/v13.22.0...v13.22.1) (2022-06-20)
+
+### Bug Fixes
+
+- Fix number type in cms ([4b67ccd](https://github.com/lenneTech/ng-base/commit/4b67ccd2187b2c5a3e6912a5573c0767c65edd6f))
+
 ## [13.22.0](https://github.com/lenneTech/ng-base/compare/v13.21.0...v13.22.0) (2022-06-19)
 
 ### Features
