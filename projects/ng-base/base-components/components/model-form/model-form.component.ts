@@ -255,6 +255,11 @@ export class ModelFormComponent implements OnInit, OnChanges {
       ) {
         delete data[key];
       }
+
+      // Set type for graphql method
+      if (this.fields[key]?.type === 'Float') {
+        data[key] = Number(value);
+      }
     }
 
     this.graphQLService
