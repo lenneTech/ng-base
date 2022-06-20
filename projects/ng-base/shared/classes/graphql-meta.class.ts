@@ -69,7 +69,7 @@ export class GraphQLMeta {
       }
     }
 
-    return possibleTypes;
+    return possibleTypes.filter((e) => e.create || e.update);
   }
 
   /**

@@ -25,13 +25,14 @@ export class ModelTableComponent implements OnInit, OnChanges {
     title: { label: 'Titel' },
     description: { label: 'Beschreibung' },
     email: { label: 'E-Mail' },
-    createdAt: { label: 'Erstellt am' },
-    updatedAt: { label: 'Bearbeitet am' },
+    createdAt: { label: 'Erstellt am', dateFormat: 'dd.MM.YYYY HH:mm' },
+    updatedAt: { label: 'Bearbeitet am', dateFormat: 'dd.MM.YYYY HH:mm' },
   };
   meta!: GraphQLMeta;
   objects: any[] = [];
   availableFields: string[] = [];
   selectedId = '';
+  queryName = null;
 
   constructor(private graphQLMetaService: GraphQLMetaService, private graphQLService: GraphQLService) {}
 
@@ -72,11 +73,18 @@ export class ModelTableComponent implements OnInit, OnChanges {
   init() {
     this.availableFields = [];
 
+    // Set query name
+    if (!this.config?.queryName) {
+      this.queryName = 'find' + this.capitalizeFirstLetter(this.modelName) + 's';
+    } else {
+      this.queryName = this.config?.queryName;
+    }
+
     if (this.config?.tableFields) {
       this.tableFields = this.config.tableFields;
     }
 
-    const possibleFields = this.meta.getFields('find' + this.capitalizeFirstLetter(this.modelName) + 's');
+    const possibleFields = this.meta.getFields(this.queryName);
     const keys = Object.keys(possibleFields);
     const tableFieldKeys = Object.keys(this.tableFields);
     tableFieldKeys?.forEach((field) => {
@@ -111,7 +119,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
   loadObjects(fields: string[]) {
     this.objects = [];
     this.graphQLService
-      .graphQl('find' + this.capitalizeFirstLetter(this.modelName) + 's', {
+      .graphQl(this.queryName, {
         fields,
         type: GraphQLRequestType.QUERY,
       })

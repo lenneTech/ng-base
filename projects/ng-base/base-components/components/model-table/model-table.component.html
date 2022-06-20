@@ -18,7 +18,13 @@
     <tbody>
       <tr *ngFor="let object of objects">
         <td class="cursor-pointer" *ngFor="let field of availableFields" (click)="selectId(object)">
-          {{ object[field] }}
+          <ng-container *ngIf="tableFields[field]?.dateFormat">
+            {{ object[field] | date: tableFields[field]?.dateFormat }} Uhr
+          </ng-container>
+
+          <ng-container *ngIf="!tableFields[field]?.dateFormat">
+            {{ object[field] }}
+          </ng-container>
         </td>
       </tr>
     </tbody>
