@@ -1,22 +1,43 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsService, UserService } from '@lenne.tech/ng-base/shared';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'base-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   form: FormGroup;
   error: string;
   loading: boolean;
+  redirectUrl = '/main';
+  subscription = new Subscription();
 
-  constructor(private formsService: FormsService, private userService: UserService, private router: Router) {}
+  constructor(
+    private formsService: FormsService,
+    private userService: UserService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.createForm();
+
+    this.subscription.add(
+      this.route.data.subscribe((data) => {
+        // Merge config from route to component
+        if (data?.redirectUrl) {
+          this.redirectUrl = data.redirectUrl;
+        }
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   /**
@@ -46,7 +67,7 @@ export class LoginComponent implements OnInit {
     this.userService.login(this.form.value).subscribe({
       next: (response) => {
         if (response) {
-          this.router.navigate(['/main']);
+          this.router.navigate([this.redirectUrl]);
           this.form.reset();
         } else {
           this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';
