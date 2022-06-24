@@ -81,6 +81,7 @@
           <base-refence-input
             [id]="key"
             [name]="key"
+            [isList]="fields[key]?.isList"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [control]="transformToControl(form?.get(key))"
             [method]="config[key]?.method || 'find'"
@@ -105,11 +106,51 @@
           ></base-checkbox>
         </ng-container>
 
+        <ng-container *ngSwitchCase="'LongText'">
+          <base-textarea
+            [id]="key"
+            [name]="key"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+          ></base-textarea>
+        </ng-container>
+
         <ng-container *ngSwitchCase="'Float'">
           <base-input
             [id]="key"
             [name]="key"
             [type]="'number'"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [placeholder]="config[key]?.placeholder || ''"
+            [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+          ></base-input>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'Password'">
+          <base-input
+            [id]="key"
+            [name]="key"
+            [type]="'password'"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [placeholder]="config[key]?.placeholder || ''"
+            [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+          ></base-input>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'Color'">
+          <base-input
+            [id]="key"
+            [name]="key"
+            [type]="'color'"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [placeholder]="config[key]?.placeholder || ''"
             [control]="transformToControl(form?.get(key))"

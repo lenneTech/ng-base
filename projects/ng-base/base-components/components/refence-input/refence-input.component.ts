@@ -10,6 +10,7 @@ export class RefenceInputComponent implements OnInit {
   @Input() id: string;
   @Input() name: string;
   @Input() label?: string;
+  @Input() isList = false;
   @Input() placeholder?: string = '';
   @Input() autocomplete?: string;
   @Input() tabIndex?: number;
@@ -34,5 +35,11 @@ export class RefenceInputComponent implements OnInit {
           this.objects = result;
         }
       });
+  }
+
+  getObjectsAsOptions() {
+    return this.objects.map((e) => {
+      return e?.id;
+    });
   }
 }

@@ -10,6 +10,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
   @Input() modelName: string;
   @Input() objectId: string;
   @Input() createMode = false;
+  @Input() logging = false;
   @Input() create = true;
   @Input() update = true;
   @Input() delete = true;
@@ -57,7 +58,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
 
     if (changes['objectId'] && this.meta) {
       if (this.selectedId !== this.objectId) {
-        if (this.config?.logging) {
+        if (this.logging) {
           console.log('ModelTableComponent::ngOnChanges->selectedId', this.selectedId);
         }
 
@@ -93,7 +94,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
       }
     });
 
-    if (this.config?.logging) {
+    if (this.logging) {
       console.log('ModelTableComponent::init->possibleFields', possibleFields);
       console.log('ModelTableComponent::init->keys', keys);
       console.log('ModelTableComponent::init->availableFields', this.availableFields);
@@ -125,7 +126,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
       })
       .subscribe({
         next: (value) => {
-          if (this.config?.logging) {
+          if (this.logging) {
             console.log('ModelTableComponent::loadObjects->value', value);
           }
 

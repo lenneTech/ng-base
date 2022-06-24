@@ -117,9 +117,19 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
           // Process patchFields for reference input
           for (const [key, value] of Object.entries(this.config)) {
-            if (this.config[key]?.patchField) {
+            // If it not an array
+            if (this.config[key]?.patchField && !this.fields[key]?.isList) {
               this.form.get(key).patchValue(response[this.config[key]?.patchField]?.id);
             }
+
+            // If value is an array
+            if (this.config[key]?.patchField && this.fields[key]?.isList) {
+              this.form.get(key).patchValue(response[this.config[key]?.patchField]?.map((e) => e?.id));
+            }
+          }
+
+          if (this.logging) {
+            console.log('ModelFormComponent::getObjectById->patchedForm', this.form);
           }
         },
         error: (err) => {
@@ -154,6 +164,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
       }
     }
 
+    if (this.logging) {
+      console.log('ModelFormComponent::createRequestObject->requestFields', requestFields);
+    }
+
     return requestFields;
   }
 
@@ -166,14 +180,20 @@ export class ModelFormComponent implements OnInit, OnChanges {
     const group: any = {};
 
     for (const [key, value] of Object.entries(fields)) {
-      if (fields[key]?.type) {
+      if (value?.type) {
         group[key] = new FormControl(
-          fields[key]?.type === 'Float' ? 0 : '',
-          value.isRequired ? Validators.required : []
+          value?.type === 'Float' ? 0 : '',
+          (this.config[key] && this.config[key]?.required !== undefined ? this.config[key]?.required : value.isRequired)
+            ? Validators.required
+            : []
         );
       } else {
         group[key] = this.createForm(fields[key] as IGraphQLTypeCollection);
       }
+    }
+
+    if (this.logging) {
+      console.log('ModelFormComponent::createForm->group', group);
     }
 
     return new FormGroup(group);
