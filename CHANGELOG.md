@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.26.1](https://github.com/lenneTech/ng-base/compare/v13.26.0...v13.26.1) (2022-06-27)
+
+### Bug Fixes
+
+- Add avatar field on user.service ([de431da](https://github.com/lenneTech/ng-base/commit/de431da124ecda80dc4d36b9e3c543750e739b26))
+
 ## [13.26.0](https://github.com/lenneTech/ng-base/compare/v13.25.0...v13.26.0) (2022-06-27)
 
 ### Features
