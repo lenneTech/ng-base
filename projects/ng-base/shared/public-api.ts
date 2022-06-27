@@ -14,6 +14,7 @@ export * from './classes/sort.class';
 
 // Directives
 export * from './directives/sort.directive';
+export * from './directives/back-button.directive';
 
 // Services
 export * from './services/auth.service';
@@ -29,6 +30,7 @@ export * from './services/scroll.service';
 export * from './services/image.service';
 export * from './services/toast.service';
 export * from './services/breadcrumb.service';
+export * from './services/navigation.service';
 
 // Enums
 export * from './enums/comparison-operator.enum';
