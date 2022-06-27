@@ -30,7 +30,7 @@ export class UserService extends GraphQLPlusService {
   login(input: { email: string; password: string }) {
     return this.graphQl('signIn', {
       arguments: { input },
-      fields: ['token', { user: ['id', 'firstName', 'lastName', 'email', 'roles'] }],
+      fields: ['token', { user: ['id', 'firstName', 'lastName', 'email', 'roles', 'avatar'] }],
       type: GraphQLRequestType.QUERY,
       loading: true,
     }).pipe(
@@ -54,7 +54,7 @@ export class UserService extends GraphQLPlusService {
   register(input: { firstName: string; lastName: string; email: string; password: string }) {
     return this.graphQl('signUp', {
       arguments: { input },
-      fields: ['token', { user: ['id', 'firstName', 'lastName', 'email', 'roles'] }],
+      fields: ['token', { user: ['id', 'firstName', 'lastName', 'email', 'roles', 'avatar'] }],
       type: GraphQLRequestType.MUTATION,
       loading: true,
     }).pipe(
