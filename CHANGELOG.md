@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.26.0](https://github.com/lenneTech/ng-base/compare/v13.25.0...v13.26.0) (2022-06-27)
+
+### Features
+
+- Add navigation service ([60a285b](https://github.com/lenneTech/ng-base/commit/60a285bd51cc5ffe4753f44b17065289a8628174))
+
 ## [13.25.0](https://github.com/lenneTech/ng-base/compare/v13.24.0...v13.25.0) (2022-06-24)
 
 ### Features
