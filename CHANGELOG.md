@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.26.3](https://github.com/lenneTech/ng-base/compare/v13.26.2...v13.26.3) (2022-06-29)
+
+### Bug Fixes
+
+- Fix double creation with file upload ([097493e](https://github.com/lenneTech/ng-base/commit/097493e72c28bd752ea4eb095761351d7564309a))
+
 ### [13.26.2](https://github.com/lenneTech/ng-base/compare/v13.26.1...v13.26.2) (2022-06-29)
 
 ### Bug Fixes
