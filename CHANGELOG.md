@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.26.5](https://github.com/lenneTech/ng-base/compare/v13.26.4...v13.26.5) (2022-06-29)
+
+### Bug Fixes
+
+- Remove debounce on tag input ([be4b73d](https://github.com/lenneTech/ng-base/commit/be4b73dce009bb4bd0f16f9b6fc8b647d632a572))
+
 ### [13.26.4](https://github.com/lenneTech/ng-base/compare/v13.26.3...v13.26.4) (2022-06-29)
 
 ### Bug Fixes
