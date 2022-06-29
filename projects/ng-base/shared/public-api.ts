@@ -16,6 +16,9 @@ export * from './classes/sort.class';
 export * from './directives/sort.directive';
 export * from './directives/back-button.directive';
 
+// Decorators
+export * from './decorators/debounce.decorator';
+
 // Services
 export * from './services/auth.service';
 export * from './services/graphql.service';

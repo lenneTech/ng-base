@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
+import { debounce } from '@lenne.tech/ng-base/shared';
 
 @Component({
   selector: 'base-tags',
@@ -26,6 +27,7 @@ export class TagsComponent {
    *
    * @param event
    */
+  @debounce(300)
   enterKey(event: KeyboardEvent): void {
     if (this.removeByKey && event.code === 'Backspace' && !this.inputValue) {
       this.removeTag();
