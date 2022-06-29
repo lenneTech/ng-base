@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.26.4](https://github.com/lenneTech/ng-base/compare/v13.26.3...v13.26.4) (2022-06-29)
+
+### Bug Fixes
+
+- Fix bug of tag component which delete wrong tag ([fe0228d](https://github.com/lenneTech/ng-base/commit/fe0228d003cf10c0b2a70adf891f977f0b96e122))
+- Fix order of form fields ([4abd623](https://github.com/lenneTech/ng-base/commit/4abd623540e0094d32291c89ef06f9cb7c28de20))
+
 ### [13.26.3](https://github.com/lenneTech/ng-base/compare/v13.26.2...v13.26.3) (2022-06-29)
 
 ### Bug Fixes
