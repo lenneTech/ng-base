@@ -25,7 +25,7 @@ export class ModelFormSubComponent implements OnInit {
 
     // Sort keys by config order
     this.keys = unsortedKeys.sort((a, b) => {
-      return (this.config[b]?.order ? this.config[b]?.order : 0) - (this.config[a]?.order ? this.config[a]?.order : 0);
+      return (this.config[a]?.order ? this.config[a]?.order : 0) - (this.config[b]?.order ? this.config[b]?.order : 0);
     });
 
     // Set user for roles check
