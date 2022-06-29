@@ -8,7 +8,7 @@
       [fields]="fields"
       [config]="config"
       [form]="form"
-      (imageChanged)="submit(true)"
+      (imageChanged)="id ? submit(true) : null"
     ></base-model-form-sub>
 
     <div class="d-flex mt-4" [ngClass]="id && delete ? 'justify-content-between' : 'justify-content-end'">
