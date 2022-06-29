@@ -7,6 +7,7 @@ import { Helper } from './helper.class';
 export class BasicUser extends Standard {
   id: string = undefined;
   email: string = undefined;
+  avatar?: string = undefined;
   firstName: string = undefined;
   lastName: string = undefined;
   roles: string[] = [];

@@ -36,7 +36,7 @@ export class UserService extends GraphQLPlusService {
     }).pipe(
       map((response: Auth) => {
         this.authService.token = response.token;
-        this.authService.currentUser = BasicUser.map(response.user);
+        this.authService.currentUser = response.user;
 
         return Auth.map({
           token: response.token,
@@ -60,7 +60,7 @@ export class UserService extends GraphQLPlusService {
     }).pipe(
       map((response: Auth) => {
         this.authService.token = response.token;
-        this.authService.currentUser = BasicUser.map(response.user);
+        this.authService.currentUser = response.user;
 
         return Auth.map({
           token: response.token,
