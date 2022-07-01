@@ -2,9 +2,21 @@
   <div class="sidebar">
     <div class="d-flex flex-column flex-shrink-0 p-3 h-100">
       <ng-container *ngIf="moduleConfig.branding">
-        <a href="/" class="d-flex flex-column align-items-start mb-3 mt-3 me-md-auto link-dark text-decoration-none">
+        <a
+          href="/"
+          class="d-flex flex-column align-items-start mb-3 mt-3 me-md-auto link-dark text-decoration-none"
+          *ngIf="!moduleConfig?.logoUrl"
+        >
           <span class="d-block fs-4"><b class="text-primary">Base</b>CMS</span>
           <small class="fw-lighter">The auto generated GraphQL CMS</small>
+        </a>
+
+        <a
+          href="/"
+          class="d-flex flex-column align-items-start mb-3 mt-3 me-md-auto link-dark text-decoration-none"
+          *ngIf="moduleConfig?.logoUrl"
+        >
+          <img [src]="moduleConfig.logoUrl" class="img-responsive" alt="Logo" />
         </a>
         <hr />
       </ng-container>

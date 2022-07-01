@@ -11,6 +11,7 @@ export function CMSConfigFactory() {
     modelConfig: {},
     fieldConfig: {},
     branding: true,
+    logoUrl: '',
     logging: false,
     ...BaseCMSModule.config,
   };

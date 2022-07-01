@@ -4,6 +4,7 @@ export interface BaseCMSModuleConfig {
   modelConfig?: { [key: string]: any };
   fieldConfig?: { [key: string]: any };
   logging?: boolean;
+  logoUrl?: string;
   branding?: boolean;
 }
 
