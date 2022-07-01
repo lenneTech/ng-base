@@ -13,8 +13,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   form: FormGroup;
   error: string;
   loading: boolean;
-  redirectUrl = '/main';
   subscription = new Subscription();
+  config = {
+    redirectUrl: '/main',
+    showPasswordForget: true,
+    showRegister: true,
+    logoUrl: '',
+  };
 
   constructor(
     private formsService: FormsService,
@@ -29,8 +34,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.route.data.subscribe((data) => {
         // Merge config from route to component
-        if (data?.redirectUrl) {
-          this.redirectUrl = data.redirectUrl;
+        if (data?.config) {
+          this.config = { ...this.config, ...data.config };
         }
       })
     );
@@ -67,7 +72,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.userService.login(this.form.value).subscribe({
       next: (response) => {
         if (response) {
-          this.router.navigate([this.redirectUrl]);
+          this.router.navigate([this.config.redirectUrl]);
           this.form.reset();
         } else {
           this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';
