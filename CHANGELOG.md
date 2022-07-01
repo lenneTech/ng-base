@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.28.1](https://github.com/lenneTech/ng-base/compare/v13.28.0...v13.28.1) (2022-07-01)
+
+### Bug Fixes
+
+- Fix logo in cms ([266cf3a](https://github.com/lenneTech/ng-base/commit/266cf3a0429bb95c9431e739613014a6ccf9bd4d))
+
 ## [13.28.0](https://github.com/lenneTech/ng-base/compare/v13.27.0...v13.28.0) (2022-07-01)
 
 ### Features
