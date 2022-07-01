@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.28.0](https://github.com/lenneTech/ng-base/compare/v13.27.0...v13.28.0) (2022-07-01)
+
+### Features
+
+- Add logo url option to cms ([3cf7adb](https://github.com/lenneTech/ng-base/commit/3cf7adb124ad67fc9e9daa0e497fe4d3bc8a9ea3))
+
 ## [13.27.0](https://github.com/lenneTech/ng-base/compare/v13.26.6...v13.27.0) (2022-07-01)
 
 ### Features
