@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.27.0](https://github.com/lenneTech/ng-base/compare/v13.26.6...v13.27.0) (2022-07-01)
+
+### Features
+
+- Add config for login prototype page ([22dd8a8](https://github.com/lenneTech/ng-base/commit/22dd8a8910948ee8cc7f411ef24be23c96178926))
+
 ### [13.26.6](https://github.com/lenneTech/ng-base/compare/v13.26.5...v13.26.6) (2022-06-30)
 
 ### Bug Fixes
