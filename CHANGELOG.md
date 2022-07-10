@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.29.0](https://github.com/lenneTech/ng-base/compare/v13.28.1...v13.29.0) (2022-07-10)
+
+### Features
+
+- Add readable reference input in cms ([92b6f99](https://github.com/lenneTech/ng-base/commit/92b6f99b5fff075663d12fce989bc564e0df221c))
+
 ### [13.28.1](https://github.com/lenneTech/ng-base/compare/v13.28.0...v13.28.1) (2022-07-01)
 
 ### Bug Fixes
