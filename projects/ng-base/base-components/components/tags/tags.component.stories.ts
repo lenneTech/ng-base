@@ -51,5 +51,9 @@ WithOptions.args = {
   custom: false,
   removeByKey: false,
   control: new FormControl([]),
-  options: ['test', 'bifi', 'chicken'],
+  options: [
+    { text: 'test', value: '1' },
+    { text: 'test2', value: '2' },
+    { text: 'test3', value: '3' },
+  ],
 };

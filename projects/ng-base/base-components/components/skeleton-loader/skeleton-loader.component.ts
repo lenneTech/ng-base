@@ -20,7 +20,6 @@ export class SkeletonLoaderComponent {
     for (let i = 0; i < value; i++) {
       res.push(i);
     }
-    console.log(res);
 
     return res;
   }

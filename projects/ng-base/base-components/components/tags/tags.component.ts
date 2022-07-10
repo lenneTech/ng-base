@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { AbstractControl, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'base-tags',
@@ -13,8 +12,8 @@ export class TagsComponent {
   @Input() placeholder?: string = '';
   @Input() autocomplete?: string;
   @Input() tabIndex?: number;
-  @Input() control: FormControl | AbstractControl;
-  @Input() options?: string[] = [];
+  @Input() control: any;
+  @Input() options?: { text: string; value: string }[];
   @Input() custom = true;
   @Input() removeByKey = true;
   @Input() required = false;
@@ -22,11 +21,30 @@ export class TagsComponent {
   selectedElement: HTMLElement;
 
   /**
+   * Convert id into text field
+   */
+  getReadableTag(tag: string) {
+    if (this.control?.value && this.options) {
+      const foundElement = this.options.find((e) => e.value === tag);
+
+      if (foundElement) {
+        return foundElement.text;
+      } else {
+        return tag;
+      }
+    } else {
+      return tag;
+    }
+  }
+
+  /**
    * Listen to enter keys
    *
    * @param event
    */
   enterKey(event: any): void {
+    this.selectedElement = event.target;
+
     if (this.removeByKey && event.code === 'Backspace' && !this.inputValue) {
       this.removeTag();
       return;
@@ -43,28 +61,40 @@ export class TagsComponent {
    * @param tag
    */
   addTag(tag: string): void {
-    if (!this.control.value) {
-      this.control.setValue([]);
-    }
-    this.selectedElement = null;
-
     if (tag.endsWith(',') || tag.endsWith(' ')) {
       tag = tag.slice(0, -1);
     }
 
-    if (!this.custom && !this.options.find((e) => e === tag)) {
+    let foundOption;
+    if (!this.options) {
+      foundOption = { value: tag, text: tag };
+    } else {
+      foundOption = this.options.find((e) => e.text === tag);
+    }
+
+    if (!this.custom && !foundOption) {
       return;
     }
 
+    this.selectedElement = null;
+
+    if (!this.control.value) {
+      this.control.setValue([]);
+    }
+
     if (this.control.value?.length === 0) {
-      this.control.setValue([tag]);
+      this.control.setValue([foundOption.value]);
       this.inputValue = '';
       this.control.setErrors(null);
       return;
     }
 
-    if (tag.length > 0 && this.control.value && !this.control.value.some((item: string) => item === tag)) {
-      this.control.setValue([...this.control.value, tag]);
+    if (
+      tag.length > 0 &&
+      this.control.value &&
+      !this.control.value.some((item: string) => item === foundOption.value)
+    ) {
+      this.control.setValue([...this.control.value, foundOption.value]);
       this.inputValue = '';
       this.control.setErrors(null);
     }
@@ -76,9 +106,15 @@ export class TagsComponent {
    * @param tag
    */
   removeTag(tag?: string): void {
-    this.selectedElement = null;
-    if (tag) {
-      this.control.setValue(this.control.value.filter((item: string) => item !== tag));
+    let foundOption;
+    if (!this.options) {
+      foundOption = { value: tag, text: tag };
+    } else {
+      foundOption = this.options.find((e) => e.value === tag);
+    }
+
+    if (foundOption) {
+      this.control.setValue(this.control.value.filter((item: string) => item !== foundOption.value));
     } else {
       this.control.value.splice(-1);
     }
@@ -91,9 +127,11 @@ export class TagsComponent {
   /**
    * Filter options for drop down
    */
-  filterOptions() {
+  filterOptions(): { text: string; value: string }[] {
     return this.options
-      ? this.options.filter((e) => e?.includes(this.inputValue) && !this.control.value.includes(e))
+      ? this.options.filter(
+          (e) => (!this.inputValue || e?.text?.includes(this.inputValue)) && !this.control.value.includes(e.value)
+        )
       : [];
   }
 

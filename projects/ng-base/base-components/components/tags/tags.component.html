@@ -3,10 +3,11 @@
 
   <div class="tag-wrapper" *ngIf="control?.value">
     <div class="tag" *ngFor="let tag of control?.value">
-      {{ tag }}
+      {{ getReadableTag(tag) }}
       <span (click)="removeTag(tag)"><i class="bi bi-x-circle"></i></span>
     </div>
   </div>
+  <input [formControl]="control" hidden />
   <input
     [id]="id"
     [name]="name"
@@ -23,7 +24,9 @@
   />
 
   <div class="tag-options" *ngIf="options && selectedElement">
-    <div class="tag-option-item" *ngFor="let option of filterOptions()" (click)="addTag(option)">{{ option }}</div>
+    <div class="tag-option-item" *ngFor="let option of filterOptions()" (click)="addTag(option?.text)">
+      {{ option?.text }}
+    </div>
   </div>
 
   <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">

@@ -182,7 +182,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
     for (const [key, value] of Object.entries(fields)) {
       if (value?.type) {
         group[key] = new FormControl(
-          value?.type === 'Float' ? 0 : '',
+          value?.type === 'Float' ? null : '',
           (this.config[key] && this.config[key]?.required !== undefined ? this.config[key]?.required : value.isRequired)
             ? Validators.required
             : []
@@ -280,6 +280,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
       if (this.fields[key]?.type === 'Float') {
         data[key] = Number(value);
       }
+    }
+
+    if (this.logging) {
+      console.log('ModelFormComponent::submit->valueToGraphql', data);
     }
 
     this.graphQLService

@@ -2,24 +2,35 @@
   <div class="form-group mb-3">
     <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
 
-    <input
-      [id]="id"
-      [name]="name"
-      class="form-control"
-      [formControl]="control"
-      [required]="required"
-      [placeholder]="placeholder"
-      [autocomplete]="autocomplete ?? null"
-      [tabIndex]="tabIndex ?? null"
-      [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
-      [attr.list]="id + '-datalistOptions'"
-    />
-    <datalist [id]="id + '-datalistOptions'">
-      <option *ngFor="let object of objects" [value]="object[valueField]">{{ object[nameField] }}</option>
-    </datalist>
+    <div class="position-relative">
+      <input [formControl]="control" hidden />
+      <input
+        [id]="id"
+        [name]="name"
+        class="form-control"
+        [(ngModel)]="currentValue"
+        [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+        (focus)="onFocus($event)"
+        (blur)="onFocus()"
+        [required]="required"
+        [placeholder]="placeholder"
+        [autocomplete]="autocomplete ?? null"
+        [tabIndex]="tabIndex ?? null"
+        (keyup)="enterKey($event)"
+      />
+      <div class="options" *ngIf="objects && selectedElement">
+        <div class="option-item" *ngFor="let object of filterOptions()" (click)="set(object[valueField])">
+          {{ object[textField] }}
+        </div>
+      </div>
+    </div>
 
-    <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">
+    <div
+      class="d-block invalid-feedback m-2"
+      *ngIf="control?.invalid && (control?.dirty || control?.touched) && !selectedElement"
+    >
       <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
+      <div *ngIf="control?.errors?.['invalidReference']">Bitte wähle einen gültigen Wert aus.</div>
       <div *ngIf="control?.errors?.['minlength']">
         Die Mindestlänge für dieses Feld beträgt
         {{control.errors?.['minlength']?.requiredLength}} Zeichen.
@@ -43,6 +54,6 @@
     [required]="required"
     [placeholder]="placeholder"
     [custom]="false"
-    [options]="getObjectsAsOptions()"
+    [options]="optionsForTagInput"
   ></base-tags>
 </ng-container>
