@@ -1,7 +1,22 @@
 <div class="w-100" *ngIf="form">
-  <h2>
-    {{ label ? label : capitalizeFirstLetter(modelName) }} {{ operation === 'update' ? 'bearbeiten' : 'erstellen' }}
-  </h2>
+  <div class="d-flex flex-row justify-content-between mt-3">
+    <h2>
+      {{ label ? label : capitalizeFirstLetter(modelName) }} {{ operation === 'update' ? 'bearbeiten' : 'erstellen' }}
+    </h2>
+
+    <div>
+      <button class="btn btn-outline-primary me-2" *ngIf="id && duplicate && !loading" (click)="duplicateObject()">
+        Duplizieren
+      </button>
+      <button class="btn btn-primary" type="button" (click)="submit(false)" *ngIf="!loading">
+        {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}
+      </button>
+      <button class="btn btn-primary" type="button" disabled *ngIf="loading">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}...
+      </button>
+    </div>
+  </div>
 
   <form [formGroup]="form">
     <base-model-form-sub

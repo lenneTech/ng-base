@@ -3,4 +3,5 @@ export interface GraphqlCrudType {
   create: boolean;
   update: boolean;
   delete: boolean;
+  duplicate: boolean;
 }

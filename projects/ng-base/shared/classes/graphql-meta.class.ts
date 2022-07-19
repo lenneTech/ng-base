@@ -42,6 +42,7 @@ export class GraphQLMeta {
           create: false,
           update: false,
           delete: false,
+          duplicate: false,
         });
       }
     }
@@ -65,6 +66,13 @@ export class GraphQLMeta {
         const model = key.split('delete').pop();
         if (possibleTypes.find((e) => e.name === model)) {
           possibleTypes.find((item) => item.name === model).delete = true;
+        }
+      }
+
+      if (key.startsWith('duplicate')) {
+        const model = key.split('duplicate').pop();
+        if (possibleTypes.find((e) => e.name === model)) {
+          possibleTypes.find((item) => item.name === model).duplicate = true;
         }
       }
     }

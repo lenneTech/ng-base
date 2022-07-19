@@ -10,6 +10,7 @@ import {
 } from '@lenne.tech/ng-base/shared';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { IGraphQLTypeCollection } from '@lenne.tech/ng-base/shared';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'base-model-form',
@@ -21,6 +22,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   @Input() label: string;
   @Input() id: string | null;
   @Input() delete = true;
+  @Input() duplicate = false;
   @Input() logging = false;
   @Input() config: any = {};
 
@@ -38,7 +40,9 @@ export class ModelFormComponent implements OnInit, OnChanges {
     private graphQLMetaService: GraphQLMetaService,
     private graphQLService: GraphQLService,
     private formsService: FormsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -134,7 +138,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
         },
         error: (err) => {
           console.error('Error on load object', err);
-          this.finished.emit(false);
+          this.finished.emit(null);
         },
       });
   }
@@ -212,10 +216,37 @@ export class ModelFormComponent implements OnInit, OnChanges {
         })
         .subscribe({
           next: (value) => {
-            this.finished.emit(true);
+            this.finished.emit(null);
           },
           error: (err) => {
             console.error('Error on delete object', err);
+          },
+        });
+    }
+  }
+
+  /**
+   * It sends a GraphQL mutation to the server to duplicate the object
+   */
+  async duplicateObject() {
+    if (confirm('Möchtest du das Objekt wirklich duplizieren?')) {
+      await this.submit(true);
+      this.graphQLService
+        .graphQl('duplicate' + this.capitalizeFirstLetter(this.modelName), {
+          arguments: { id: this.id },
+          fields: ['id'],
+          type: GraphQLRequestType.MUTATION,
+        })
+        .subscribe({
+          next: (value) => {
+            if (value?.id) {
+              this.router.navigate(['../' + value.id], { relativeTo: this.route });
+            } else {
+              this.finished.emit(null);
+            }
+          },
+          error: (err) => {
+            console.error('Error on duplicate object', err);
           },
         });
     }
@@ -247,64 +278,72 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * @returns The id of the newly created or updated object.
    */
   submit(secret = false) {
-    if (!secret) {
-      this.loading = true;
-    }
-
-    if (this.form.invalid && !secret) {
-      this.formsService.validateAllFormFields(this.form as any);
-      this.loading = false;
-      return;
-    }
-
-    if (this.operation === 'update' && !this.id) {
-      console.error('ID is missing for update!');
-      this.loading = false;
-      return;
-    }
-
-    if (this.logging) {
-      console.log('ModelFormComponent::submit->formValue', this.form.value);
-    }
-
-    const data = Object.assign({}, this.form.value);
-    for (const [key, value] of Object.entries(data)) {
-      if (
-        (this.config[key]?.roles ? !this.user.hasAllRoles(this.config[key]?.roles) : false) ||
-        this.config[key]?.exclude
-      ) {
-        delete data[key];
+    return new Promise((resolve, reject) => {
+      if (!secret) {
+        this.loading = true;
       }
 
-      // Set type for graphql method
-      if (this.fields[key]?.type === 'Float') {
-        data[key] = Number(value);
+      if (this.form.invalid && !secret) {
+        this.formsService.validateAllFormFields(this.form as any);
+        this.loading = false;
+        reject();
+        return;
       }
-    }
 
-    if (this.logging) {
-      console.log('ModelFormComponent::submit->valueToGraphql', data);
-    }
+      if (this.operation === 'update' && !this.id) {
+        console.error('ID is missing for update!');
+        this.loading = false;
+        reject();
+        return;
+      }
 
-    this.graphQLService
-      .graphQl(this.operation + this.capitalizeFirstLetter(this.modelName), {
-        arguments: this.operation === 'update' ? { id: this.id, input: data } : { input: data },
-        fields: ['id'],
-        type: GraphQLRequestType.MUTATION,
-      })
-      .subscribe({
-        next: (value) => {
-          if (!secret) {
-            this.loading = false;
-            this.finished.emit(true);
-          }
-        },
-        error: (err) => {
-          if (!secret) {
-            console.error('Failed on ' + this.operation, err);
-            this.loading = false;
-          }
-        },
-      });
+      if (this.logging) {
+        console.log('ModelFormComponent::submit->formValue', this.form.value);
+      }
+
+      const data = Object.assign({}, this.form.value);
+      for (const [key, value] of Object.entries(data)) {
+        if (
+          (this.config[key]?.roles ? !this.user.hasAllRoles(this.config[key]?.roles) : false) ||
+          this.config[key]?.exclude
+        ) {
+          delete data[key];
+        }
+
+        // Set type for graphql method
+        if (this.fields[key]?.type === 'Float') {
+          data[key] = Number(value);
+        }
+      }
+
+      if (this.logging) {
+        console.log('ModelFormComponent::submit->valueToGraphql', data);
+      }
+
+      this.graphQLService
+        .graphQl(this.operation + this.capitalizeFirstLetter(this.modelName), {
+          arguments: this.operation === 'update' ? { id: this.id, input: data } : { input: data },
+          fields: ['id'],
+          type: GraphQLRequestType.MUTATION,
+        })
+        .subscribe({
+          next: (value) => {
+            if (!secret) {
+              this.loading = false;
+              this.finished.emit(null);
+            }
+
+            resolve(value);
+          },
+          error: (err) => {
+            if (!secret) {
+              console.error('Failed on ' + this.operation, err);
+              this.loading = false;
+            }
+
+            reject();
+          },
+        });
+    });
   }
 }

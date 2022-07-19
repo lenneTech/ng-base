@@ -1,18 +1,20 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { AuthService, BasicUser, GraphqlCrudType, GraphQLMeta, GraphQLMetaService } from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BASE_CMS_MODULE_CONFIG, BaseCMSModuleConfig } from '../../interfaces/base-cms-module-config.interface';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-base-cms',
   templateUrl: './base-cms.component.html',
   styleUrls: ['./base-cms.component.scss'],
 })
-export class BaseCmsComponent implements OnInit {
+export class BaseCmsComponent implements OnInit, OnDestroy {
   meta: GraphQLMeta;
   modelName: string;
   id: string;
   types: GraphqlCrudType[] = [];
+  subscription = new Subscription();
 
   constructor(
     @Inject(BASE_CMS_MODULE_CONFIG) public moduleConfig: BaseCMSModuleConfig,
@@ -21,27 +23,33 @@ export class BaseCmsComponent implements OnInit {
     private router: Router,
     private authService: AuthService
   ) {
-    this.route.params.subscribe((value) => {
-      if (value['modelName']) {
-        const restricted = this.moduleConfig.modelConfig[value['modelName']]?.restricted;
-        const excluded = this.moduleConfig.modelConfig[value['modelName']]?.excluded;
-        if ((restricted !== null && !restricted) || (excluded !== null && !excluded)) {
-          this.modelName = value['modelName'];
-        } else {
-          this.init().then((types: GraphqlCrudType[]) => {
-            this.router.navigate(['../' + types[0].name.toLowerCase()], { relativeTo: this.route });
-          });
-        }
-      }
+    this.subscription.add(
+      this.route.params.subscribe((value) => {
+        if (value['modelName']) {
+          const exclude = this.moduleConfig.modelConfig[value['modelName']]?.exclude;
 
-      if (value['id']) {
-        this.id = value['id'];
-      }
-    });
+          if (exclude !== null && !exclude) {
+            this.modelName = value['modelName'];
+          } else {
+            this.init().then((types: GraphqlCrudType[]) => {
+              this.router.navigate(['../' + types[0].name.toLowerCase()], { relativeTo: this.route });
+            });
+          }
+        }
+
+        if (value['id']) {
+          this.id = value['id'];
+        }
+      })
+    );
   }
 
   async ngOnInit() {
     await this.init();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   /**
@@ -65,7 +73,7 @@ export class BaseCmsComponent implements OnInit {
         const types = meta.getTypes();
 
         // Check for excluded types
-        const filteredTypes = types.filter((e) => !this.moduleConfig?.modelConfig[e.name.toLowerCase()]?.excluded);
+        const filteredTypes = types.filter((e) => !this.moduleConfig?.modelConfig[e.name.toLowerCase()]?.exclude);
 
         // Check for restricted types
         this.types = filteredTypes.filter((e) => {
@@ -151,9 +159,17 @@ export class BaseCmsComponent implements OnInit {
   }
 
   /**
-   * If the id is truthy, navigate to the id, otherwise navigate to the parent route
+   * If the model name is found in the type array, return the duplicate property of the type object
    *
-   * @param id - The id of the selected item.
+   * @returns A boolean value.
+   */
+  isDuplicatePossible(): boolean {
+    const type = this.getTypeByModelName();
+    return type ? type.duplicate : false;
+  }
+
+  /**
+   * If the id is truthy, navigate to the id, otherwise navigate to the parent route
    */
   idSelected(id: string) {
     if (id) {

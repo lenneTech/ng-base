@@ -14,6 +14,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
   @Input() create = true;
   @Input() update = true;
   @Input() delete = true;
+  @Input() duplicate = true;
   @Input() config: any = {};
   @Input() fieldConfig: any = {};
 
@@ -130,7 +131,12 @@ export class ModelTableComponent implements OnInit, OnChanges {
             console.log('ModelTableComponent::loadObjects->value', value);
           }
 
-          this.objects = value;
+          const arrayForSort = [...value];
+          this.objects = arrayForSort.sort(
+            (a, b) =>
+              (b?.createdAt ? new Date(b?.createdAt)?.getTime() : new Date().getTime()) -
+              (a?.createdAt ? new Date(a?.createdAt)?.getTime() : new Date().getTime())
+          );
         },
         error: (err) => {
           console.log('Error on loading objects', err);
@@ -141,8 +147,6 @@ export class ModelTableComponent implements OnInit, OnChanges {
   /**
    * If the update property is true, then set the selectedId property to the id of the object passed in, and emit the
    * selectedId property
-   *
-   * @param object - any - this is the object that is passed in from the child component.
    */
   selectId(object: any) {
     if (!object) {
