@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.30.0](https://github.com/lenneTech/ng-base/compare/v13.29.0...v13.30.0) (2022-07-19)
+
+### Features
+
+- Add duplicate function to cms and some optimizations ([29f892c](https://github.com/lenneTech/ng-base/commit/29f892c5c9ec3bb903bcf421f7465118fc06ec15))
+
 ## [13.29.0](https://github.com/lenneTech/ng-base/compare/v13.28.1...v13.29.0) (2022-07-10)
 
 ### Features
