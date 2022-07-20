@@ -19,12 +19,7 @@
   </div>
 
   <form [formGroup]="form">
-    <base-model-form-sub
-      [fields]="fields"
-      [config]="config"
-      [form]="form"
-      (imageChanged)="id ? submit(true) : null"
-    ></base-model-form-sub>
+    <base-model-form-sub [fields]="fields" [config]="config" [form]="form"></base-model-form-sub>
 
     <div class="d-flex mt-4" [ngClass]="id && delete ? 'justify-content-between' : 'justify-content-end'">
       <div *ngIf="id && delete">
