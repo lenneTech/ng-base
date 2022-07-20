@@ -11,6 +11,7 @@
     [autocomplete]="autocomplete ?? null"
     [tabIndex]="tabIndex ?? null"
     [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+    (keyup.enter)="enterEvent()"
   />
 
   <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">

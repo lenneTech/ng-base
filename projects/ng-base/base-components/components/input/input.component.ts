@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'base-input',
@@ -15,4 +15,15 @@ export class InputComponent {
   @Input() control: any;
   @Input() type = 'text';
   @Input() required = false;
+
+  @Output() enter = new EventEmitter();
+
+  /**
+   * If the control has a value, emit the enter event
+   */
+  enterEvent() {
+    if (this.control?.value) {
+      this.enter.emit();
+    }
+  }
 }
