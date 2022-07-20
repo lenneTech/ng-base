@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.31.0](https://github.com/lenneTech/ng-base/compare/v13.30.0...v13.31.0) (2022-07-20)
+
+### Features
+
+- Add enter event to base-input ([de2fe81](https://github.com/lenneTech/ng-base/commit/de2fe813848742196d8a704ad98a18e4d93dc9d8))
+
 ## [13.30.0](https://github.com/lenneTech/ng-base/compare/v13.29.0...v13.30.0) (2022-07-19)
 
 ### Features
