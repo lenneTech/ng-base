@@ -120,7 +120,7 @@ export class RefenceInputComponent implements OnInit, OnChanges {
       ? this.objects.filter(
           (e) =>
             (!this.currentValue || e[this.textField]?.includes(this.currentValue)) &&
-            !this.control.value.includes(e.value)
+            !this.control?.value?.includes(e?.value)
         )
       : [];
   }
