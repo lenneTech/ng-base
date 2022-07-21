@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.32.0](https://github.com/lenneTech/ng-base/compare/v13.31.1...v13.32.0) (2022-07-21)
+
+### Features
+
+- Update session user after profile change ([0fd4b5a](https://github.com/lenneTech/ng-base/commit/0fd4b5a8e9b20e41ac9f0214f1e5898c6ca16a51))
+
 ### [13.31.1](https://github.com/lenneTech/ng-base/compare/v13.31.0...v13.31.1) (2022-07-20)
 
 ### Bug Fixes
