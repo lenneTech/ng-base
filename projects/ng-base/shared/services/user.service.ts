@@ -71,6 +71,21 @@ export class UserService extends GraphQLPlusService {
   }
 
   /**
+   * This function will make a GraphQL query to the server, and return the result
+   *
+   * @param id - The id of the user you want to get
+   * @returns A GraphQLRequest object.
+   */
+  get(id: string) {
+    return this.graphQl('getUser', {
+      arguments: { id },
+      fields: ['id', 'firstName', 'lastName', 'email', 'roles', 'avatar'],
+      type: GraphQLRequestType.QUERY,
+      loading: true,
+    });
+  }
+
+  /**
    * Request password reset mail
    *
    * @param email

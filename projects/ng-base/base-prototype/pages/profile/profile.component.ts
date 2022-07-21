@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AuthService, BasicUser } from '@lenne.tech/ng-base/shared';
+import { AuthService, BasicUser, UserService } from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -41,7 +41,7 @@ export class ProfileComponent implements OnInit {
 
   currentUser: BasicUser;
 
-  constructor(private authService: AuthService, private route: ActivatedRoute) {
+  constructor(private authService: AuthService, private route: ActivatedRoute, private userService: UserService) {
     this.currentUser = authService.currentUser;
     this.profileConfig = { ...this.profileConfig, ...this.config };
   }
@@ -51,6 +51,17 @@ export class ProfileComponent implements OnInit {
       // Merge config from route to component
       if (data) {
         this.profileConfig = { ...this.profileConfig, ...data };
+      }
+    });
+  }
+
+  /**
+   * It gets the current user from the database and updates the current user in the session
+   */
+  updateSessionUser() {
+    this.userService.get(this.authService.currentUser.id).subscribe((user) => {
+      if (user) {
+        this.authService.currentUser = user;
       }
     });
   }

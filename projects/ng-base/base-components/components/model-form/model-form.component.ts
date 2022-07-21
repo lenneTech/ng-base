@@ -90,6 +90,9 @@ export class ModelFormComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * It takes a key as an argument, and returns an array of keys from the sub-object
+   */
   getKeysFromSubObject(key: string) {
     return Object.keys(this.fields[key]);
   }

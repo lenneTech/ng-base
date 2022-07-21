@@ -6,6 +6,7 @@
       [label]="'Mein Profil'"
       [config]="profileConfig || {}"
       [delete]="false"
+      (finished)="updateSessionUser()"
     ></base-model-form>
   </div>
 </div>
