@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.32.2](https://github.com/lenneTech/ng-base/compare/v13.32.1...v13.32.2) (2022-07-25)
+
+### Bug Fixes
+
+- Fix loading-bar ExpressionChangedAfterItHasBeenCheckedError ([5bd80d6](https://github.com/lenneTech/ng-base/commit/5bd80d6e3fd19e4df488aee94ef052b9585fefe1))
+
 ### [13.32.1](https://github.com/lenneTech/ng-base/compare/v13.32.0...v13.32.1) (2022-07-21)
 
 ### Bug Fixes
