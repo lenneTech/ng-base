@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormControl } from '@angular/forms';
+import { AbstractControl, UntypedFormControl } from '@angular/forms';
 import { AuthService, BasicUser } from '@lenne.tech/ng-base/shared';
 
 @Component({
@@ -71,6 +71,6 @@ export class ModelFormSubComponent implements OnInit {
    * @returns A FormControl
    */
   transformToControl(control: AbstractControl | null | undefined) {
-    return control as FormControl;
+    return control as UntypedFormControl;
   }
 }
