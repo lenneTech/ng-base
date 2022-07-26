@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { FormsService, UserService } from '@lenne.tech/ng-base/shared';
 import { Router } from '@angular/router';
 
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./forgot-password.component.scss'],
 })
 export class ForgotPasswordComponent implements OnInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   error: string;
   loading: boolean;
 
@@ -23,8 +23,8 @@ export class ForgotPasswordComponent implements OnInit {
    * Create login form
    */
   createForm() {
-    this.form = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
+    this.form = new UntypedFormGroup({
+      email: new UntypedFormControl('', [Validators.required, Validators.email]),
     });
   }
 

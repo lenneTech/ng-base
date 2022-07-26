@@ -32,14 +32,10 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "projects/ng-base/**/*.ts",
-              "projects/ng-base/**/*.html"
-            ]
+            "lintFilePatterns": ["projects/ng-base/**/*.ts", "projects/ng-base/**/*.html"]
           }
         }
       }
     }
-  },
-  "defaultProject": "ng-base"
+  }
 }

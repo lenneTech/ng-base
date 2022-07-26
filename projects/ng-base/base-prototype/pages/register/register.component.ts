@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { FormsService, UserService, Validation } from '@lenne.tech/ng-base/shared';
 import { Router } from '@angular/router';
 
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent implements OnInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   error: string;
   loading: boolean;
 
@@ -23,14 +23,14 @@ export class RegisterComponent implements OnInit {
    * Create login form
    */
   createForm() {
-    this.form = new FormGroup(
+    this.form = new UntypedFormGroup(
       {
-        firstName: new FormControl('', [Validators.required]),
-        lastName: new FormControl('', [Validators.required]),
-        email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', Validators.required),
-        passwordConfirm: new FormControl('', Validators.required),
-        privacy: new FormControl(false, Validators.requiredTrue),
+        firstName: new UntypedFormControl('', [Validators.required]),
+        lastName: new UntypedFormControl('', [Validators.required]),
+        email: new UntypedFormControl('', [Validators.required, Validators.email]),
+        password: new UntypedFormControl('', Validators.required),
+        passwordConfirm: new UntypedFormControl('', Validators.required),
+        privacy: new UntypedFormControl(false, Validators.requiredTrue),
       },
       {
         validators: [Validation.match('password', 'passwordConfirm')],

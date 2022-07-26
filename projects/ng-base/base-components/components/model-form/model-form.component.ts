@@ -8,7 +8,7 @@ import {
   GraphQLRequestType,
   GraphQLService,
 } from '@lenne.tech/ng-base/shared';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { IGraphQLTypeCollection } from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -29,7 +29,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   @Output() finished = new EventEmitter();
 
   meta: GraphQLMeta;
-  form: FormGroup;
+  form: UntypedFormGroup;
   loading = false;
   fields: any;
   operation: string;
@@ -188,7 +188,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
     for (const [key, value] of Object.entries(fields)) {
       if (value?.type) {
-        group[key] = new FormControl(
+        group[key] = new UntypedFormControl(
           value?.type === 'Float' ? null : '',
           (this.config[key] && this.config[key]?.required !== undefined ? this.config[key]?.required : value.isRequired)
             ? Validators.required
@@ -203,7 +203,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
       console.log('ModelFormComponent::createForm->group', group);
     }
 
-    return new FormGroup(group);
+    return new UntypedFormGroup(group);
   }
 
   /**
@@ -272,7 +272,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * @returns A FormControl
    */
   transformToControl(control: AbstractControl | null | undefined) {
-    return control as FormControl;
+    return control as UntypedFormControl;
   }
 
   /**

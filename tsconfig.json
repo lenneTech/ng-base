@@ -11,21 +11,12 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "paths": {
-      "@lenne.tech/ng-base/*": [
-        "projects/ng-base/*",
-        "projects/ng-base"
-      ],
-      "@lenne.tech/ng-base": [
-        "dist/ng-base/*",
-        "dist/ng-base"
-      ]
+      "@lenne.tech/ng-base/*": ["projects/ng-base/*", "projects/ng-base"],
+      "@lenne.tech/ng-base": ["dist/ng-base/*", "dist/ng-base"]
     },
-    "target": "es2015",
+    "target": "es2020",
     "module": "es2020",
-    "lib": [
-      "es2018",
-      "dom"
-    ]
+    "lib": ["es2018", "dom"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
