@@ -2,8 +2,8 @@
   --base-toast-z-index: 999;
 }
 
-.toast-wrapper {
-  position: fixed;
+.toast-container {
+  //position: fixed;
   padding: 10px;
   z-index: var(--base-toast-z-index);
 }
