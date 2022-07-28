@@ -107,7 +107,6 @@ export class UploadImageComponent {
 
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + this.authService.token,
       }),
     };
@@ -134,7 +133,6 @@ export class UploadImageComponent {
     if (id) {
       const httpOptions = {
         headers: new HttpHeaders({
-          'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.authService.token,
         }),
       };
