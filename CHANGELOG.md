@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.0.3](https://github.com/lenneTech/ng-base/compare/v14.0.2...v14.0.3) (2022-07-28)
+
+### Bug Fixes
+
+- Add missing auth token to image upload ([dbc2c76](https://github.com/lenneTech/ng-base/commit/dbc2c7633df5051e9d1aee4efdb10b082054f217))
+
 ### [14.0.2](https://github.com/lenneTech/ng-base/compare/v14.0.1...v14.0.2) (2022-07-28)
 
 ### Bug Fixes
