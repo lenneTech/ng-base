@@ -1,19 +1,23 @@
 <div class="mt-3" *ngFor="let key of keys">
-  <ng-container *ngIf="!fields[key]?.type && (config[key]?.roles ? user?.hasAllRoles(config[key]?.roles) : true)">
-    <fieldset class="border rounded-3 p-3">
+  <ng-container
+    *ngIf="checkFieldHasFields(fields[key]) && (config[key]?.roles ? user?.hasAllRoles(config[key]?.roles) : true)"
+  >
+    <fieldset class="border rounded-3 p-3 mt-3">
       <legend class="float-none w-auto px-3">
         {{ config[key]?.label ? config[key].label : capitalizeFirstLetter(key) }}
       </legend>
       <base-model-form-sub
-        [fields]="fields[key]"
+        [fields]="fields[key].fields"
         [config]="config[key]?.fields || {}"
         [form]="form.get(key)"
       ></base-model-form-sub>
     </fieldset>
   </ng-container>
 
-  <ng-container *ngIf="fields[key]?.type && (config[key]?.roles ? user?.hasAllRoles(config[key]?.roles) : true)">
-    <ng-container *ngIf="fields[key]?.isEnum">
+  <ng-container
+    *ngIf="!checkFieldHasFields(fields[key]) && (config[key]?.roles ? user?.hasAllRoles(config[key]?.roles) : true)"
+  >
+    <ng-container *ngIf="fields[key]?.isEnum && !config[key]?.exclude">
       <base-select
         [id]="key"
         [name]="key"
@@ -25,7 +29,7 @@
       ></base-select>
     </ng-container>
 
-    <ng-container *ngIf="!fields[key]?.isEnum">
+    <ng-container *ngIf="!fields[key]?.isEnum && !config[key]?.exclude">
       <ng-container [ngSwitch]="config[key]?.type ? config[key]?.type : fields[key]?.type">
         <ng-container *ngSwitchCase="'String'">
           <ng-container *ngIf="fields[key]?.isList && !config[key]?.exclude">
@@ -72,8 +76,8 @@
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
-            (imageDeleted)="imageChanged.emit()"
-            (imageUploaded)="imageChanged.emit()"
+            (imageDeleted)="imageChanged.emit(key)"
+            (imageUploaded)="imageChanged.emit(key)"
           ></base-upload-image>
         </ng-container>
 
@@ -153,6 +157,34 @@
             [type]="'color'"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [placeholder]="config[key]?.placeholder || ''"
+            [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+          ></base-input>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'URL'">
+          <base-input
+            [id]="key"
+            [name]="key"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [placeholder]="config[key]?.placeholder || ''"
+            [type]="'url'"
+            [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+          ></base-input>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'Email'">
+          <base-input
+            [id]="key"
+            [name]="key"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [placeholder]="config[key]?.placeholder || ''"
+            [type]="'email'"
             [control]="transformToControl(form?.get(key))"
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired

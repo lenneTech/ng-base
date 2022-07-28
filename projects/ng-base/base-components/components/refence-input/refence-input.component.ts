@@ -1,12 +1,13 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { GraphQLRequestType, GraphQLService } from '@lenne.tech/ng-base/shared';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'base-refence-input',
   templateUrl: './refence-input.component.html',
   styleUrls: ['./refence-input.component.scss'],
 })
-export class RefenceInputComponent implements OnInit, OnChanges {
+export class RefenceInputComponent implements OnInit, OnDestroy {
   @Input() id: string;
   @Input() name: string;
   @Input() label?: string;
@@ -24,10 +25,30 @@ export class RefenceInputComponent implements OnInit, OnChanges {
   currentValue: any;
   optionsForTagInput = [];
   selectedElement: HTMLElement;
+  subscription = new Subscription();
 
   constructor(private graphQLService: GraphQLService) {}
 
   async ngOnInit() {
+    this.getReferences();
+
+    this.subscription.add(
+      this.control.valueChanges.subscribe(() => {
+        if (!this.currentValue) {
+          this.setValue();
+        }
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  /**
+   * It gets the references from the GraphQL server and sets the value of the select
+   */
+  getReferences() {
     this.graphQLService
       .graphQl(this.method, {
         fields: this.fields,
@@ -37,15 +58,12 @@ export class RefenceInputComponent implements OnInit, OnChanges {
         if (result) {
           this.objects = result;
           this.setObjectsAsOptions();
-          await this.setValue();
+
+          if (!this.currentValue) {
+            this.setValue();
+          }
         }
       });
-  }
-
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes['control'] && this.objects) {
-      await this.setValue();
-    }
   }
 
   /**
@@ -84,21 +102,16 @@ export class RefenceInputComponent implements OnInit, OnChanges {
    * the objects array is empty, then set the currentValue to the control's value
    */
   setValue() {
-    return new Promise((resolve, reject) => {
-      if (this.control?.value && this.objects) {
-        const foundElement = this.objects.find((e) => e[this.valueField] === this.control.value);
-
-        if (foundElement) {
-          this.currentValue = foundElement[this.textField];
-          resolve(true);
-        } else {
-          this.currentValue = this.control.value;
-          resolve(true);
-        }
-      } else {
-        resolve(true);
+    if (this.control?.value && this.objects?.length > 0) {
+      if (this.control?.value?.id) {
+        this.control.setValue(this.control.value.id);
       }
-    });
+
+      const foundElement = this.objects.find((e) => e[this.valueField] === this.control.value);
+      if (foundElement) {
+        this.currentValue = foundElement[this.textField];
+      }
+    }
   }
 
   /**

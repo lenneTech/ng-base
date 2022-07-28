@@ -1,10 +1,16 @@
-import { GraphQLInputObjectType, GraphQLList, GraphQLNamedType, GraphQLNonNull, GraphQLSchema } from 'graphql';
+import {
+  GraphQLEnumType,
+  GraphQLInputObjectType,
+  GraphQLList,
+  GraphQLNamedType,
+  GraphQLNonNull,
+  GraphQLScalarType,
+  GraphQLSchema,
+} from 'graphql';
 import { GraphQLRequestType } from '../enums/graphql-request-type.enum';
 import { Helper } from './helper.class';
 import { GraphQLType } from './graphql-type.class';
-import { IGraphQLTypeCollection } from '../interfaces/graphql-type-collection.interface';
 import { GraphqlCrudType } from '../interfaces/graphql-crud-type.interface';
-import { cloneDeep } from '@apollo/client/utilities';
 
 /**
  * GraphQL meta
@@ -86,7 +92,7 @@ export class GraphQLMeta {
   getArgs(
     functionName: string,
     options: { cache?: boolean; freeze?: boolean; type?: GraphQLRequestType } = {}
-  ): IGraphQLTypeCollection {
+  ): GraphQLType {
     const { cache, freeze, type } = {
       cache: true,
       freeze: true,
@@ -103,10 +109,10 @@ export class GraphQLMeta {
     }
 
     const func = this.getFunction(functionName, { type });
-    const result = {};
+    const result = new GraphQLType();
     if (func?.args) {
       func.args.forEach((item) => {
-        result[item.name] = this.getDeepType(item.type);
+        result.fields[item.name] = this.getDeepType(item.type);
       });
     }
 
@@ -124,7 +130,7 @@ export class GraphQLMeta {
   getFields(
     functionName: string,
     options: { cache?: boolean; freeze?: boolean; type?: GraphQLRequestType } = {}
-  ): IGraphQLTypeCollection {
+  ): GraphQLType {
     const { cache, freeze, type } = {
       cache: true,
       freeze: true,
@@ -141,7 +147,7 @@ export class GraphQLMeta {
     }
 
     const func = this.getFunction(functionName, options);
-    const result: IGraphQLTypeCollection = this.getDeepType(func.type) as IGraphQLTypeCollection;
+    const result = this.getDeepType(func.type);
 
     // Set cache
     if (freeze) {
@@ -197,26 +203,50 @@ export class GraphQLMeta {
   }
 
   /**
+   * Get (deep) type name
+   */
+  protected getTypeName(type: any) {
+    if (
+      type instanceof GraphQLInputObjectType ||
+      type instanceof GraphQLScalarType ||
+      type instanceof GraphQLEnumType
+    ) {
+      return type.name;
+    } else if (type.type) {
+      return this.getTypeName(type.type);
+    } else if (type.ofType) {
+      return this.getTypeName(type.ofType);
+    } else {
+      return type.name;
+    }
+  }
+
+  /**
    * Get deep type data
    */
-  protected getDeepType(
-    type: any,
-    prepared: WeakMap<any, any> = new WeakMap(),
-    setMetaData = false
-  ): IGraphQLTypeCollection | GraphQLType {
+  protected getDeepType(type: any, prepared: Record<string, any> = {}, setMetaData = false): GraphQLType {
     // Check type
     if (!type) {
       return type;
     }
 
     // Infinite regress protection
-    const preparedObject = {};
+    const typeName = this.getTypeName(type);
+    const graphQLType = GraphQLType.map({
+      type: this.getTypeName(type),
+    });
 
     // Check prepared
     if (typeof type === 'object') {
-      const preparedType = prepared.get(type);
+      const preparedType = prepared[typeName];
+
+      // Work with cached type
       if (preparedType) {
-        const clone = cloneDeep(preparedType);
+        // Create a new object to protect own isXXX information
+        const clone = Object.assign({}, preparedType);
+
+        // But use fields as reference to get future changes via prepared caching
+        clone.fields = preparedType.fields;
 
         // Disable meta flags for sub objects
         if (
@@ -254,28 +284,33 @@ export class GraphQLMeta {
         return clone;
       }
 
-      // Set prepared
-      prepared.set(type, preparedObject);
+      // Set prepared cache for GraphQL types
+      // (type names start with uppercase letters as opposed to property names that start with lowercase letters)
+      if (type.name && type.name[0].toUpperCase() === type.name[0] && !prepared[type.name]) {
+        prepared[type.name] = graphQLType;
+      }
     }
 
     // Search deeper
     if (type.ofType) {
       const ofTypeResult = this.getDeepType(type.ofType, prepared, setMetaData);
-      Object.assign(preparedObject, ofTypeResult);
-      return ofTypeResult;
+      Object.assign(graphQLType, ofTypeResult);
+      return graphQLType;
     }
 
     // Process fields
     if (type._fields) {
-      const result = {};
+      const fields = {};
       for (const [key, value] of Object.entries(type._fields)) {
-        result[key] = this.getDeepType(value, prepared, true);
+        fields[key] = this.getDeepType(value, prepared, true);
       }
-      Object.assign(preparedObject, result);
-      return result;
+
+      // Assign and not replace to preserve updates in the cache
+      Object.assign(graphQLType.fields, fields);
+      return graphQLType;
     }
 
-    // Get type name
+    // Process type
     if (type.type) {
       const typeResult = this.getDeepType(type.type, prepared, setMetaData);
 
@@ -312,27 +347,21 @@ export class GraphQLMeta {
         }
       }
 
-      Object.assign(preparedObject, typeResult);
-      return typeResult;
+      Object.assign(graphQLType, typeResult);
+      return graphQLType;
     }
-
-    // Initialize GraphQLType
-    const graphqlType = GraphQLType.map({
-      type: type.name,
-    });
 
     // Set enum values
     if (!!type._values) {
-      graphqlType.isEnum = true;
+      graphQLType.isEnum = true;
       for (const [key, value] of Object.entries(type._nameLookup)) {
         if (!(value as any).isDeprecated) {
-          graphqlType.validEnums.push(key);
+          graphQLType.validEnums.push(key);
         }
       }
     }
 
     // Finish
-    prepared.set(type, graphqlType);
-    return graphqlType;
+    return graphQLType;
   }
 }

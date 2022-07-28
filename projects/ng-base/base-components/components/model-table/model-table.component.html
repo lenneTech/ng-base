@@ -1,6 +1,6 @@
 <div *ngIf="!selectedId && !createMode">
-  <div class="w-100 d-flex flex-row justify-content-between mb-4">
-    <h2 *ngIf="modelName">
+  <div class="w-100 d-flex flex-row justify-content-between align-items-center mb-4">
+    <h2 class="mb-0" *ngIf="modelName">
       {{ config?.plural ? config?.plural : config?.label ? config?.label : capitalizeFirstLetter(modelName) + 's' }}
     </h2>
     <div class="d-flex align-items-center">

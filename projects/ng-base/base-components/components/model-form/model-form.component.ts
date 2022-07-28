@@ -7,6 +7,7 @@ import {
   GraphQLMetaService,
   GraphQLRequestType,
   GraphQLService,
+  GraphQLType,
 } from '@lenne.tech/ng-base/shared';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { IGraphQLTypeCollection } from '@lenne.tech/ng-base/shared';
@@ -31,7 +32,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   meta: GraphQLMeta;
   form: UntypedFormGroup;
   loading = false;
-  fields: any;
+  fields: Record<string, GraphQLType>;
   operation: string;
   keys: string[] = [];
   user: BasicUser;
@@ -73,8 +74,8 @@ export class ModelFormComponent implements OnInit, OnChanges {
       this.operation = this.id ? 'update' : 'create';
       this.fields = this.meta.getArgs(this.operation + this.capitalizeFirstLetter(this.modelName), {
         type: GraphQLRequestType.MUTATION,
-      });
-      this.fields = this.fields['input'] as any;
+      }).fields;
+      this.fields = this.fields['input'].fields as any;
       this.keys = Object.keys(this.fields);
 
       if (this.logging) {
@@ -126,12 +127,12 @@ export class ModelFormComponent implements OnInit, OnChanges {
           for (const [key, value] of Object.entries(this.config)) {
             // If it not an array
             if (this.config[key]?.patchField && !this.fields[key]?.isList) {
-              this.form.get(key).patchValue(response[this.config[key]?.patchField]?.id);
+              this.form.get(key).setValue(response[this.config[key]?.patchField]?.id);
             }
 
             // If value is an array
             if (this.config[key]?.patchField && this.fields[key]?.isList) {
-              this.form.get(key).patchValue(response[this.config[key]?.patchField]?.map((e) => e?.id));
+              this.form.get(key).setValue(response[this.config[key]?.patchField]?.map((e) => e?.id));
             }
           }
 
@@ -157,14 +158,14 @@ export class ModelFormComponent implements OnInit, OnChanges {
     const requestFields: any = [];
 
     for (const [key, value] of Object.entries(fields)) {
-      if (fields[key]?.type) {
+      if (Object.keys(fields[key]?.fields)?.length === 0) {
         if (!this.config[key]?.patchField) {
           requestFields.push(key);
         } else {
           requestFields.push({ [this.config[key]?.patchField]: ['id'] });
         }
       } else {
-        const subkeys = this.createRequestObject(fields[key] as IGraphQLTypeCollection);
+        const subkeys = this.createRequestObject(fields[key].fields as IGraphQLTypeCollection);
         const resultObject = {};
         resultObject[key] = subkeys;
         requestFields.push(resultObject);
@@ -187,15 +188,15 @@ export class ModelFormComponent implements OnInit, OnChanges {
     const group: any = {};
 
     for (const [key, value] of Object.entries(fields)) {
-      if (value?.type) {
+      if (Object.keys(value?.fields)?.length === 0) {
         group[key] = new UntypedFormControl(
-          value?.type === 'Float' ? null : '',
+          null,
           (this.config[key] && this.config[key]?.required !== undefined ? this.config[key]?.required : value.isRequired)
             ? Validators.required
             : []
         );
       } else {
-        group[key] = this.createForm(fields[key] as IGraphQLTypeCollection);
+        group[key] = this.createForm(fields[key].fields as IGraphQLTypeCollection);
       }
     }
 
@@ -276,6 +277,41 @@ export class ModelFormComponent implements OnInit, OnChanges {
   }
 
   /**
+   * It takes the key of the form control that has changed, gets the value of that form control, creates an object with the
+   * key and value, and then sends that object to the GraphQL server to update the database
+   */
+  imageChanged(key: string) {
+    const data = {};
+    data[key] = this.form.get(key).value;
+
+    if (this.logging) {
+      console.log('ModelFormComponent::imageChanged->body', data);
+    }
+
+    if (this.id) {
+      try {
+        this.graphQLService
+          .graphQl('update' + this.capitalizeFirstLetter(this.modelName), {
+            arguments: { id: this.id, input: data },
+            fields: ['id'],
+            type: GraphQLRequestType.MUTATION,
+          })
+          .subscribe({
+            next: (value) => {
+              if (this.logging) {
+                console.log('ModelFormComponent::imageChanged->success', value);
+              }
+            },
+          });
+      } catch (e) {
+        if (this.logging) {
+          console.log('ModelFormComponent::imageChanged->error', e);
+        }
+      }
+    }
+  }
+
+  /**
    * It takes the form, validates it, and then sends it to the GraphQL server
    *
    * @returns The id of the newly created or updated object.
@@ -311,6 +347,19 @@ export class ModelFormComponent implements OnInit, OnChanges {
           this.config[key]?.exclude
         ) {
           delete data[key];
+        }
+
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          data[key] = Object.keys(data[key])
+            .filter((k) => data[key][k] != null)
+            .reduce((a, k) => ({ ...a, [k]: data[key][k] }), {});
+
+          if (Object.keys(data[key])?.length === 0) {
+            if (this.logging) {
+              console.log('Object is empty from result');
+            }
+            data[key] = null;
+          }
         }
 
         // Set type for graphql method

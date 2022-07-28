@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, UntypedFormControl } from '@angular/forms';
-import { AuthService, BasicUser } from '@lenne.tech/ng-base/shared';
+import { AuthService, BasicUser, GraphQLType } from '@lenne.tech/ng-base/shared';
 
 @Component({
   selector: 'base-model-form-sub',
@@ -8,11 +8,11 @@ import { AuthService, BasicUser } from '@lenne.tech/ng-base/shared';
   styleUrls: ['./model-form-sub.component.scss'],
 })
 export class ModelFormSubComponent implements OnInit {
-  @Input() fields: any;
+  @Input() fields: Record<string, GraphQLType>;
   @Input() form: any;
   @Input() config: any = {};
 
-  @Output() imageChanged = new EventEmitter();
+  @Output() imageChanged = new EventEmitter<string>();
 
   keys: string[] = [];
   user: BasicUser;
@@ -32,6 +32,13 @@ export class ModelFormSubComponent implements OnInit {
 
     // Set user for roles check
     this.user = BasicUser.map(this.authService.currentUser);
+  }
+
+  /**
+   * If the field has fields, return true, otherwise return false.
+   */
+  checkFieldHasFields(field: GraphQLType) {
+    return Object.keys(field.fields)?.length !== 0;
   }
 
   /**

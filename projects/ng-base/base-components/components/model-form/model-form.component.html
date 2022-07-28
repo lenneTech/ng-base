@@ -1,10 +1,10 @@
 <div class="w-100" *ngIf="form">
   <div class="d-flex flex-row justify-content-between mt-3">
-    <h2>
+    <h2 class="mb-0">
       {{ label ? label : capitalizeFirstLetter(modelName) }} {{ operation === 'update' ? 'bearbeiten' : 'erstellen' }}
     </h2>
 
-    <div>
+    <div class="d-flex flex-row align-items-center justify-content-end">
       <button class="btn btn-outline-primary me-2" *ngIf="id && duplicate && !loading" (click)="duplicateObject()">
         Duplizieren
       </button>
@@ -19,7 +19,12 @@
   </div>
 
   <form [formGroup]="form">
-    <base-model-form-sub [fields]="fields" [config]="config" [form]="form"></base-model-form-sub>
+    <base-model-form-sub
+      [fields]="fields"
+      [config]="config"
+      [form]="form"
+      (imageChanged)="imageChanged($event)"
+    ></base-model-form-sub>
 
     <div class="d-flex mt-4" [ngClass]="id && delete ? 'justify-content-between' : 'justify-content-end'">
       <div *ngIf="id && delete">
