@@ -72,8 +72,8 @@ export function apolloOptionsFactory(
       )
     );
   } else {
-    links.push(http);
     links.push(authMiddleware);
+    links.push(http);
   }
 
   return {
