@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from '@lenne.tech/ng-base/shared';
 
 @Component({
   selector: 'base-upload-image',
@@ -28,7 +29,7 @@ export class UploadImageComponent {
   fileUrl: string;
   loading = false;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private authService: AuthService) {}
 
   /**
    * The dragOver function is called when the user drags a file over the dropzone. It prevents the default action of the
@@ -103,7 +104,15 @@ export class UploadImageComponent {
   upload() {
     const data = new FormData();
     data.append('file', this.selectedFile);
-    this.httpClient.post(this.url + this.uploadPath, data).subscribe((result: any) => {
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.authService.token,
+      }),
+    };
+
+    this.httpClient.post(this.url + this.uploadPath, data, httpOptions).subscribe((result: any) => {
       if (result?.id) {
         this.control.setValue(result.id);
         this.imageUploaded.emit(result.id);
@@ -123,7 +132,14 @@ export class UploadImageComponent {
     this.fileUrl = null;
 
     if (id) {
-      this.httpClient.delete(this.url + this.deletePath + id).subscribe((result) => {
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.authService.token,
+        }),
+      };
+
+      this.httpClient.delete(this.url + this.deletePath + id, httpOptions).subscribe((result) => {
         this.selectedFile = null;
         this.fileUrl = null;
         this.control.setValue('');
