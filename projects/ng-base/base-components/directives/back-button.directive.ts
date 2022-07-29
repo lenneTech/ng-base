@@ -1,5 +1,5 @@
 import { Directive, HostListener } from '@angular/core';
-import { NavigationService } from '../services/navigation.service';
+import { NavigationService } from '@lenne.tech/ng-base/shared';
 
 @Directive({
   selector: '[baseBackButton]',

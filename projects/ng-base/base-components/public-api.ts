@@ -5,6 +5,11 @@
 // Module
 export * from './base-components.module';
 
+// Directives
+export * from './directives/sort.directive';
+export * from './directives/back-button.directive';
+export * from './directives/context-menu.directive';
+
 // Components
 export * from './components/input/input.component';
 export * from './components/select/select.component';

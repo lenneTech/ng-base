@@ -16,12 +16,20 @@ import { ModelFormComponent } from './components/model-form/model-form.component
 import { ModelFormSubComponent } from './components/model-form-sub/model-form-sub.component';
 import { UploadImageComponent } from './components/upload-image/upload-image.component';
 import { RefenceInputComponent } from './components/refence-input/refence-input.component';
+import { BackButtonDirective } from './directives/back-button.directive';
+import { SortDirective } from './directives/sort.directive';
+import { ContextMenuDirective } from './directives/context-menu.directive';
 
 // Modules
 const imports = [FormsModule, ReactiveFormsModule, CommonModule];
 
 // Imported and exported elements
 const elements = [
+  // Directives
+  SortDirective,
+  BackButtonDirective,
+  ContextMenuDirective,
+
   // Components
   InputComponent,
   SelectComponent,

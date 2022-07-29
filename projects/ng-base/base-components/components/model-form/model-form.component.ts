@@ -8,9 +8,10 @@ import {
   GraphQLRequestType,
   GraphQLService,
   GraphQLType,
+  CmsService,
+  IGraphQLTypeCollection,
 } from '@lenne.tech/ng-base/shared';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { IGraphQLTypeCollection } from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -43,7 +44,8 @@ export class ModelFormComponent implements OnInit, OnChanges {
     private formsService: FormsService,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cmsService: CmsService
   ) {}
 
   ngOnInit(): void {
@@ -126,13 +128,23 @@ export class ModelFormComponent implements OnInit, OnChanges {
           // Process patchFields for reference input
           for (const [key, value] of Object.entries(this.config)) {
             // If it not an array
-            if (this.config[key]?.patchField && !this.fields[key]?.isList) {
-              this.form.get(key).setValue(response[this.config[key]?.patchField]?.id);
+            if (this.config[key]?.type === 'Reference' && !this.fields[key]?.isList) {
+              if (this.form.get(key)) {
+                this.form
+                  .get(key)
+                  .patchValue(response[this.config[key]?.patchField ? this.config[key]?.patchField : key]?.id);
+              }
             }
 
             // If value is an array
-            if (this.config[key]?.patchField && this.fields[key]?.isList) {
-              this.form.get(key).setValue(response[this.config[key]?.patchField]?.map((e) => e?.id));
+            if (this.config[key]?.type === 'Reference' && this.fields[key]?.isList) {
+              if (this.form.get(key)) {
+                this.form
+                  .get(key)
+                  .patchValue(
+                    response[this.config[key]?.patchField ? this.config[key]?.patchField : key]?.map((e) => e?.id)
+                  );
+              }
             }
           }
 
@@ -158,11 +170,15 @@ export class ModelFormComponent implements OnInit, OnChanges {
     const requestFields: any = [];
 
     for (const [key, value] of Object.entries(fields)) {
+      if (this.config[key]?.exclude !== undefined && this.config[key]?.exclude) {
+        continue;
+      }
+
       if (Object.keys(fields[key]?.fields)?.length === 0) {
-        if (!this.config[key]?.patchField) {
+        if (this.config[key]?.type !== 'Reference') {
           requestFields.push(key);
         } else {
-          requestFields.push({ [this.config[key]?.patchField]: ['id'] });
+          requestFields.push({ [this.config[key]?.patchField ? this.config[key]?.patchField : key]: ['id'] });
         }
       } else {
         const subkeys = this.createRequestObject(fields[key].fields as IGraphQLTypeCollection);
@@ -211,49 +227,22 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * It calls the graphQLService to delete the object with the id of the object that is currently being edited
    */
   deleteObject() {
-    if (confirm('Möchtest du das Objekt wirklich löschen?')) {
-      this.graphQLService
-        .graphQl('delete' + this.capitalizeFirstLetter(this.modelName), {
-          arguments: { id: this.id },
-          fields: ['id'],
-          type: GraphQLRequestType.MUTATION,
-        })
-        .subscribe({
-          next: (value) => {
-            this.finished.emit(null);
-          },
-          error: (err) => {
-            console.error('Error on delete object', err);
-          },
-        });
-    }
+    this.cmsService.deleteObject(this.id, this.modelName).then(() => {
+      this.finished.emit(null);
+    });
   }
 
   /**
    * It sends a GraphQL mutation to the server to duplicate the object
    */
   async duplicateObject() {
-    if (confirm('Möchtest du das Objekt wirklich duplizieren?')) {
-      await this.submit(true);
-      this.graphQLService
-        .graphQl('duplicate' + this.capitalizeFirstLetter(this.modelName), {
-          arguments: { id: this.id },
-          fields: ['id'],
-          type: GraphQLRequestType.MUTATION,
-        })
-        .subscribe({
-          next: (value) => {
-            if (value?.id) {
-              this.router.navigate(['../' + value.id], { relativeTo: this.route });
-            } else {
-              this.finished.emit(null);
-            }
-          },
-          error: (err) => {
-            console.error('Error on duplicate object', err);
-          },
-        });
-    }
+    this.cmsService.duplicateObject(this.id, this.modelName).then((value) => {
+      if (value?.id) {
+        this.router.navigate(['../' + value.id], { relativeTo: this.route });
+      } else {
+        this.finished.emit(null);
+      }
+    });
   }
 
   /**
@@ -263,7 +252,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * @returns The first letter of the string is being capitalized and the rest of the string is being returned.
    */
   capitalizeFirstLetter(value: string) {
-    return value.charAt(0).toUpperCase() + value.slice(1);
+    return this.cmsService.capitalizeFirstLetter(value);
   }
 
   /**

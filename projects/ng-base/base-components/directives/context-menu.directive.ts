@@ -58,7 +58,6 @@ export class ContextMenuDirective implements OnInit {
         // Get valid clicked structureElement
         const clickedElement = (event?.target as HTMLElement)?.closest(this.selectors);
         if (clickedElement) {
-          // Set clicked structureElement
           this.clickedElement = clickedElement;
 
           setTimeout(() => {

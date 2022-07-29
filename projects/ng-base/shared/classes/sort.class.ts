@@ -4,10 +4,6 @@ export class Sort {
 
   /**
    * Sorts clicked column
-   *
-   * @param property
-   * @param order
-   * @param type
    */
   public startSort(property: string, order: string, type = '') {
     if (order === 'desc') {
@@ -26,9 +22,6 @@ export class Sort {
 
   /**
    * Sorts dates
-   *
-   * @param a
-   * @param b
    */
   private sortDate(a: Date, b: Date) {
     if (a < b) {

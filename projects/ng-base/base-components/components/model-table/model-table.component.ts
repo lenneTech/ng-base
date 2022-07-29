@@ -1,5 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { GraphQLMeta, GraphQLMetaService, GraphQLRequestType, GraphQLService } from '@lenne.tech/ng-base/shared';
+import {
+  GraphQLMeta,
+  GraphQLMetaService,
+  GraphQLRequestType,
+  GraphQLService,
+  CmsService,
+} from '@lenne.tech/ng-base/shared';
 
 @Component({
   selector: 'base-model-table',
@@ -17,6 +23,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
   @Input() duplicate = true;
   @Input() config: any = {};
   @Input() fieldConfig: any = {};
+  uniqueField = 'id';
 
   @Output() idSelected = new EventEmitter<string>();
   @Output() createModeChanged = new EventEmitter<boolean>();
@@ -36,7 +43,11 @@ export class ModelTableComponent implements OnInit, OnChanges {
   selectedId = '';
   queryName = null;
 
-  constructor(private graphQLMetaService: GraphQLMetaService, private graphQLService: GraphQLService) {}
+  constructor(
+    private graphQLMetaService: GraphQLMetaService,
+    private graphQLService: GraphQLService,
+    private cmsService: CmsService
+  ) {}
 
   ngOnInit(): void {
     this.graphQLMetaService.getMeta().subscribe((meta) => {
@@ -161,12 +172,27 @@ export class ModelTableComponent implements OnInit, OnChanges {
   }
 
   /**
+   * It calls the duplicateObject function in the cmsService, passing in the id of the object to be duplicated and the
+   * modelName of the object
+   */
+  async duplicateObject(id: string) {
+    await this.cmsService.duplicateObject(id, this.modelName);
+    this.loadObjects(this.availableFields);
+  }
+
+  /**
+   * It calls the deleteObject function in the cmsService, passing in the id of the object to delete and the name of the
+   * model
+   */
+  async deleteObject(id: string) {
+    await this.cmsService.deleteObject(id, this.modelName);
+    this.loadObjects(this.availableFields);
+  }
+
+  /**
    * It takes a string, capitalizes the first letter, and returns the modified string
-   *
-   * @param value - The string to capitalize.
-   * @returns The first letter of the string is being capitalized and the rest of the string is being returned.
    */
   capitalizeFirstLetter(value: string) {
-    return value.charAt(0).toUpperCase() + value.slice(1);
+    return this.cmsService.capitalizeFirstLetter(value);
   }
 }

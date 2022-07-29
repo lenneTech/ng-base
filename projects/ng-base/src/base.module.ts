@@ -3,7 +3,6 @@ import { HttpLink } from 'apollo-angular/http';
 import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 
 import { apolloOptionsFactory } from './factories/apollo-options.factory';
-import { ContextMenuDirective } from './directives/context-menu.directive';
 import { LazyLoadDirective } from './directives/lazy-load.directive';
 import { MatchHeightDirective } from './directives/match-height.directive';
 import { ResizableDirective } from './directives/resizable.directive';
@@ -16,7 +15,6 @@ import { HttpClientModule } from '@angular/common/http';
 // Imported and exported elements
 const elements = [
   // Directives
-  ContextMenuDirective,
   LazyLoadDirective,
   MatchHeightDirective,
   ResizableDirective,

@@ -1,12 +1,12 @@
 import { Directive, ElementRef, HostListener, Inject, Input, Renderer2 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Sort } from '../classes/sort.class';
+import { Sort } from '@lenne.tech/ng-base/shared';
 
 @Directive({
   selector: '[baseSort]',
 })
 export class SortDirective {
-  @Input() lcSort: Array<any>;
+  @Input() baseSort: Array<any>;
   constructor(private renderer: Renderer2, private targetElem: ElementRef, @Inject(DOCUMENT) document: Document) {}
 
   /**
@@ -31,12 +31,12 @@ export class SortDirective {
     const property = elem.getAttribute('data-name');
 
     if (order === 'desc') {
-      this.lcSort.sort(sort.startSort(property, order, type));
+      this.baseSort.sort(sort.startSort(property, order, type));
       elem.setAttribute('data-order', 'asc');
       elem.classList.remove('desc');
       elem.classList.add('asc');
     } else {
-      this.lcSort.sort(sort.startSort(property, order, type));
+      this.baseSort.sort(sort.startSort(property, order, type));
       elem.setAttribute('data-order', 'desc');
       elem.classList.remove('asc');
       elem.classList.add('desc');

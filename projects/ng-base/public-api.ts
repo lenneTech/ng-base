@@ -6,7 +6,6 @@
 export * from './src/base.module';
 
 // Directives
-export * from './src/directives/context-menu.directive';
 export * from './src/directives/lazy-load.directive';
 export * from './src/directives/match-height.directive';
 export * from './src/directives/resizable.directive';
