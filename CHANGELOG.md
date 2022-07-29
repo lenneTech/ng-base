@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.0.5](https://github.com/lenneTech/ng-base/compare/v14.0.4...v14.0.5) (2022-07-29)
+
 ### [14.0.4](https://github.com/lenneTech/ng-base/compare/v14.0.3...v14.0.4) (2022-07-28)
 
 ### Bug Fixes
