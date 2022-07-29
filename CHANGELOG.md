@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.1.0](https://github.com/lenneTech/ng-base/compare/v14.0.5...v14.1.0) (2022-07-29)
+
+### Features
+
+- Add sort and context menu for cms table ([7b330c2](https://github.com/lenneTech/ng-base/commit/7b330c23f74da1f184e326c1e2fc477db0d625a1))
+
 ### [14.0.5](https://github.com/lenneTech/ng-base/compare/v14.0.4...v14.0.5) (2022-07-29)
 
 ### [14.0.4](https://github.com/lenneTech/ng-base/compare/v14.0.3...v14.0.4) (2022-07-28)
