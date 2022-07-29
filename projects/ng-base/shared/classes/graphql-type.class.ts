@@ -5,6 +5,7 @@ import { Standard } from './standard.class';
  */
 export class GraphQLType extends Standard {
   type = '';
+  fields: Record<string, GraphQLType> = {};
   isRequired = false;
   isItemRequired = false;
   isList = false;

@@ -130,7 +130,7 @@ export class TagsComponent {
   filterOptions(): { text: string; value: string }[] {
     return this.options
       ? this.options.filter(
-          (e) => (!this.inputValue || e?.text?.includes(this.inputValue)) && !this.control.value.includes(e.value)
+          (e) => (!this.inputValue || e?.text?.includes(this.inputValue)) && !this.control.value?.includes(e.value)
         )
       : [];
   }

@@ -15,12 +15,12 @@
 
     <ng-container *ngIf="selectedFile && !control?.value && !loading">
       <img [src]="fileUrl" *ngIf="selectedFile" />
-      <button class="btn btn-danger" (click)="deleteFile()">Löschen</button>
+      <button class="btn btn-danger" type="button" (click)="deleteFile()">Löschen</button>
     </ng-container>
 
     <ng-container *ngIf="control?.value && !loading">
       <img [src]="url + path + control?.value" />
-      <button class="btn btn-danger" (click)="deleteFile(control?.value)">Löschen</button>
+      <button class="btn btn-danger" type="button" (click)="deleteFile(control?.value)">Löschen</button>
     </ng-container>
 
     <ng-container *ngIf="!selectedFile && !control?.value && !loading">
