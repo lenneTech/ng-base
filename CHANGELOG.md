@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.1.1](https://github.com/lenneTech/ng-base/compare/v14.1.0...v14.1.1) (2022-08-02)
+
+### Bug Fixes
+
+- Check for localstorage in auth.service ([b78848f](https://github.com/lenneTech/ng-base/commit/b78848f2c38ca8cc8f12fc08377e3f205962eab8))
+
 ## [14.1.0](https://github.com/lenneTech/ng-base/compare/v14.0.5...v14.1.0) (2022-07-29)
 
 ### Features
