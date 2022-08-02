@@ -42,6 +42,10 @@ export class AuthService {
   // #################################################################
 
   get currentUser(): BasicUser {
+    if (!localStorage) {
+      return undefined;
+    }
+
     return this._currentUser.value;
   }
 
@@ -59,6 +63,10 @@ export class AuthService {
   // #################################################################
 
   get token(): string {
+    if (!localStorage) {
+      return undefined;
+    }
+
     return this._token.value;
   }
 
