@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.2.0](https://github.com/lenneTech/ng-base/compare/v14.1.1...v14.2.0) (2022-08-03)
+
+### Features
+
+- Support webp and valid extensions in cms ([434312d](https://github.com/lenneTech/ng-base/commit/434312de4405327c98aaa0d8587e7687b3644795))
+
 ### [14.1.1](https://github.com/lenneTech/ng-base/compare/v14.1.0...v14.1.1) (2022-08-02)
 
 ### Bug Fixes
