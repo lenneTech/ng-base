@@ -14,7 +14,7 @@ export class UploadImageComponent {
   @Input() supportText = 'Supports: JPEG, JPG, PNG';
   @Input() required = false;
   @Input() dragText = 'Drag & Drop';
-  @Input() validExtensions = ['image/jpeg', 'image/jpg', 'image/png'];
+  @Input() validExtensions = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   @Input() control: any;
   @Input() url = 'http://localhost:3000';
   @Input() uploadPath = '/files/upload';

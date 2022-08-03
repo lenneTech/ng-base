@@ -72,7 +72,7 @@
             [deletePath]="config[key]?.deletePath || '/files/'"
             [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
             [dragText]="config[key]?.dragText || 'Drag & Drop'"
-            [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png']"
+            [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']"
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "

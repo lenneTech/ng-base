@@ -30,7 +30,7 @@
 
       <span class="header">{{ dragText }}</span>
       <span class="header">or <span class="button" (click)="fileInput.click()">browse</span></span>
-      <input type="file" (change)="selectFile($event)" hidden #fileInput />
+      <input type="file" (change)="selectFile($event)" [attr.accept]="validExtensions?.join(',')" hidden #fileInput />
       <span class="support">{{ supportText }}</span>
     </ng-container>
   </div>
