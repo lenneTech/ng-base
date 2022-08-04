@@ -236,9 +236,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * It sends a GraphQL mutation to the server to duplicate the object
    */
   async duplicateObject() {
-    this.cmsService.duplicateObject(this.id, this.modelName).then((value) => {
+    this.cmsService.duplicateObject(this.id, this.modelName).then(async (value) => {
       if (value?.id) {
-        this.router.navigate(['../' + value.id], { relativeTo: this.route });
+        await this.router.navigate(['../' + value.id], { relativeTo: this.route });
+        this.init();
       } else {
         this.finished.emit(null);
       }
