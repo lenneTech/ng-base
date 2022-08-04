@@ -68,10 +68,14 @@ export class ModelFormComponent implements OnInit, OnChanges {
   }
 
   /**
-   * > If the model name and meta data are present, set the operation to update or create, get the fields from the meta
-   * data, create the form, and if the value is present, patch the form with the value
+   * > If the model name and metadata are present, set the operation to update or create, get the fields from the
+   * metadata, create the form, and if the value is present, patch the form with the value
    */
-  init() {
+  init(id?: string) {
+    if (id) {
+      this.id = id;
+    }
+
     if (this.modelName && this.meta) {
       this.operation = this.id ? 'update' : 'create';
       this.fields = this.meta.getArgs(this.operation + this.capitalizeFirstLetter(this.modelName), {
@@ -239,7 +243,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
     this.cmsService.duplicateObject(this.id, this.modelName).then(async (value) => {
       if (value?.id) {
         await this.router.navigate(['../' + value.id], { relativeTo: this.route });
-        this.init();
+        this.init(value.id);
       } else {
         this.finished.emit(null);
       }
