@@ -24,6 +24,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   @Input() label: string;
   @Input() id: string | null;
   @Input() delete = true;
+  @Input() onlyUpdateMode = false;
   @Input() duplicate = false;
   @Input() logging = false;
   @Input() config: any = {};
@@ -62,7 +63,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['modelName'] || changes['value']) {
+    if (changes['modelName'] || changes['id']) {
       this.init();
     }
   }
@@ -76,6 +77,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
       this.id = id;
     }
 
+    if (!this.id && this.onlyUpdateMode) {
+      return;
+    }
+
     if (this.modelName && this.meta) {
       this.operation = this.id ? 'update' : 'create';
       this.fields = this.meta.getArgs(this.operation + this.capitalizeFirstLetter(this.modelName), {
@@ -85,6 +90,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
       this.keys = Object.keys(this.fields);
 
       if (this.logging) {
+        console.log('ModelFormComponent::init->id', this.id);
         console.log('ModelFormComponent::init->fields', this.fields);
         console.log('ModelFormComponent::init->keys', this.keys);
       }
