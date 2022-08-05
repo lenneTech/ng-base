@@ -63,14 +63,9 @@ export class ModelFormComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // Reinit form for new model
-    if (changes['modelName']) {
+    // Reinit form for new model or load and patch form with new id
+    if (changes['modelName'] || changes['id']) {
       this.init();
-    }
-
-    // Load and patch form with new id
-    if (changes['id']) {
-      this.getObjectById(this.id);
     }
   }
 
@@ -122,6 +117,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * @param id - The id of the object to be loaded
    */
   getObjectById(id: string) {
+    if (!id) {
+      return;
+    }
+
     if (this.logging) {
       console.log('ModelFormComponent::getObjectById->id', id);
       console.log('ModelFormComponent::getObjectById->requestFields', this.createRequestObject(this.fields));
