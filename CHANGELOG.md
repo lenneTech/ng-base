@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.2.4](https://github.com/lenneTech/ng-base/compare/v14.2.3...v14.2.4) (2022-08-05)
+
+### Bug Fixes
+
+- Fix wrong init handling with id in form component ([c77a2bf](https://github.com/lenneTech/ng-base/commit/c77a2bf7e86a3a6c332e82481e138b562653642e))
+
 ### [14.2.3](https://github.com/lenneTech/ng-base/compare/v14.2.2...v14.2.3) (2022-08-05)
 
 ### Bug Fixes
