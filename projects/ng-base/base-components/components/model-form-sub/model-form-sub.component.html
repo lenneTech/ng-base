@@ -72,6 +72,8 @@
             [deletePath]="config[key]?.deletePath || '/files/'"
             [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
             [dragText]="config[key]?.dragText || 'Drag & Drop'"
+            [preButtonText]="config[key]?.preButtonText || 'or'"
+            [buttonText]="config[key]?.buttonText || 'browse'"
             [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']"
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
@@ -86,6 +88,7 @@
             [id]="key"
             [name]="key"
             [isList]="fields[key]?.isList"
+            [search]="config[key]?.searchable ?? true"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [control]="transformToControl(form?.get(key))"
             [method]="config[key]?.method || 'find'"

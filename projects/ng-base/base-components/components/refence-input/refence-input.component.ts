@@ -12,6 +12,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
   @Input() name: string;
   @Input() label?: string;
   @Input() isList = false;
+  @Input() search = true;
   @Input() placeholder?: string = '';
   @Input() autocomplete?: string;
   @Input() tabIndex?: number;

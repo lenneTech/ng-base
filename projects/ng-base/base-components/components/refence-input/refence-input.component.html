@@ -2,7 +2,7 @@
   <div class="form-group mb-3">
     <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
 
-    <div class="position-relative">
+    <div class="position-relative" *ngIf="search">
       <input [formControl]="control" hidden />
       <input
         [id]="id"
@@ -23,6 +23,24 @@
           {{ object[textField] }}
         </div>
       </div>
+    </div>
+
+    <div *ngIf="!search">
+      <select
+        [id]="id"
+        [name]="name"
+        class="form-select"
+        [attr.aria-label]="placeholder"
+        [formControl]="control"
+        [required]="required"
+        [tabIndex]="tabIndex ?? null"
+        [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+      >
+        <option [ngValue]="null" selected>{{ placeholder }}</option>
+        <option *ngFor="let object of objects" [ngValue]="object[valueField]">
+          {{ object[textField] }}
+        </option>
+      </select>
     </div>
 
     <div

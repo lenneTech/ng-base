@@ -42,6 +42,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
   availableFields: string[] = [];
   selectedId = '';
   queryName = null;
+  camelModelName: string;
 
   constructor(
     private graphQLMetaService: GraphQLMetaService,
@@ -85,16 +86,23 @@ export class ModelTableComponent implements OnInit, OnChanges {
    */
   init() {
     this.availableFields = [];
-
+    this.camelModelName = this.kebabToCamelCase(this.modelName);
     // Set query name
     if (!this.config?.queryName) {
-      this.queryName = 'find' + this.capitalizeFirstLetter(this.modelName) + 's';
+      this.queryName = 'find' + this.capitalizeFirstLetter(this.camelModelName) + 's';
     } else {
       this.queryName = this.config?.queryName;
     }
 
     if (this.config?.tableFields) {
       this.tableFields = this.config.tableFields;
+    }
+
+    if (this.logging) {
+      console.log('ModelTableComponent::init->modelName', this.modelName);
+      console.log('ModelTableComponent::init->camelModelName', this.camelModelName);
+      console.log('ModelTableComponent::init->queryName', this.queryName);
+      console.log('ModelTableComponent::init->tableFields', this.tableFields);
     }
 
     const possibleFields = this.meta.getFields(this.queryName).fields;
@@ -176,7 +184,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
    * modelName of the object
    */
   async duplicateObject(id: string) {
-    await this.cmsService.duplicateObject(id, this.modelName);
+    await this.cmsService.duplicateObject(id, this.camelModelName);
     this.loadObjects(this.availableFields);
   }
 
@@ -185,7 +193,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
    * model
    */
   async deleteObject(id: string) {
-    await this.cmsService.deleteObject(id, this.modelName);
+    await this.cmsService.deleteObject(id, this.camelModelName);
     this.loadObjects(this.availableFields);
   }
 
@@ -194,5 +202,12 @@ export class ModelTableComponent implements OnInit, OnChanges {
    */
   capitalizeFirstLetter(value: string) {
     return this.cmsService.capitalizeFirstLetter(value);
+  }
+
+  /**
+   * Kebab to camel case string
+   */
+  kebabToCamelCase(str: string) {
+    return str.replace(/-./g, (match) => match[1].toUpperCase());
   }
 }

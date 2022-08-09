@@ -25,14 +25,14 @@
           <a
             class="nav-link"
             aria-current="page"
-            [routerLink]="(id ? '../../' : '../') + type?.name?.toLowerCase()"
-            [ngClass]="{ active: type?.name?.toLowerCase() === this.modelName?.toLowerCase() }"
+            [routerLink]="(id ? '../../' : '../') + toKebabCase(type?.name)"
+            [ngClass]="{ active: toKebabCase(type?.name) === toKebabCase(this.modelName) }"
           >
             {{
-              moduleConfig?.modelConfig[type?.name?.toLowerCase()]?.plural
-                ? moduleConfig?.modelConfig[type?.name?.toLowerCase()]?.plural
-                : moduleConfig?.modelConfig[type?.name?.toLowerCase()]?.label
-                ? moduleConfig?.modelConfig[type?.name?.toLowerCase()]?.label
+              moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.plural
+                ? moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.plural
+                : moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.label
+                ? moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.label
                 : type.name + 's'
             }}
           </a>
@@ -44,8 +44,8 @@
   <div class="sidebar-content">
     <div class="p-5 mb-3">
       <base-model-table
-        [config]="moduleConfig?.modelConfig[modelName?.toLowerCase()]"
-        [fieldConfig]="moduleConfig?.fieldConfig[modelName?.toLowerCase()] || {}"
+        [config]="moduleConfig?.modelConfig[camelModelName]"
+        [fieldConfig]="moduleConfig?.fieldConfig[camelModelName] || {}"
         [modelName]="modelName"
         [logging]="moduleConfig?.logging"
         [objectId]="id !== 'neu' ? id : ''"

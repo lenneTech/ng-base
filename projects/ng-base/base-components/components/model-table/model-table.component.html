@@ -1,7 +1,9 @@
 <div *ngIf="!selectedId && !createMode">
   <div class="w-100 d-flex flex-row justify-content-between align-items-center mb-4">
     <h2 class="mb-0" *ngIf="modelName">
-      {{ config?.plural ? config?.plural : config?.label ? config?.label : capitalizeFirstLetter(modelName) + 's' }}
+      {{
+        config?.plural ? config?.plural : config?.label ? config?.label : capitalizeFirstLetter(camelModelName) + 's'
+      }}
     </h2>
     <div class="d-flex align-items-center">
       <button class="btn btn-primary" (click)="createNewObject()" *ngIf="create">Erstellen</button>
@@ -35,7 +37,11 @@
               {{ object[field] | date: tableFields[field]?.dateFormat }} Uhr
             </ng-container>
 
-            <ng-container *ngIf="!tableFields[field]?.dateFormat">
+            <ng-container *ngIf="tableFields[field]?.enumValues">
+              {{ tableFields[field]?.enumValues[object[field]]?.text }}
+            </ng-container>
+
+            <ng-container *ngIf="!tableFields[field]?.dateFormat && !tableFields[field]?.enumValues">
               {{ object[field] }}
             </ng-container>
           </td>
@@ -58,7 +64,7 @@
 <div class="w-100" *ngIf="selectedId || createMode">
   <button class="btn btn-outline-primary mb-3" (click)="selectId('')">Zurück</button>
   <base-model-form
-    [modelName]="modelName"
+    [modelName]="camelModelName"
     [label]="config?.label"
     [config]="fieldConfig"
     [logging]="logging"

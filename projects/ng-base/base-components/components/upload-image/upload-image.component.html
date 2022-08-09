@@ -29,9 +29,11 @@
       </div>
 
       <span class="header">{{ dragText }}</span>
-      <span class="header">or <span class="button" (click)="fileInput.click()">browse</span></span>
+      <span class="header"
+        >{{ preButtonText }} <span class="button" (click)="fileInput.click()">{{ buttonText }}</span></span
+      >
       <input type="file" (change)="selectFile($event)" [attr.accept]="validExtensions?.join(',')" hidden #fileInput />
-      <span class="support">{{ supportText }}</span>
+      <span class="support" [innerText]="supportText"></span>
     </ng-container>
   </div>
 

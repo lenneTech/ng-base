@@ -66,4 +66,11 @@ export class CmsService {
   capitalizeFirstLetter(value: string) {
     return value.charAt(0).toUpperCase() + value.slice(1);
   }
+
+  /**
+   * Transform first letter to lowercase
+   */
+  lowerCaseFirstLetter(value: string) {
+    return value.charAt(0).toLowerCase() + value.slice(1);
+  }
 }

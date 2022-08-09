@@ -84,6 +84,15 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
     if (this.modelName && this.meta) {
       this.operation = this.id ? 'update' : 'create';
+
+      if (this.logging) {
+        console.log('ModelFormComponent::init->operation', this.operation);
+        console.log(
+          'ModelFormComponent::init->meta.getArgs',
+          this.operation + this.capitalizeFirstLetter(this.modelName)
+        );
+      }
+
       this.fields = this.meta.getArgs(this.operation + this.capitalizeFirstLetter(this.modelName), {
         type: GraphQLRequestType.MUTATION,
       }).fields;

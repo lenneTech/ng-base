@@ -1,5 +1,12 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { AuthService, BasicUser, GraphqlCrudType, GraphQLMeta, GraphQLMetaService } from '@lenne.tech/ng-base/shared';
+import {
+  AuthService,
+  BasicUser,
+  CmsService,
+  GraphqlCrudType,
+  GraphQLMeta,
+  GraphQLMetaService,
+} from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BASE_CMS_MODULE_CONFIG, BaseCMSModuleConfig } from '../../interfaces/base-cms-module-config.interface';
 import { Subscription } from 'rxjs';
@@ -12,6 +19,7 @@ import { Subscription } from 'rxjs';
 export class BaseCmsComponent implements OnInit, OnDestroy {
   meta: GraphQLMeta;
   modelName: string;
+  camelModelName: string;
   id: string;
   types: GraphqlCrudType[] = [];
   subscription = new Subscription();
@@ -21,7 +29,8 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
     private graphQLMetaService: GraphQLMetaService,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cmsService: CmsService
   ) {
     this.subscription.add(
       this.route.params.subscribe((value) => {
@@ -30,9 +39,10 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
 
           if (exclude !== null && !exclude) {
             this.modelName = value['modelName'];
+            this.camelModelName = this.toCamelCase(this.modelName);
           } else {
             this.init().then((types: GraphqlCrudType[]) => {
-              this.router.navigate(['../' + types[0].name.toLowerCase()], { relativeTo: this.route });
+              this.router.navigate(['../' + this.toKebabCase(types[0].name)], { relativeTo: this.route });
             });
           }
         }
@@ -64,6 +74,7 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
 
         if (this.route.snapshot?.params?.['modelName']) {
           this.modelName = this.route.snapshot?.params?.['modelName'];
+          this.camelModelName = this.toCamelCase(this.modelName);
         }
 
         if (this.route.snapshot?.params?.['id']) {
@@ -73,7 +84,19 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
         const types = meta.getTypes();
 
         // Check for excluded types
-        const filteredTypes = types.filter((e) => !this.moduleConfig?.modelConfig[e.name.toLowerCase()]?.exclude);
+        let filteredTypes = types.filter((e) => !this.moduleConfig?.modelConfig[e.name.toLowerCase()]?.exclude);
+
+        // Sort types
+        filteredTypes = filteredTypes.sort((a, b) => {
+          return (
+            (this.moduleConfig?.modelConfig[a.name.toLowerCase()]?.order
+              ? this.moduleConfig?.modelConfig[a.name.toLowerCase()]?.order
+              : 99) -
+            (this.moduleConfig?.modelConfig[b.name.toLowerCase()]?.order
+              ? this.moduleConfig?.modelConfig[b.name.toLowerCase()]?.order
+              : 99)
+          );
+        });
 
         // Check for restricted types
         this.types = filteredTypes.filter((e) => {
@@ -92,12 +115,14 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
 
         if (this.moduleConfig?.logging) {
           console.log('BaseCmsComponent::init->types', this.types);
+          console.log('BaseCmsComponent::init->camelModelName', this.camelModelName);
+          console.log('BaseCmsComponent::init->fieldConfig', this.moduleConfig?.fieldConfig);
         }
 
         resolve(this.types);
 
         if (!this.modelName && this.types) {
-          this.router.navigate(['./' + this.types[0].name.toLowerCase()], { relativeTo: this.route });
+          this.router.navigate(['./' + this.toKebabCase(this.types[0].name)], { relativeTo: this.route });
         }
       });
     });
@@ -110,7 +135,7 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
    */
   getTypeByModelName() {
     if (this.modelName && this.types) {
-      return this.types.find((e) => e.name.toLowerCase() === this.modelName.toLowerCase());
+      return this.types.find((e) => this.toKebabCase(e.name) === this.toKebabCase(this.modelName));
     } else {
       return null;
     }
@@ -177,5 +202,26 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
     } else {
       this.router.navigate(['..'], { relativeTo: this.route });
     }
+  }
+
+  /**
+   * Transform string to kebab case
+   */
+  toKebabCase(str: string) {
+    return str?.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+  }
+
+  /**
+   * Transform string to camel case
+   */
+  toCamelCase(str: string) {
+    return str?.replace(/-./g, (match) => match[1].toUpperCase());
+  }
+
+  /**
+   * Transform first letter to lower case
+   */
+  lowerCaseFirstLetter(value: string) {
+    return this.cmsService.lowerCaseFirstLetter(value);
   }
 }
