@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
  * Truncate string with ellipses
  */
 @Pipe({
-  name: 'ltEllipses',
+  name: 'baseEllipses',
 })
 export class EllipsesPipe implements PipeTransform {
   transform(value: string, limit: number): string {

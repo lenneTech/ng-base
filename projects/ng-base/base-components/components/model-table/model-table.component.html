@@ -42,7 +42,7 @@
             </ng-container>
 
             <ng-container *ngIf="!tableFields[field]?.dateFormat && !tableFields[field]?.enumValues">
-              {{ object[field] }}
+              {{ object[field] | baseEllipses: 60 }}
             </ng-container>
           </td>
         </tr>

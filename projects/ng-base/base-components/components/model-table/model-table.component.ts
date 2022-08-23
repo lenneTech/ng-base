@@ -138,10 +138,17 @@ export class ModelTableComponent implements OnInit, OnChanges {
    * @param fields - string[] - The fields you want to load from the database.
    */
   loadObjects(fields: string[]) {
+    const requestFields = [...fields];
+    const idInFields = requestFields.find((e) => e === 'id');
+
+    if (!idInFields) {
+      requestFields.push('id');
+    }
+
     this.objects = [];
     this.graphQLService
       .graphQl(this.queryName, {
-        fields,
+        fields: requestFields,
         type: GraphQLRequestType.QUERY,
       })
       .subscribe({

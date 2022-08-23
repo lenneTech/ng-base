@@ -5,13 +5,19 @@
     </h2>
 
     <div class="d-flex flex-row align-items-center justify-content-end">
-      <button class="btn btn-outline-primary me-2" *ngIf="id && duplicate && !loading" (click)="duplicateObject()">
+      <button class="btn btn-outline-primary me-2" *ngIf="id && duplicate && !_loading" (click)="duplicateObject()">
         Duplizieren
       </button>
-      <button class="btn btn-primary" type="button" (click)="submit(false)" *ngIf="!loading">
+      <button
+        class="btn btn-primary"
+        type="button"
+        [disabled]="!form.touched && !form.dirty"
+        (click)="submit(false)"
+        *ngIf="!_loading"
+      >
         {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}
       </button>
-      <button class="btn btn-primary" type="button" disabled *ngIf="loading">
+      <button class="btn btn-primary" type="button" disabled *ngIf="_loading">
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}...
       </button>
@@ -31,10 +37,16 @@
         <button class="btn btn-danger" type="button" (click)="deleteObject()">Löschen</button>
       </div>
       <div>
-        <button class="btn btn-primary" type="button" (click)="submit(false)" *ngIf="!loading">
+        <button
+          class="btn btn-primary"
+          type="button"
+          [disabled]="!form.touched && !form.dirty"
+          (click)="submit(false)"
+          *ngIf="!_loading"
+        >
           {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}
         </button>
-        <button class="btn btn-primary" type="button" disabled *ngIf="loading">
+        <button class="btn btn-primary" type="button" disabled *ngIf="_loading">
           <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}...
         </button>

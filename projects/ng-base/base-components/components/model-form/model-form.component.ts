@@ -10,6 +10,8 @@ import {
   GraphQLType,
   CmsService,
   IGraphQLTypeCollection,
+  ToastService,
+  ToastType,
 } from '@lenne.tech/ng-base/shared';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -33,11 +35,21 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
   meta: GraphQLMeta;
   form: UntypedFormGroup;
-  loading = false;
+  _loading = false;
   fields: Record<string, GraphQLType>;
   operation: string;
   keys: string[] = [];
   user: BasicUser;
+
+  set loading(value: boolean) {
+    if (!value) {
+      setTimeout(() => {
+        this._loading = value;
+      }, 400);
+    } else {
+      this._loading = value;
+    }
+  }
 
   constructor(
     private graphQLMetaService: GraphQLMetaService,
@@ -46,7 +58,8 @@ export class ModelFormComponent implements OnInit, OnChanges {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private cmsService: CmsService
+    private cmsService: CmsService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -229,12 +242,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
     for (const [key, value] of Object.entries(fields)) {
       if (Object.keys(value?.fields)?.length === 0) {
-        group[key] = new UntypedFormControl(
-          null,
-          (this.config[key] && this.config[key]?.required !== undefined ? this.config[key]?.required : value.isRequired)
-            ? Validators.required
-            : []
-        );
+        group[key] = new UntypedFormControl(null, this.processValidators(this.config[key], value));
       } else {
         group[key] = this.createForm(fields[key].fields as IGraphQLTypeCollection);
       }
@@ -245,6 +253,29 @@ export class ModelFormComponent implements OnInit, OnChanges {
     }
 
     return new UntypedFormGroup(group);
+  }
+
+  /**
+   * Process form validators for control
+   */
+  processValidators(config: any, value: IGraphQLTypeCollection | GraphQLType) {
+    const validators = [];
+
+    if (config) {
+      if (config?.required !== undefined ? config?.required : value.isRequired) {
+        validators.push(Validators.required);
+      }
+
+      if (config?.type === 'Email') {
+        validators.push(Validators.email);
+      }
+
+      if (config?.type === 'Password') {
+        validators.push(Validators.min(6));
+      }
+    }
+
+    return validators;
   }
 
   /**
@@ -339,14 +370,14 @@ export class ModelFormComponent implements OnInit, OnChanges {
       if (this.form.invalid && !secret) {
         this.formsService.validateAllFormFields(this.form as any);
         this.loading = false;
-        reject();
+        resolve(null);
         return;
       }
 
       if (this.operation === 'update' && !this.id) {
         console.error('ID is missing for update!');
         this.loading = false;
-        reject();
+        resolve(null);
         return;
       }
 
@@ -397,6 +428,13 @@ export class ModelFormComponent implements OnInit, OnChanges {
             if (!secret) {
               this.loading = false;
               this.finished.emit(null);
+              this.toastService.show({
+                id: this.modelName + '-success',
+                type: ToastType.SUCCESS,
+                title: 'Erfolgreich',
+                description:
+                  this.label + ' wurde erfolgreich ' + (this.operation === 'create' ? 'erstellt.' : 'aktualisiert.'),
+              });
             }
 
             resolve(value);
@@ -405,6 +443,17 @@ export class ModelFormComponent implements OnInit, OnChanges {
             if (!secret) {
               console.error('Failed on ' + this.operation, err);
               this.loading = false;
+
+              this.toastService.show({
+                id: this.modelName + '-success',
+                type: ToastType.ERROR,
+                description:
+                  'Beim ' +
+                  (this.operation === 'create' ? 'erstellen' : 'aktualisieren') +
+                  ' von ' +
+                  this.label +
+                  ' ist etwas schiefgelaufen.',
+              });
             }
 
             reject();

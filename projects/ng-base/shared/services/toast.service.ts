@@ -18,7 +18,7 @@ export class ToastService {
    * @param toast
    * @param duration
    */
-  show(toast: Toast, duration?: number) {
+  show(toast: Toast, duration = 2300) {
     const value = this.toastsObservables.value;
     value.push(toast);
     this.toastsObservables.next(value);

@@ -6,7 +6,6 @@ import { apolloOptionsFactory } from './factories/apollo-options.factory';
 import { LazyLoadDirective } from './directives/lazy-load.directive';
 import { MatchHeightDirective } from './directives/match-height.directive';
 import { ResizableDirective } from './directives/resizable.directive';
-import { EllipsesPipe } from './pipes/ellipses.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { DateAgoPipe } from './pipes/date-ago.pipe';
 import { AuthService, BaseModuleConfig, BASE_MODULE_CONFIG, WsService } from '@lenne.tech/ng-base/shared';
@@ -20,7 +19,6 @@ const elements = [
   ResizableDirective,
 
   // Pipes
-  EllipsesPipe,
   SafeHtmlPipe,
   DateAgoPipe,
 ];

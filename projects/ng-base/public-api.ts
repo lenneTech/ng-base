@@ -19,7 +19,6 @@ export * from './src/guards/can-deactivate.guard';
 export * from './src/guards/logout.guard';
 
 // Pipes
-export * from './src/pipes/ellipses.pipe';
 export * from './src/pipes/safe-html.pipe';
 export * from './src/pipes/date-ago.pipe';
 
