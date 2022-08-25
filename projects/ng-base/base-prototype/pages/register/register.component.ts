@@ -28,14 +28,15 @@ export class RegisterComponent implements OnInit {
         firstName: new UntypedFormControl('', [Validators.required]),
         lastName: new UntypedFormControl('', [Validators.required]),
         email: new UntypedFormControl('', [Validators.required, Validators.email]),
-        password: new UntypedFormControl('', Validators.required),
-        passwordConfirm: new UntypedFormControl('', Validators.required),
+        password: new UntypedFormControl('', [Validators.required, Validators.minLength(6)]),
+        passwordConfirm: new UntypedFormControl('', [Validators.required, Validators.minLength(6)]),
         privacy: new UntypedFormControl(false, Validators.requiredTrue),
       },
       {
         validators: [Validation.match('password', 'passwordConfirm')],
       }
     );
+    console.log(this.form);
   }
 
   /**
