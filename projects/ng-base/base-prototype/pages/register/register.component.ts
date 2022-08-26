@@ -36,7 +36,6 @@ export class RegisterComponent implements OnInit {
         validators: [Validation.match('password', 'passwordConfirm')],
       }
     );
-    console.log(this.form);
   }
 
   /**
