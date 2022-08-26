@@ -271,7 +271,15 @@ export class ModelFormComponent implements OnInit, OnChanges {
       }
 
       if (config?.type === 'Password') {
-        validators.push(Validators.min(6));
+        validators.push(Validators.minLength(6));
+      }
+
+      if (typeof config?.min === 'number') {
+        validators.push(Validators.min(config.min));
+      }
+
+      if (typeof config?.max === 'number') {
+        validators.push(Validators.max(config.max));
       }
     }
 
