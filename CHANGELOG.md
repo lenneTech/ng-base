@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.3.0](https://github.com/lenneTech/ng-base/compare/v14.2.6...v14.3.0) (2022-08-26)
+
+### Features
+
+- Added min and max validation options for number forms ([0736b75](https://github.com/lenneTech/ng-base/commit/0736b7506d0c24fe8e314db930f17e53f0902321))
+
+### Bug Fixes
+
+- Added password min validation ([#15](https://github.com/lenneTech/ng-base/issues/15)) ([855d1b4](https://github.com/lenneTech/ng-base/commit/855d1b422929af56a09a2f96e752e6788f5e594c))
+
 ### [14.2.6](https://github.com/lenneTech/ng-base/compare/v14.2.5...v14.2.6) (2022-08-23)
 
 ### Bug Fixes
