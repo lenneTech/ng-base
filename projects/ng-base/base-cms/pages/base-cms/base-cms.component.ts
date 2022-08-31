@@ -81,7 +81,7 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
           this.id = this.route.snapshot?.params?.['id'];
         }
 
-        const types = meta.getTypes();
+        const types = meta.getTypes(this.moduleConfig?.logging);
 
         // Check for excluded types
         let filteredTypes = types.filter((e) => !this.moduleConfig?.modelConfig[e.name.toLowerCase()]?.exclude);

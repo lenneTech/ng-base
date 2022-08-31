@@ -36,10 +36,14 @@ export class GraphQLMeta {
    *
    * @returns An array of objects with the name of the model, and the CRUD operations that are available for that model.
    */
-  getTypes(): GraphqlCrudType[] {
+  getTypes(logging = false): GraphqlCrudType[] {
     const possibleTypes: GraphqlCrudType[] = [] as any;
     const mutationType = this.schema.getMutationType();
     const queryType = this.schema.getQueryType();
+
+    if (logging) {
+      console.log('GraphQLMeta::getTypes->queryTypeFields', queryType.getFields());
+    }
 
     for (const [key, value] of Object.entries(queryType.getFields())) {
       if (key.startsWith('find')) {
@@ -51,6 +55,11 @@ export class GraphQLMeta {
           duplicate: false,
         });
       }
+    }
+
+    if (logging) {
+      console.log('GraphQLMeta::getTypes->mutationTypeFields', mutationType.getFields());
+      console.log('GraphQLMeta::getTypes->possibleTypes', possibleTypes);
     }
 
     for (const [key, value] of Object.entries(mutationType.getFields())) {
@@ -81,6 +90,14 @@ export class GraphQLMeta {
           possibleTypes.find((item) => item.name === model).duplicate = true;
         }
       }
+    }
+
+    if (logging) {
+      console.log('GraphQLMeta::getTypes->possibleTypes', possibleTypes);
+      console.log(
+        'GraphQLMeta::getTypes->filteredPossibleTypes',
+        possibleTypes.filter((e) => e.create || e.update)
+      );
     }
 
     return possibleTypes.filter((e) => e.create || e.update);

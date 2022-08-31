@@ -98,4 +98,19 @@ export class UserService extends GraphQLPlusService {
       loading: true,
     });
   }
+
+  /**
+   * Change password of current user
+   *
+   * @param id
+   * @param password
+   */
+  changePassword(id: string, password: string) {
+    return this.graphQl('updateUser', {
+      arguments: { id, input: { password } },
+      fields: ['id'],
+      type: GraphQLRequestType.MUTATION,
+      loading: true,
+    });
+  }
 }

@@ -15,6 +15,7 @@ export class InputComponent {
   @Input() control: any;
   @Input() type = 'text';
   @Input() required = false;
+  @Input() eyeButton = false;
 
   @Output() enter = new EventEmitter();
 
@@ -24,6 +25,17 @@ export class InputComponent {
   enterEvent() {
     if (this.control?.value) {
       this.enter.emit();
+    }
+  }
+
+  /**
+   * Switch input type
+   */
+  togglePasswordType() {
+    if (this.type === 'password') {
+      this.type = 'text';
+    } else {
+      this.type = 'password';
     }
   }
 }

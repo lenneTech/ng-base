@@ -28,3 +28,4 @@ export * from './components/model-table/model-table.component';
 export * from './components/model-form-sub/model-form-sub.component';
 export * from './components/upload-image/upload-image.component';
 export * from './components/refence-input/refence-input.component';
+export * from './components/change-password/change-password.component';

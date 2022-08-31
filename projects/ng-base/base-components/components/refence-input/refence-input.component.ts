@@ -21,7 +21,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
   @Input() method = 'find';
   @Input() fields = ['id', 'name'];
   @Input() valueField = 'id';
-  @Input() textField = 'name';
+  @Input() nameField = 'name';
   objects: any[] = [];
   currentValue: any;
   optionsForTagInput = [];
@@ -50,9 +50,23 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
    * It gets the references from the GraphQL server and sets the value of the select
    */
   getReferences() {
+    const fields = [...this.fields];
+
+    if (Array.isArray(this.nameField)) {
+      for (const field of this.nameField) {
+        if (!fields.includes(field)) {
+          fields.push(field);
+        }
+      }
+    } else {
+      if (!fields.includes(this.nameField)) {
+        fields.push(this.nameField);
+      }
+    }
+
     this.graphQLService
       .graphQl(this.method, {
-        fields: this.fields,
+        fields,
         type: GraphQLRequestType.QUERY,
       })
       .subscribe(async (result) => {
@@ -110,7 +124,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
 
       const foundElement = this.objects.find((e) => e[this.valueField] === this.control.value);
       if (foundElement) {
-        this.currentValue = foundElement[this.textField];
+        this.currentValue = this.prepareNameField(foundElement);
       }
     }
   }
@@ -132,9 +146,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
   filterOptions(): any[] {
     return this.objects
       ? this.objects.filter(
-          (e) =>
-            (!this.currentValue || e[this.textField]?.includes(this.currentValue)) &&
-            !this.control?.value?.includes(e?.value)
+          (e) => (!this.currentValue || this.checkForNameFields(e)) && !this.control?.value?.includes(e?.value)
         )
       : [];
   }
@@ -145,7 +157,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
   setObjectsAsOptions() {
     this.optionsForTagInput = this.objects.map((e) => {
       return {
-        text: e[this.textField],
+        text: this.prepareNameField(e),
         value: e[this.valueField],
       };
     });
@@ -162,6 +174,47 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.selectedElement = null;
       }, 250);
+    }
+  }
+
+  /**
+   * Prepare string function if name fields is an array
+   */
+  prepareNameField(object: any) {
+    let result;
+
+    if (Array.isArray(this.nameField)) {
+      for (const field of this.nameField) {
+        if (!result) {
+          result = object[field];
+        } else {
+          result = result + ' ' + object[field];
+        }
+      }
+    } else {
+      result = object[this.nameField];
+    }
+
+    return result;
+  }
+
+  /**
+   * Check function if name fields is an array
+   */
+  checkForNameFields(object: any) {
+    if (Array.isArray(this.nameField)) {
+      let result = false;
+
+      for (const field of this.nameField) {
+        const check = object[field].includes(this.currentValue);
+        if (check) {
+          result = check;
+        }
+      }
+
+      return result;
+    } else {
+      return object[this.nameField]?.includes(this.currentValue);
     }
   }
 }

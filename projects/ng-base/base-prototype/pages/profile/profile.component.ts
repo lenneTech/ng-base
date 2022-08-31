@@ -43,10 +43,10 @@ export class ProfileComponent implements OnInit {
 
   constructor(private authService: AuthService, private route: ActivatedRoute, private userService: UserService) {
     this.currentUser = authService.currentUser;
-    this.profileConfig = { ...this.profileConfig, ...this.config };
   }
 
   ngOnInit() {
+    this.profileConfig = { ...this.profileConfig, ...this.config };
     this.route.data.subscribe((data) => {
       // Merge config from route to component
       if (data) {

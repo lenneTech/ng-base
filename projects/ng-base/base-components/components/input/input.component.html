@@ -1,30 +1,43 @@
 <div class="form-group mb-3">
   <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
-  <input
-    [id]="id"
-    [name]="name"
-    class="form-control"
-    [type]="type"
-    [formControl]="control"
-    [required]="required"
-    [placeholder]="placeholder"
-    [autocomplete]="autocomplete ?? null"
-    [tabIndex]="tabIndex ?? null"
-    [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
-    (keyup.enter)="enterEvent()"
-  />
+  <div class="input-group">
+    <input
+      [id]="id"
+      [name]="name"
+      class="form-control"
+      [type]="type"
+      [formControl]="control"
+      [required]="required"
+      [placeholder]="placeholder"
+      [autocomplete]="autocomplete ?? null"
+      [tabIndex]="tabIndex ?? null"
+      [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+      (keyup.enter)="enterEvent()"
+      [attr.aria-describedby]="id + 'eye-button'"
+    />
+    <button
+      class="btn btn-outline-primary"
+      type="button"
+      [id]="id + 'eye-button'"
+      (click)="togglePasswordType()"
+      *ngIf="eyeButton"
+    >
+      <i class="bi bi-eye" *ngIf="type === 'password'"></i>
+      <i class="bi bi-eye-slash" *ngIf="type === 'text'"></i>
+    </button>
 
-  <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">
-    <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
-    <div *ngIf="control?.errors?.['minlength']">
-      Die Mindestlänge für dieses Feld beträgt
-      {{control.errors?.['minlength']?.requiredLength}} Zeichen.
+    <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">
+      <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
+      <div *ngIf="control?.errors?.['minlength']">
+        Die Mindestlänge für dieses Feld beträgt
+        {{control.errors?.['minlength']?.requiredLength}} Zeichen.
+      </div>
+      <div *ngIf="control?.errors?.['maxlength']">
+        Die maximale Länge für dieses Feld beträgt
+        {{control.errors?.['maxlength']?.requiredLength}} Zeichen.
+      </div>
+      <div *ngIf="control?.errors?.['email']">Bitte eine gültige E-Mail Adresse angeben.</div>
+      <div *ngIf="control?.errors?.['matching']">Die Passwörter müssen überein stimmen.</div>
     </div>
-    <div *ngIf="control?.errors?.['maxlength']">
-      Die maximale Länge für dieses Feld beträgt
-      {{control.errors?.['maxlength']?.requiredLength}} Zeichen.
-    </div>
-    <div *ngIf="control?.errors?.['email']">Bitte eine gültige E-Mail Adresse angeben.</div>
-    <div *ngIf="control?.errors?.['matching']">Die Passwörter müssen überein stimmen.</div>
   </div>
 </div>

@@ -137,13 +137,20 @@ export class TagsComponent {
 
   /**
    * Show dropdown focus
-   *
-   * @param event
    */
   onFocus(event?) {
+    if (this.options) {
+      if (this.options.find((e) => e.text === this.inputValue)) {
+        this.control.setErrors({ invalidReference: false });
+      } else {
+        this.control.setErrors({ invalidReference: true });
+      }
+    }
+
     if (event) {
       this.selectedElement = event.target;
     } else {
+      this.control.markAsTouched();
       setTimeout(() => {
         this.selectedElement = null;
       }, 250);

@@ -94,7 +94,7 @@
             [method]="config[key]?.method || 'find'"
             [fields]="config[key]?.fields || ['id', 'name']"
             [valueField]="config[key]?.valueField || 'id'"
-            [textField]="config[key]?.nameField || 'name'"
+            [nameField]="config[key]?.nameField || 'name'"
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "

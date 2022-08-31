@@ -20,7 +20,7 @@
       />
       <div class="options" *ngIf="objects && selectedElement">
         <div class="option-item" *ngFor="let object of filterOptions()" (click)="set(object[valueField])">
-          {{ object[textField] }}
+          {{ prepareNameField(object) }}
         </div>
       </div>
     </div>
@@ -38,7 +38,7 @@
       >
         <option [ngValue]="null" selected>{{ placeholder }}</option>
         <option *ngFor="let object of objects" [ngValue]="object[valueField]">
-          {{ object[textField] }}
+          {{ prepareNameField(object) }}
         </option>
       </select>
     </div>
@@ -48,7 +48,9 @@
       *ngIf="control?.invalid && (control?.dirty || control?.touched) && !selectedElement"
     >
       <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
-      <div *ngIf="control?.errors?.['invalidReference']">Bitte wähle einen gültigen Wert aus.</div>
+      <div *ngIf="control?.errors?.['invalidReference']">
+        {{ currentValue }} ist kein gültiger Wert für {{ label }}.
+      </div>
       <div *ngIf="control?.errors?.['minlength']">
         Die Mindestlänge für dieses Feld beträgt
         {{control.errors?.['minlength']?.requiredLength}} Zeichen.
