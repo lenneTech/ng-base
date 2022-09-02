@@ -27,7 +27,8 @@ export class RegisterComponent implements OnInit {
       {
         firstName: new UntypedFormControl('', [Validators.required]),
         lastName: new UntypedFormControl('', [Validators.required]),
-        email: new UntypedFormControl('', [Validators.required, Validators.email]),
+        email: new UntypedFormControl('', [Validators.required, Validators.pattern(/[^\s@]+@[^\s@]+\.[^\s@]/)]),
+        // alternativer regex string: '[\w\.-]+@[\w\.-]+\.\w{2,4}'
         password: new UntypedFormControl('', [Validators.required, Validators.minLength(6)]),
         passwordConfirm: new UntypedFormControl('', [Validators.required, Validators.minLength(6)]),
         privacy: new UntypedFormControl(false, Validators.requiredTrue),
@@ -42,6 +43,7 @@ export class RegisterComponent implements OnInit {
    * Submit login form
    */
   submit() {
+    console.log(UntypedFormControl);
     this.error = '';
     this.loading = true;
 

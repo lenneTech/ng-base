@@ -24,7 +24,7 @@
       Die maximale Länge für dieses Feld beträgt
       {{control.errors?.['maxlength']?.requiredLength}} Zeichen.
     </div>
-    <div *ngIf="control?.errors?.['email']">Bitte eine gültige E-Mail Adresse angeben.</div>
+    <div *ngIf="control?.errors?.['pattern']">Bitte eine gültige E-Mail Adresse angeben.</div>
     <div *ngIf="control?.errors?.['matching']">Die Passwörter müssen überein stimmen.</div>
   </div>
 </div>
