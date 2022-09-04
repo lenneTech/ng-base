@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.5.0](https://github.com/lenneTech/ng-base/compare/v14.4.0...v14.5.0) (2022-09-04)
+
+### Features
+
+- Add better email validator ([fa2033f](https://github.com/lenneTech/ng-base/commit/fa2033fd3ae7bfca0b5212be202de6dcf424ba16))
+
 ## [14.4.0](https://github.com/lenneTech/ng-base/compare/v14.3.1...v14.4.0) (2022-08-31)
 
 ### Features
