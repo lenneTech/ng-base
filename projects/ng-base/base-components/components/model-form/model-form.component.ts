@@ -12,6 +12,7 @@ import {
   IGraphQLTypeCollection,
   ToastService,
   ToastType,
+  fullEmail,
 } from '@lenne.tech/ng-base/shared';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -267,7 +268,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
       }
 
       if (config?.type === 'Email') {
-        validators.push(Validators.email);
+        validators.push(fullEmail());
       }
 
       if (config?.type === 'Password') {

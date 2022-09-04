@@ -37,6 +37,7 @@
         {{control.errors?.['maxlength']?.requiredLength}} Zeichen.
       </div>
       <div *ngIf="control?.errors?.['email']">Bitte eine gültige E-Mail Adresse angeben.</div>
+      <div *ngIf="control?.errors?.['invalidEmail']">Bitte eine gültige E-Mail Adresse angeben.</div>
       <div *ngIf="control?.errors?.['matching']">Die Passwörter müssen überein stimmen.</div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormsService, UserService } from '@lenne.tech/ng-base/shared';
+import { FormsService, UserService, fullEmail } from '@lenne.tech/ng-base/shared';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit, OnDestroy {
    */
   createForm() {
     this.form = new UntypedFormGroup({
-      email: new UntypedFormControl('', [Validators.required, Validators.email]),
+      email: new UntypedFormControl('', [Validators.required, fullEmail()]),
       password: new UntypedFormControl('', Validators.required),
     });
   }
