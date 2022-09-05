@@ -113,4 +113,18 @@ export class UserService extends GraphQLPlusService {
       loading: true,
     });
   }
+
+  /**
+   * Set new password by token
+   *
+   * @param token
+   * @param password
+   */
+  resetPassword(token: string, password: string) {
+    return this.graphQl('resetPassword', {
+      arguments: { token, password },
+      type: GraphQLRequestType.MUTATION,
+      loading: true,
+    });
+  }
 }

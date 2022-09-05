@@ -1,3 +1,7 @@
 .required:after {
   content: ' *';
 }
+
+.input-group > .btn {
+  min-width: 100px;
+}
