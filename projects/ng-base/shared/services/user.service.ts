@@ -127,4 +127,18 @@ export class UserService extends GraphQLPlusService {
       loading: true,
     });
   }
+
+  /**
+   * Delete user by id
+   *
+   * @param id
+   */
+  delete(id: string) {
+    return this.graphQl('deleteUser', {
+      arguments: { id },
+      fields: ['id'],
+      type: GraphQLRequestType.MUTATION,
+      loading: true,
+    });
+  }
 }

@@ -1,0 +1,15 @@
+<div>
+  <h3>Konto löschen</h3>
+
+  <p>{{ description }}</p>
+
+  <div class="d-flex justify-content-end mt-3">
+    <div>
+      <button class="btn btn-primary" (click)="deleteAccount()" *ngIf="!loading">Konto löschen</button>
+      <button class="btn btn-primary" type="button" disabled *ngIf="loading">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Loading...
+      </button>
+    </div>
+  </div>
+</div>

@@ -17,6 +17,7 @@ import { ModelFormSubComponent } from './components/model-form-sub/model-form-su
 import { UploadImageComponent } from './components/upload-image/upload-image.component';
 import { RefenceInputComponent } from './components/refence-input/refence-input.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { DeleteAccountComponent } from './components/delete-account/delete-account.component';
 
 import { BackButtonDirective } from './directives/back-button.directive';
 import { SortDirective } from './directives/sort.directive';
@@ -50,6 +51,7 @@ const elements = [
   UploadImageComponent,
   RefenceInputComponent,
   ChangePasswordComponent,
+  DeleteAccountComponent,
 
   // Pipes
   EllipsesPipe,
