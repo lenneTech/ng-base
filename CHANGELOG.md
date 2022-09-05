@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.7.0](https://github.com/lenneTech/ng-base/compare/v14.6.0...v14.7.0) (2022-09-05)
+
+### Features
+
+- Add DeleteAccount component ([c470c26](https://github.com/lenneTech/ng-base/commit/c470c26fbc3796d6140c49198c66537be203f136))
+
 ## [14.6.0](https://github.com/lenneTech/ng-base/compare/v14.5.0...v14.6.0) (2022-09-05)
 
 ### Features
