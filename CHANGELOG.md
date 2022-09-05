@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.6.0](https://github.com/lenneTech/ng-base/compare/v14.5.0...v14.6.0) (2022-09-05)
+
+### Features
+
+- Add ResetPassword component and functions ([bbbf28e](https://github.com/lenneTech/ng-base/commit/bbbf28ef52fd94d36a3827a8aad41eebda369bc3))
+
 ## [14.5.0](https://github.com/lenneTech/ng-base/compare/v14.4.0...v14.5.0) (2022-09-04)
 
 ### Features
