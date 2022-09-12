@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.8.0](https://github.com/lenneTech/ng-base/compare/v14.7.0...v14.8.0) (2022-09-12)
+
+### Features
+
+- Some optimizations for delete account and forgot password ([0014bb4](https://github.com/lenneTech/ng-base/commit/0014bb47fc198cb235de4797e5e99da9b63cb4ef))
+
 ## [14.7.0](https://github.com/lenneTech/ng-base/compare/v14.6.0...v14.7.0) (2022-09-05)
 
 ### Features
