@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { FormsService, UserService, fullEmail } from '@lenne.tech/ng-base/shared';
+import { FormsService, fullEmail, ToastService, ToastType, UserService } from '@lenne.tech/ng-base/shared';
 import { Router } from '@angular/router';
 
 @Component({
@@ -13,7 +13,12 @@ export class ForgotPasswordComponent implements OnInit {
   error: string;
   loading: boolean;
 
-  constructor(private formsService: FormsService, private userService: UserService, private router: Router) {}
+  constructor(
+    private formsService: FormsService,
+    private userService: UserService,
+    private router: Router,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.createForm();
@@ -43,6 +48,13 @@ export class ForgotPasswordComponent implements OnInit {
     this.userService.requestPasswordResetMail(this.form.get('email').value).subscribe({
       next: (response) => {
         if (response) {
+          this.toastService.show({
+            id: 'password-forgot-success',
+            title: 'Erfolgreich',
+            description: 'Wir haben Dir eine E-Mail geschickt. Bitte überprüfe Dein Postfach.',
+            type: ToastType.SUCCESS,
+          });
+
           this.router.navigate(['/']);
         } else {
           this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';

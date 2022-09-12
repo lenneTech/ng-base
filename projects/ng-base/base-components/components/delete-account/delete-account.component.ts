@@ -22,6 +22,11 @@ export class DeleteAccountComponent {
   deleteAccount() {
     this.loading = true;
 
+    if (!confirm('Willst Du wirklich ein Konto unwiderruflich löschen?')) {
+      this.loading = false;
+      return;
+    }
+
     this.userService.delete(this.authService.currentUser.id).subscribe({
       next: (response) => {
         if (response) {
