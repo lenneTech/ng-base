@@ -65,13 +65,22 @@ table {
   top: 0;
   left: 0;
   width: 200px;
+
+  &-menu-item {
+    cursor: pointer;
+    padding: 8px 15px;
+
+    &:hover {
+      color: var(--bs-primary);
+    }
+  }
 }
 
-.context-menu-item {
-  cursor: pointer;
-  padding: 8px 15px;
-}
-
-.context-menu-item:hover {
-  color: var(--bs-primary);
+.table-card {
+  background: var(--bs-white);
+  padding: 10px;
+  margin-bottom: 10px;
+  &-entry {
+    margin-bottom: 4px;
+  }
 }

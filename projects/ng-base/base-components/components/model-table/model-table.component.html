@@ -1,12 +1,12 @@
 <div *ngIf="!selectedId && !createMode">
-  <div class="w-100 d-flex flex-row justify-content-between align-items-center mb-4">
+  <div class="w-100 d-flex flex-row justify-content-between align-items-center mb-2 mb-lg-4">
     <h2 class="mb-0" *ngIf="modelName">
       {{
         config?.plural ? config?.plural : config?.label ? config?.label : capitalizeFirstLetter(camelModelName) + 's'
       }}
     </h2>
     <div class="d-flex align-items-center">
-      <button class="btn btn-primary" (click)="createNewObject()" *ngIf="create">Erstellen</button>
+      <button class="d-none d-lg-block btn btn-primary" (click)="createNewObject()" *ngIf="create">Erstellen</button>
     </div>
   </div>
 
@@ -16,7 +16,7 @@
     [selectors]="'.object-col'"
     #contextMenuData="contextMenuData"
   >
-    <table class="table table-hover bg-white">
+    <table class="table table-hover bg-white d-none d-lg-block">
       <thead>
         <tr>
           <th
@@ -48,6 +48,27 @@
         </tr>
       </tbody>
     </table>
+
+    <div class="d-flex d-lg-none flex-column flex-grow-1">
+      <div class="table-card" *ngFor="let object of objects" [id]="object[uniqueField]">
+        <div class="table-card-entry" *ngFor="let field of availableFields" (click)="selectId(object)">
+          <b>{{ tableFields[field]?.label ? tableFields[field]?.label : capitalizeFirstLetter(field) }}: </b>
+          <p>
+            <ng-container *ngIf="tableFields[field]?.dateFormat">
+              {{ object[field] | date: tableFields[field]?.dateFormat }} Uhr
+            </ng-container>
+
+            <ng-container *ngIf="tableFields[field]?.enumValues">
+              {{ tableFields[field]?.enumValues[object[field]]?.text }}
+            </ng-container>
+
+            <ng-container *ngIf="!tableFields[field]?.dateFormat && !tableFields[field]?.enumValues">
+              {{ object[field] | baseEllipses: 60 }}
+            </ng-container>
+          </p>
+        </div>
+      </div>
+    </div>
 
     <div class="context-menu" #contextMenu>
       <div class="context-menu-item" (click)="selectId({ id: contextMenuData.clickedElement?.id })">Bearbeiten</div>

@@ -21,8 +21,11 @@
   height: 100%;
 
   .sidebar {
-    flex: 1 0 22%;
-    max-width: 300px;
+    flex-grow: 1;
+
+    @media only screen and (min-width: 992px) {
+      max-width: 300px;
+    }
   }
 
   .sidebar-content {
