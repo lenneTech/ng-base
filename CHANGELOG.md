@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.9.0](https://github.com/lenneTech/ng-base/compare/v14.8.1...v14.9.0) (2022-09-13)
+
+### Features
+
+- Add email verification page ([cb6612b](https://github.com/lenneTech/ng-base/commit/cb6612bd3f65df0e98d35e474e5cd753f8517422))
+
 ### [14.8.1](https://github.com/lenneTech/ng-base/compare/v14.8.0...v14.8.1) (2022-09-13)
 
 ### Bug Fixes
