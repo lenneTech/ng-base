@@ -11,6 +11,7 @@ import { RegisterComponent } from './pages/register/register.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
+import { EmailVerificationComponent } from './pages/email-verification/email-verification.component';
 
 // Modules
 const imports = [BaseModule, FormsModule, RouterModule, ReactiveFormsModule, CommonModule, BaseComponentsModule];
@@ -23,6 +24,7 @@ const elements = [
   ForgotPasswordComponent,
   ProfileComponent,
   ResetPasswordComponent,
+  EmailVerificationComponent,
 ];
 
 @NgModule({

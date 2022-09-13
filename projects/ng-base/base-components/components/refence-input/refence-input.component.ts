@@ -94,7 +94,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
 
     const foundElement = this.objects.find((e) => e[this.valueField] === this.currentValue);
     if (!foundElement) {
-      this.control.setValue('INVALID_REFERENCE');
+      this.control.setValue(null);
       this.control.markAsTouched();
       this.control.markAsDirty();
       this.control.setErrors({ invalidReference: true });

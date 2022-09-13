@@ -141,4 +141,17 @@ export class UserService extends GraphQLPlusService {
       loading: true,
     });
   }
+
+  /**
+   * Verify user by token
+   *
+   * @param token
+   */
+  verifyUser(token: string) {
+    return this.graphQl('verifyUser', {
+      arguments: { token },
+      type: GraphQLRequestType.MUTATION,
+      loading: true,
+    });
+  }
 }
