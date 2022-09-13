@@ -6,7 +6,6 @@ import { Observable, throwError } from 'rxjs';
 import { GraphQLMetaService } from './graphql-meta.service';
 import { GraphQLEnum } from '../classes/graphql-enum.class';
 import { GraphQLType } from '../classes/graphql-type.class';
-import { IGraphQLTypeCollection } from '../interfaces/graphql-type-collection.interface';
 import { sha256 } from 'js-sha256';
 
 /**
@@ -80,17 +79,6 @@ export class GraphQLService {
             allowed: allowedFields,
           });
 
-          // Log fields data
-          if (config.log) {
-            fieldsData.usedFields.sort();
-            fieldsData.schemaFields.sort();
-            const filtered = fieldsData.schemaFields.filter((field) => !fieldsData.usedFields.includes(field));
-            const unused = this.graphQLTypeToStringArray(allowedFields).filter(
-              (field) => !fieldsData.usedFields.includes(field)
-            );
-            console.log({ fieldsData, filtered, unused });
-          }
-
           fields = fieldsData.fieldsString;
         }
 
@@ -126,7 +114,10 @@ export class GraphQLService {
           console.log({ argsData, filtered, unused });
         }
 
-        const args = argsData?.argsString || '';
+        let args = argsData?.argsString || '';
+        if (args === '{}') {
+          args = '';
+        }
 
         // Log
         if (config.log) {
