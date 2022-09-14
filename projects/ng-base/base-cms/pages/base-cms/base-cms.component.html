@@ -1,6 +1,6 @@
 <div class="main">
-  <div class="sidebar">
-    <div class="d-flex flex-column flex-shrink-0 p-3 h-100">
+  <div class="sidebar" [ngStyle]="{ 'flex-basis': !responsiveToggle ? sideBarWidth : '100%' }">
+    <div class="d-none d-md-flex flex-column flex-shrink-0 p-3 h-100">
       <ng-container *ngIf="moduleConfig.branding">
         <a
           href="/"
@@ -39,10 +39,41 @@
         </li>
       </ul>
     </div>
+    <div class="d-flex flex-column d-md-none p-3 h-100">
+      <div class="d-flex justify-content-end">
+        <i
+          class="bi"
+          [ngClass]="{ 'bi-chevron-left': !responsiveToggle, 'bi-chevron-right': responsiveToggle }"
+          (click)="responsiveToggle = !responsiveToggle"
+        ></i>
+      </div>
+      <ul
+        class="nav nav-pills responsive-pills flex-column mb-auto"
+        [ngClass]="{ 'w-100-transition': responsiveToggle }"
+        *ngIf="types"
+      >
+        <li class="nav-item" *ngFor="let type of types" (click)="responsiveToggle = !responsiveToggle">
+          <a
+            class="nav-link"
+            aria-current="page"
+            [routerLink]="(id ? '../../' : '../') + toKebabCase(type?.name)"
+            [ngClass]="{ active: toKebabCase(type?.name) === toKebabCase(this.modelName) }"
+          >
+            {{
+              moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.plural
+                ? moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.plural
+                : moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.label
+                ? moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.label
+                : type.name + 's'
+            }}
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 
-  <div class="sidebar-content">
-    <div class="p-5 mb-3">
+  <div class="sidebar-content" [ngStyle]="{ 'flex-basis': !responsiveToggle ? 'unset' : '0' }">
+    <div class="p-3 p-md-5 mb-3">
       <base-model-table
         [config]="moduleConfig?.modelConfig[camelModelName]"
         [fieldConfig]="moduleConfig?.fieldConfig[camelModelName] || {}"
@@ -56,6 +87,7 @@
         [update]="isUpdatePossible()"
         [delete]="isDeletePossible()"
         [duplicate]="isDuplicatePossible()"
+        [showFavButton]="!responsiveToggle"
       ></base-model-table>
     </div>
   </div>

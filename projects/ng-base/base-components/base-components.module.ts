@@ -18,15 +18,17 @@ import { UploadImageComponent } from './components/upload-image/upload-image.com
 import { RefenceInputComponent } from './components/refence-input/refence-input.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { DeleteAccountComponent } from './components/delete-account/delete-account.component';
+import { FabButtonComponent } from './components/fab-button/fab-button.component';
 
 import { BackButtonDirective } from './directives/back-button.directive';
 import { SortDirective } from './directives/sort.directive';
 import { ContextMenuDirective } from './directives/context-menu.directive';
 
 import { EllipsesPipe } from './pipes/ellipses.pipe';
+import { RouterModule } from '@angular/router';
 
 // Modules
-const imports = [FormsModule, ReactiveFormsModule, CommonModule];
+const imports = [FormsModule, ReactiveFormsModule, CommonModule, RouterModule];
 
 // Imported and exported elements
 const elements = [
@@ -52,6 +54,7 @@ const elements = [
   RefenceInputComponent,
   ChangePasswordComponent,
   DeleteAccountComponent,
+  FabButtonComponent,
 
   // Pipes
   EllipsesPipe,

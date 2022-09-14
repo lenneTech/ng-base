@@ -16,6 +16,7 @@ import {
 } from '@lenne.tech/ng-base/shared';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Button } from '../fab-button/fab-button.component';
 
 @Component({
   selector: 'base-model-form',
@@ -31,6 +32,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   @Input() duplicate = false;
   @Input() logging = false;
   @Input() config: any = {};
+  @Input() showFavButton = true;
 
   @Output() finished = new EventEmitter();
 
@@ -41,6 +43,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   operation: string;
   keys: string[] = [];
   user: BasicUser;
+  fabButtons: Button[] = [];
 
   set loading(value: boolean) {
     if (!value) {
@@ -74,6 +77,8 @@ export class ModelFormComponent implements OnInit, OnChanges {
         this.init();
       }
     });
+
+    this.initFabActions();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -469,5 +474,26 @@ export class ModelFormComponent implements OnInit, OnChanges {
           },
         });
     });
+  }
+
+  /**
+   * Init fab buttons for mobile devices
+   */
+  initFabActions() {
+    const saveEvent = new EventEmitter<boolean>();
+    this.fabButtons.push({ icon: 'bi-check-lg', color: 'var(--bs-success)', event: saveEvent });
+    saveEvent.subscribe(() => this.submit(false));
+
+    if (this.duplicate) {
+      const event = new EventEmitter<boolean>();
+      this.fabButtons.push({ icon: 'bi-back', color: 'var(--bs-info)', event });
+      event.subscribe(() => this.duplicateObject());
+    }
+
+    if (this.operation === 'update') {
+      const event = new EventEmitter<boolean>();
+      this.fabButtons.push({ icon: 'bi-x-lg', color: 'var(--bs-danger)', event });
+      event.subscribe(() => this.deleteObject());
+    }
   }
 }

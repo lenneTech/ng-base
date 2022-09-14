@@ -30,3 +30,4 @@ export * from './components/upload-image/upload-image.component';
 export * from './components/refence-input/refence-input.component';
 export * from './components/change-password/change-password.component';
 export * from './components/delete-account/delete-account.component';
+export * from './components/fab-button/fab-button.component';

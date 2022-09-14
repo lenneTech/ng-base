@@ -1,10 +1,13 @@
 <div class="w-100" *ngIf="form">
   <div class="d-flex flex-row justify-content-between mt-3">
+    <div class="responsive-back">
+      <i class="d-block d-lg-none bi bi-arrow-left" routerLink="../"></i>
+    </div>
     <h2 class="mb-0">
       {{ label ? label : capitalizeFirstLetter(modelName) }} {{ operation === 'update' ? 'bearbeiten' : 'erstellen' }}
     </h2>
 
-    <div class="d-flex flex-row align-items-center justify-content-end">
+    <div class="d-none d-lg-flex flex-row align-items-center justify-content-end">
       <button class="btn btn-outline-primary me-2" *ngIf="id && duplicate && !_loading" (click)="duplicateObject()">
         Duplizieren
       </button>
@@ -32,7 +35,7 @@
       (imageChanged)="imageChanged($event)"
     ></base-model-form-sub>
 
-    <div class="d-flex mt-4" [ngClass]="id && delete ? 'justify-content-between' : 'justify-content-end'">
+    <div class="d-none d-lg-flex mt-4" [ngClass]="id && delete ? 'justify-content-between' : 'justify-content-end'">
       <div *ngIf="id && delete">
         <button class="btn btn-danger" type="button" (click)="deleteObject()">Löschen</button>
       </div>
@@ -53,4 +56,8 @@
       </div>
     </div>
   </form>
+</div>
+
+<div class="d-block d-lg-none responsive-action-button" *ngIf="showFavButton">
+  <base-fab-button [buttons]="fabButtons"></base-fab-button>
 </div>

@@ -23,6 +23,8 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
   id: string;
   types: GraphqlCrudType[] = [];
   subscription = new Subscription();
+  sideBarWidth = '22%';
+  responsiveToggle = false;
 
   constructor(
     @Inject(BASE_CMS_MODULE_CONFIG) public moduleConfig: BaseCMSModuleConfig,
@@ -32,6 +34,7 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private cmsService: CmsService
   ) {
+    this.calcSideBarWidth();
     this.subscription.add(
       this.route.params.subscribe((value) => {
         if (value['modelName']) {
@@ -223,5 +226,12 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
    */
   lowerCaseFirstLetter(value: string) {
     return this.cmsService.lowerCaseFirstLetter(value);
+  }
+
+  /**
+   * Calculates sidebar width based on screen size
+   */
+  calcSideBarWidth() {
+    this.sideBarWidth = window.innerWidth < 768 ? '8%' : '22%';
   }
 }

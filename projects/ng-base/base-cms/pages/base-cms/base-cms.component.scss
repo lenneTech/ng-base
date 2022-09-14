@@ -21,17 +21,32 @@
   height: 100%;
 
   .sidebar {
-    flex: 1 0 22%;
-    max-width: 300px;
+    flex-grow: 1;
+
+    @media only screen and (min-width: 992px) {
+      max-width: 300px;
+    }
   }
 
   .sidebar-content {
     flex-grow: 999;
     overflow-y: auto;
     background-color: #f5f7fe;
+    min-height: 100vh;
   }
 }
 
 .nav-flush .nav-link {
   border-radius: 0;
+}
+
+.responsive-pills {
+  width: 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+.w-100-transition {
+  width: 100%;
+  transition: width 200ms;
 }
