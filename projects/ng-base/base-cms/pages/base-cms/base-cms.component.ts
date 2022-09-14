@@ -232,6 +232,6 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
    * Calculates sidebar width based on screen size
    */
   calcSideBarWidth() {
-    this.sideBarWidth = window.innerWidth < 992 ? '8%' : '22%';
+    this.sideBarWidth = window.innerWidth < 768 ? '8%' : '22%';
   }
 }

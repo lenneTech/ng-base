@@ -23,6 +23,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
   @Input() duplicate = true;
   @Input() config: any = {};
   @Input() fieldConfig: any = {};
+  @Input() showFavButton = true;
   uniqueField = 'id';
 
   @Output() idSelected = new EventEmitter<string>();

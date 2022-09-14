@@ -1,5 +1,8 @@
 <div class="w-100" *ngIf="form">
   <div class="d-flex flex-row justify-content-between mt-3">
+    <div class="responsive-back">
+      <i class="d-block d-lg-none bi bi-arrow-left" routerLink="../"></i>
+    </div>
     <h2 class="mb-0">
       {{ label ? label : capitalizeFirstLetter(modelName) }} {{ operation === 'update' ? 'bearbeiten' : 'erstellen' }}
     </h2>
@@ -53,4 +56,8 @@
       </div>
     </div>
   </form>
+</div>
+
+<div class="d-block d-lg-none responsive-action-button" *ngIf="showFavButton">
+  <base-fab-button [buttons]="fabButtons"></base-fab-button>
 </div>

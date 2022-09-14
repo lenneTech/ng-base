@@ -1,0 +1,17 @@
+<div class="fab-container" [ngClass]="{ 'fab-container-active': toggle }">
+  <div class="fab shadow">
+    <div class="fab-content" (click)="toggle = !toggle">
+      <i class="bi" [ngClass]="fabIcon"></i>
+    </div>
+  </div>
+  <div
+    class="sub-button shadow"
+    *ngFor="let button of buttons"
+    (click)="button.event.emit(true); toggle = !toggle"
+    [ngStyle]="{ backgroundColor: button.color }"
+  >
+    <a [routerLink]="button.routerLink">
+      <i class="bi" [ngClass]="button.icon"></i>
+    </a>
+  </div>
+</div>

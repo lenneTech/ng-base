@@ -1,0 +1,21 @@
+.responsive-back {
+  display: flex;
+  align-items: center;
+  margin-right: 6px;
+
+  .bi-arrow-left {
+    font-size: 28px;
+  }
+}
+
+h2 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.responsive-action-button {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+}

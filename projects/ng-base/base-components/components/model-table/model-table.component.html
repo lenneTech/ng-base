@@ -95,13 +95,14 @@
     (finished)="selectId('')"
     [delete]="delete"
     [duplicate]="duplicate"
+    [showFavButton]="showFavButton"
   ></base-model-form>
 </div>
 
-<button
-  class="d-flex d-lg-none responsive-action-button"
-  (click)="createNewObject()"
-  *ngIf="!(selectedId || createMode)"
->
-  <i class="bi bi-plus-lg"></i>
-</button>
+<div class="responsive-action-button">
+  <base-fab-button
+    [fabIcon]="'bi-plus'"
+    (click)="createNewObject()"
+    *ngIf="!(selectedId || createMode) && showFavButton"
+  ></base-fab-button>
+</div>
