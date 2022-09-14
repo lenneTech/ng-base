@@ -15,4 +15,15 @@ export class FormsService {
       }
     });
   }
+
+  public findInvalidControls(formGroup: UntypedFormGroup): string[] {
+    const invalid: string[] = [];
+    const controls = formGroup.controls;
+    Object.keys(formGroup.controls).forEach((name) => {
+      if (controls[name].invalid) {
+        invalid.push(name);
+      }
+    });
+    return invalid;
+  }
 }
