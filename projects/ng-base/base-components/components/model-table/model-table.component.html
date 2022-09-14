@@ -5,8 +5,8 @@
         config?.plural ? config?.plural : config?.label ? config?.label : capitalizeFirstLetter(camelModelName) + 's'
       }}
     </h2>
-    <div class="d-flex align-items-center">
-      <button class="d-none d-lg-block btn btn-primary" (click)="createNewObject()" *ngIf="create">Erstellen</button>
+    <div class="d-flex align-items-center d-none d-lg-block">
+      <button class="btn btn-primary" (click)="createNewObject()" *ngIf="create">Erstellen</button>
     </div>
   </div>
 
@@ -16,7 +16,7 @@
     [selectors]="'.object-col'"
     #contextMenuData="contextMenuData"
   >
-    <table class="table table-hover bg-white d-none d-lg-block">
+    <table class="table table-hover bg-white d-none d-lg-table">
       <thead>
         <tr>
           <th
@@ -51,9 +51,11 @@
 
     <div class="d-flex d-lg-none flex-column flex-grow-1">
       <div class="table-card" *ngFor="let object of objects" [id]="object[uniqueField]">
-        <div class="table-card-entry" *ngFor="let field of availableFields" (click)="selectId(object)">
-          <b>{{ tableFields[field]?.label ? tableFields[field]?.label : capitalizeFirstLetter(field) }}: </b>
-          <p>
+        <div class="table-card-entry" *ngFor="let field of availableFields; let i = index" (click)="selectId(object)">
+          <b *ngIf="i > 0"
+            >{{ tableFields[field]?.label ? tableFields[field]?.label : capitalizeFirstLetter(field) }}:</b
+          >
+          <p [ngClass]="{ 'table-card-entry-first': i === 0 }">
             <ng-container *ngIf="tableFields[field]?.dateFormat">
               {{ object[field] | date: tableFields[field]?.dateFormat }} Uhr
             </ng-container>
@@ -83,7 +85,7 @@
 </div>
 
 <div class="w-100" *ngIf="selectedId || createMode">
-  <button class="btn btn-outline-primary mb-3" (click)="selectId('')">Zurück</button>
+  <button class="d-none d-lg-block btn btn-outline-primary mb-3" (click)="selectId('')">Zurück</button>
   <base-model-form
     [modelName]="camelModelName"
     [label]="config?.label"
@@ -95,3 +97,11 @@
     [duplicate]="duplicate"
   ></base-model-form>
 </div>
+
+<button
+  class="d-flex d-lg-none responsive-action-button"
+  (click)="createNewObject()"
+  *ngIf="!(selectedId || createMode)"
+>
+  <i class="bi bi-plus-lg"></i>
+</button>

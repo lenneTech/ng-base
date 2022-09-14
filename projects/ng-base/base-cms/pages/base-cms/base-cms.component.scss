@@ -32,9 +32,21 @@
     flex-grow: 999;
     overflow-y: auto;
     background-color: #f5f7fe;
+    min-height: 100vh;
   }
 }
 
 .nav-flush .nav-link {
   border-radius: 0;
+}
+
+.responsive-pills {
+  width: 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+.w-100-transition {
+  width: 100%;
+  transition: width 200ms;
 }
