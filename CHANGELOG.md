@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.10.0](https://github.com/lenneTech/ng-base/compare/v14.9.1...v14.10.0) (2022-09-14)
+
+### Features
+
+- fixed fav button on lg ([65639e0](https://github.com/lenneTech/ng-base/commit/65639e0545e06c4f879033997aef1c8bd336195b))
+
 ### [14.9.1](https://github.com/lenneTech/ng-base/compare/v14.9.0...v14.9.1) (2022-09-14)
 
 ## [14.9.0](https://github.com/lenneTech/ng-base/compare/v14.8.1...v14.9.0) (2022-09-13)
