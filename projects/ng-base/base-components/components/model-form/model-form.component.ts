@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import {
   AuthService,
   BasicUser,
@@ -13,12 +13,10 @@ import {
   ToastService,
   ToastType,
   fullEmail,
-  ScrollService,
 } from '@lenne.tech/ng-base/shared';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Button } from '../fab-button/fab-button.component';
-import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'base-model-form',
@@ -65,9 +63,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
     private router: Router,
     private route: ActivatedRoute,
     private cmsService: CmsService,
-    private toastService: ToastService,
-    private scrollService: ScrollService,
-    @Inject(DOCUMENT) private document: Document
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -398,8 +394,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
       if (this.form.invalid && !secret) {
         this.formsService.validateAllFormFields(this.form as any);
-        const invalidForm: string = this.formsService.findInvalidControls(this.form)[0];
-        this.scrollService.scrollTo(invalidForm);
+        this.formsService.scrollToInvalidControl(this.form);
         this.loading = false;
         resolve(null);
         return;

@@ -1,10 +1,14 @@
-import { Injectable } from '@angular/core';
-import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
+import { Inject, Injectable } from '@angular/core';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { DOCUMENT } from '@angular/common';
+import { ScrollService } from './scroll.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FormsService {
+  constructor(@Inject(DOCUMENT) private document: Document, private scrollService: ScrollService) {}
+
   public validateAllFormFields(formGroup: UntypedFormGroup) {
     Object.keys(formGroup.controls).forEach((field) => {
       const control = formGroup.get(field);
@@ -25,5 +29,10 @@ export class FormsService {
       }
     });
     return invalid;
+  }
+
+  public scrollToInvalidControl(form: UntypedFormGroup) {
+    const invalidForm: string = this.findInvalidControls(form)[0];
+    this.scrollService.scrollTo(invalidForm);
   }
 }
