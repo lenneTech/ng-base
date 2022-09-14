@@ -297,6 +297,12 @@ export class ModelFormComponent implements OnInit, OnChanges {
    */
   deleteObject() {
     this.cmsService.deleteObject(this.id, this.modelName).then(() => {
+      this.toastService.show({
+        id: this.modelName + '-success',
+        type: ToastType.SUCCESS,
+        title: 'Erfolgreich',
+        description: this.label + ' wurde erfolgreich gelöscht.',
+      });
       this.finished.emit(null);
     });
   }
@@ -307,8 +313,13 @@ export class ModelFormComponent implements OnInit, OnChanges {
   async duplicateObject() {
     this.cmsService.duplicateObject(this.id, this.modelName).then(async (value) => {
       if (value?.id) {
-        await this.router.navigate(['../' + value.id], { relativeTo: this.route });
-        this.init(value.id);
+        await this.router.navigate(['../'], { relativeTo: this.route });
+        this.toastService.show({
+          id: this.modelName + '-success',
+          type: ToastType.SUCCESS,
+          title: 'Erfolgreich',
+          description: this.label + ' wurde erfolgreich dupliziert.',
+        });
       } else {
         this.finished.emit(null);
       }
@@ -484,7 +495,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
     this.fabButtons.push({ icon: 'bi-check-lg', color: 'var(--bs-success)', event: saveEvent });
     saveEvent.subscribe(() => this.submit(false));
 
-    if (this.duplicate) {
+    if (this.duplicate && this.operation === 'update') {
       const event = new EventEmitter<boolean>();
       this.fabButtons.push({ icon: 'bi-back', color: 'var(--bs-info)', event });
       event.subscribe(() => this.duplicateObject());
