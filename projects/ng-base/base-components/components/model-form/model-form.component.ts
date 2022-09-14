@@ -481,7 +481,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
    */
   initFabActions() {
     const saveEvent = new EventEmitter<boolean>();
-    this.fabButtons.push({ icon: 'bi-check-lg', color: 'var(--bs-success)', saveEvent });
+    this.fabButtons.push({ icon: 'bi-check-lg', color: 'var(--bs-success)', event: saveEvent });
     saveEvent.subscribe(() => this.submit(false));
 
     if (this.duplicate) {
