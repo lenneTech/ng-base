@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.11.1](https://github.com/lenneTech/ng-base/compare/v14.11.0...v14.11.1) (2022-09-14)
+
+### Bug Fixes
+
+- Fix z-index fab button ([d7aee9b](https://github.com/lenneTech/ng-base/commit/d7aee9be3272439946f63b54726429dae05ac60c))
+
 ## [14.11.0](https://github.com/lenneTech/ng-base/compare/v14.10.1...v14.11.0) (2022-09-14)
 
 ### Features
