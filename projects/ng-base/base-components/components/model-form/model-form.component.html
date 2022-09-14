@@ -1,7 +1,7 @@
 <div class="w-100" *ngIf="form">
   <div class="d-flex flex-row justify-content-between mt-3">
-    <div class="responsive-back">
-      <i class="d-block d-lg-none bi bi-arrow-left" routerLink="../"></i>
+    <div class="responsive-back d-flex d-lg-none">
+      <i class="bi bi-arrow-left" routerLink="../"></i>
     </div>
     <h2 class="mb-0">
       {{ label ? label : capitalizeFirstLetter(modelName) }} {{ operation === 'update' ? 'bearbeiten' : 'erstellen' }}
