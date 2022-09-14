@@ -394,6 +394,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
       if (this.form.invalid && !secret) {
         this.formsService.validateAllFormFields(this.form as any);
+        this.formsService.scrollToInvalidControl(this.form);
         this.loading = false;
         resolve(null);
         return;
