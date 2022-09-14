@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.11.0](https://github.com/lenneTech/ng-base/compare/v14.10.1...v14.11.0) (2022-09-14)
+
+### Features
+
+- Add better loading service ([47b7c21](https://github.com/lenneTech/ng-base/commit/47b7c211875afdab737c3df18c2645b4b1db2398))
+- added automatic unsubscribe decorator ([1e9024d](https://github.com/lenneTech/ng-base/commit/1e9024d9d489fcaa528239102953db4a6345d1d1))
+- implemented scrolling to invalid form field ([f30c37b](https://github.com/lenneTech/ng-base/commit/f30c37b7696bab5d9e6d35ff3f254a3c5d32b236))
+- refactored scroll to invalid ([e11e594](https://github.com/lenneTech/ng-base/commit/e11e594f0898cffded49318018e89f873aa33ebc))
+
 ### [14.10.1](https://github.com/lenneTech/ng-base/compare/v14.10.0...v14.10.1) (2022-09-14)
 
 ### Bug Fixes
