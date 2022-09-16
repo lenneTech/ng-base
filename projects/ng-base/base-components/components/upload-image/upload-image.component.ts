@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '@lenne.tech/ng-base/shared';
+import { HttpClient } from '@angular/common/http';
+import { AuthService, CompressOptions, FileService, ToastService, ToastType } from '@lenne.tech/ng-base/shared';
 
 @Component({
   selector: 'base-upload-image',
@@ -13,7 +13,8 @@ export class UploadImageComponent {
   @Input() label?: string;
   @Input() supportText = 'Supports: JPEG, JPG, PNG';
   @Input() required = false;
-  @Input() dragText = 'Drag & Drop';
+  @Input() defaultDragText = 'Drag & Drop';
+  @Input() defaultReleaseText = 'Release to Upload';
   @Input() preButtonText = 'or';
   @Input() buttonText = 'browse';
   @Input() validExtensions = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -22,16 +23,26 @@ export class UploadImageComponent {
   @Input() uploadPath = '/files/upload';
   @Input() deletePath = '/files/';
   @Input() path = '/files/';
+  @Input() compressOptions: CompressOptions;
+  @Input() maxSize: number;
+  @Input() uploadDirectly = false;
 
   @Output() imageUploaded = new EventEmitter();
   @Output() imageDeleted = new EventEmitter();
+  @Output() fileChanged = new EventEmitter<{ field: string; file: File | null }>();
 
   dragActive = false;
+  dragText = 'Drag & Drop';
   selectedFile: File;
   fileUrl: string;
   loading = false;
 
-  constructor(private httpClient: HttpClient, private authService: AuthService) {}
+  constructor(
+    private httpClient: HttpClient,
+    private authService: AuthService,
+    private fileService: FileService,
+    private toastService: ToastService
+  ) {}
 
   /**
    * The dragOver function is called when the user drags a file over the dropzone. It prevents the default action of the
@@ -41,7 +52,7 @@ export class UploadImageComponent {
    */
   dragOver(event: any) {
     event.preventDefault();
-    this.dragText = 'Release to Upload';
+    this.dragText = this.defaultReleaseText;
     this.dragActive = true;
   }
 
@@ -52,7 +63,7 @@ export class UploadImageComponent {
    * @param event - The event object that is passed to the dragLeave event.
    */
   dragLeave(event: any) {
-    this.dragText = 'Drag & Drop';
+    this.dragText = this.defaultDragText;
     this.dragActive = false;
   }
 
@@ -77,16 +88,42 @@ export class UploadImageComponent {
    *
    * @param file - any - this is the file that is selected by the user.
    */
-  setUrl(file: any) {
+  setUrl(file: File) {
+    if (this.maxSize && file.size > this.maxSize) {
+      this.toastService.show(
+        {
+          id: 'image-invalid-size',
+          type: ToastType.ERROR,
+          title: 'Fehlgeschlagen',
+          description:
+            'Die Datei ist zu groß. Die Datei darf nicht größer als ' +
+            (this.maxSize / (1024 * 1024)).toFixed(2) +
+            'MB sein.',
+        },
+        3500
+      );
+      return;
+    }
+
     if (this.validExtensions.includes(file.type)) {
       const fileReader = new FileReader();
-      fileReader.onload = () => {
+      fileReader.onload = (result) => {
         this.loading = true;
         this.fileUrl = fileReader.result as string;
         this.selectedFile = file;
         this.upload();
       };
       fileReader.readAsDataURL(file);
+    } else {
+      this.toastService.show(
+        {
+          id: 'image-invalid-format',
+          type: ToastType.ERROR,
+          title: 'Fehlgeschlagen',
+          description: 'Das Format der Datei wird nicht unterstützt.',
+        },
+        3500
+      );
     }
   }
 
@@ -103,23 +140,24 @@ export class UploadImageComponent {
   /**
    * We create a new FormData object, append the selected file to it, and then send it to the server
    */
-  upload() {
-    const data = new FormData();
-    data.append('file', this.selectedFile);
-
-    const httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: 'Bearer ' + this.authService.token,
-      }),
-    };
-
-    this.httpClient.post(this.url + this.uploadPath, data, httpOptions).subscribe((result: any) => {
-      if (result?.id) {
-        this.control.setValue(result.id);
-        this.imageUploaded.emit(result.id);
-      }
+  async upload() {
+    let result;
+    if (this.uploadDirectly) {
+      result = await this.fileService.upload(this.url, this.uploadPath, this.selectedFile, this.compressOptions);
+    } else {
+      this.control.markAsTouched();
+      this.fileChanged.emit({ field: this.id, file: this.selectedFile });
       this.loading = false;
-    });
+      return;
+    }
+
+    if (result?.id) {
+      this.control.setValue(result.id);
+      this.imageUploaded.emit(result.id);
+    }
+
+    this.control.markAsTouched();
+    this.loading = false;
   }
 
   /**
@@ -127,25 +165,29 @@ export class UploadImageComponent {
    *
    * @param [id] - The id of the file to delete.
    */
-  deleteFile(id?: string) {
+  async deleteFile(id?: string) {
+    if (!this.uploadDirectly) {
+      this.selectedFile = null;
+      this.fileUrl = null;
+      this.control.setValue('');
+      this.control.markAsTouched();
+      this.fileChanged.emit({ field: this.id, file: null });
+      return;
+    }
+
     this.loading = true;
     this.selectedFile = null;
     this.fileUrl = null;
 
     if (id) {
-      const httpOptions = {
-        headers: new HttpHeaders({
-          Authorization: 'Bearer ' + this.authService.token,
-        }),
-      };
-
-      this.httpClient.delete(this.url + this.deletePath + id, httpOptions).subscribe((result) => {
+      const result = await this.fileService.delete(this.url, this.deletePath, id);
+      if (result) {
         this.selectedFile = null;
         this.fileUrl = null;
         this.control.setValue('');
         this.imageDeleted.emit();
         this.loading = false;
-      });
+      }
     }
   }
 }

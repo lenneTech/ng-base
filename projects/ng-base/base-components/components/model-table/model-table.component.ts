@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import {
+  CmsService,
   GraphQLMeta,
   GraphQLMetaService,
   GraphQLRequestType,
   GraphQLService,
-  CmsService,
 } from '@lenne.tech/ng-base/shared';
 
 @Component({

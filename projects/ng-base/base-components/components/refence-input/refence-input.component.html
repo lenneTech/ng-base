@@ -48,7 +48,7 @@
       *ngIf="control?.invalid && (control?.dirty || control?.touched) && !selectedElement"
     >
       <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
-      <div *ngIf="control?.errors?.['invalidReference']">
+      <div *ngIf="control?.errors?.['invalidReference'] && currentValue">
         {{ currentValue }} ist kein gültiger Wert für {{ label }}.
       </div>
       <div *ngIf="control?.errors?.['minlength']">

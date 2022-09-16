@@ -33,6 +33,7 @@
       [config]="config"
       [form]="form"
       (imageChanged)="imageChanged($event)"
+      (fileChanged)="processFileChanges($event)"
     ></base-model-form-sub>
 
     <div class="d-none d-lg-flex mt-4" [ngClass]="id && delete ? 'justify-content-between' : 'justify-content-end'">

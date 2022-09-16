@@ -2,17 +2,18 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import {
   AuthService,
   BasicUser,
+  CmsService,
+  FileService,
   FormsService,
+  fullEmail,
   GraphQLMeta,
   GraphQLMetaService,
   GraphQLRequestType,
   GraphQLService,
   GraphQLType,
-  CmsService,
   IGraphQLTypeCollection,
   ToastService,
   ToastType,
-  fullEmail,
 } from '@lenne.tech/ng-base/shared';
 import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -43,7 +44,9 @@ export class ModelFormComponent implements OnInit, OnChanges {
   operation: string;
   keys: string[] = [];
   user: BasicUser;
+  object: any;
   fabButtons: Button[] = [];
+  fileChanges: [{ field: string; file: File | null }];
 
   set loading(value: boolean) {
     if (!value) {
@@ -63,7 +66,8 @@ export class ModelFormComponent implements OnInit, OnChanges {
     private router: Router,
     private route: ActivatedRoute,
     private cmsService: CmsService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private fileService: FileService
   ) {}
 
   ngOnInit(): void {
@@ -166,6 +170,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
             console.log('ModelFormComponent::get->value', response);
           }
 
+          this.object = response;
           this.form.patchValue({ ...{}, ...response });
 
           // Process patchFields for reference input
@@ -387,7 +392,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * @returns The id of the newly created or updated object.
    */
   submit(secret = false) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (!secret) {
         this.loading = true;
       }
@@ -441,6 +446,49 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
       if (this.logging) {
         console.log('ModelFormComponent::submit->valueToGraphql', data);
+      }
+
+      if (this.fileChanges?.length) {
+        for (const fileChange of this.fileChanges) {
+          const key = fileChange.field;
+          if (fileChange.file) {
+            // Upload
+            if (this.form.get(key).value) {
+              // Delete
+              const deleteResult = await this.fileService.delete(
+                this.config[key]?.url,
+                this.config[key]?.deletePath || '/files/',
+                this.object[key]
+              );
+
+              if (deleteResult) {
+                data[key] = '';
+              }
+            }
+
+            const uploadResult = await this.fileService.upload(
+              this.config[key]?.url,
+              this.config[key]?.uploadPath || '/files/upload',
+              fileChange.file,
+              this.config[key]?.compressOptions
+            );
+
+            if (uploadResult?.id) {
+              data[key] = uploadResult.id;
+            }
+          } else {
+            // Delete
+            const result = await this.fileService.delete(
+              this.config[key]?.url,
+              this.config[key]?.deletePath || '/files/',
+              this.object[key]
+            );
+
+            if (result) {
+              data[key] = '';
+            }
+          }
+        }
       }
 
       this.graphQLService
@@ -506,6 +554,18 @@ export class ModelFormComponent implements OnInit, OnChanges {
       const event = new EventEmitter<boolean>();
       this.fabButtons.push({ icon: 'bi-x-lg', color: 'var(--bs-danger)', event });
       event.subscribe(() => this.deleteObject());
+    }
+  }
+
+  processFileChanges(event: { field: string; file: File | null }) {
+    const index = this.fileChanges?.findIndex((e) => e.field === event.field);
+
+    if (index !== undefined && index !== -1) {
+      this.fileChanges[index] = event;
+    } else if (this.fileChanges) {
+      this.fileChanges.push(event);
+    } else {
+      this.fileChanges = [event];
     }
   }
 }

@@ -13,6 +13,7 @@ export class ModelFormSubComponent implements OnInit {
   @Input() config: any = {};
 
   @Output() imageChanged = new EventEmitter<string>();
+  @Output() fileChanged = new EventEmitter<{ field: string; file: File | null }>();
 
   keys: string[] = [];
   user: BasicUser;

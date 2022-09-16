@@ -31,6 +31,7 @@ export * from './services/toast.service';
 export * from './services/breadcrumb.service';
 export * from './services/navigation.service';
 export * from './services/cms.service';
+export * from './services/file.service';
 
 // Enums
 export * from './enums/comparison-operator.enum';
@@ -58,6 +59,7 @@ export * from './interfaces/time-components.interface';
 export * from './interfaces/toast.interface';
 export * from './interfaces/breadcrumb.interface';
 export * from './interfaces/graphql-crud-type.interface';
+export * from './interfaces/compress-options.interface';
 
 // Types
 export * from './types/storage.type';

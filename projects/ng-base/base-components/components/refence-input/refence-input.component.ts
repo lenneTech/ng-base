@@ -88,6 +88,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
     if (!this.currentValue) {
       this.control.markAsTouched();
       this.control.markAsDirty();
+      this.control.setValue('');
       this.control.setErrors(null);
       return;
     }
