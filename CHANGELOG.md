@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.12.0](https://github.com/lenneTech/ng-base/compare/v14.11.1...v14.12.0) (2022-09-16)
+
+### Features
+
+- Refactor upload handling in cms ([2a29a99](https://github.com/lenneTech/ng-base/commit/2a29a997f549af58f5beefbf049e847b391f88f8))
+
 ### [14.11.1](https://github.com/lenneTech/ng-base/compare/v14.11.0...v14.11.1) (2022-09-14)
 
 ### Bug Fixes
