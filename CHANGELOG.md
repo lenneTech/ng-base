@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.13.0](https://github.com/lenneTech/ng-base/compare/v14.12.0...v14.13.0) (2022-09-19)
+
+### Features
+
+- Small fixes and add secure password validator ([d23e84d](https://github.com/lenneTech/ng-base/commit/d23e84dc05ae9e2832a2dd116f6f4f46de669bed))
+
 ## [14.12.0](https://github.com/lenneTech/ng-base/compare/v14.11.1...v14.12.0) (2022-09-16)
 
 ### Features
