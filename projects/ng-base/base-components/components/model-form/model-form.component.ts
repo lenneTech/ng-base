@@ -550,9 +550,9 @@ export class ModelFormComponent implements OnInit, OnChanges {
       event.subscribe(() => this.duplicateObject());
     }
 
-    if (this.operation === 'update') {
+    if (this.operation === 'update' && this.delete) {
       const event = new EventEmitter<boolean>();
-      this.fabButtons.push({ icon: 'bi-x-lg', color: 'var(--bs-danger)', event });
+      this.fabButtons.push({ icon: 'bi-trash3', color: 'var(--bs-danger)', event });
       event.subscribe(() => this.deleteObject());
     }
   }

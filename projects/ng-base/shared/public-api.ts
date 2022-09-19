@@ -68,6 +68,7 @@ export * from './types/graphql-fields.type';
 // Validators
 export * from './validators/match.validator';
 export * from './validators/email.validator';
+export * from './validators/secure-password.validator';
 
 // Functions
 export * from './functions/ws-client.function';

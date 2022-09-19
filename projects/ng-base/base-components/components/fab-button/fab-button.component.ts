@@ -14,7 +14,7 @@ export interface Button {
   styleUrls: ['./fab-button.component.scss'],
 })
 export class FabButtonComponent {
-  @Input() fabIcon = 'bi-three-dots';
+  @Input() fabIcon = 'bi-list';
   @Input() buttons: Button[];
   toggle = false;
 }

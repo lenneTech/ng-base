@@ -37,8 +37,13 @@
         {{control.errors?.['maxlength']?.requiredLength}} Zeichen.
       </div>
       <div *ngIf="control?.errors?.['email']">Bitte eine gültige E-Mail Adresse angeben.</div>
+      <div *ngIf="control?.errors?.['pattern'] && type === 'tel'">Bitte eine gültige Telefonnummer angeben.</div>
       <div *ngIf="control?.errors?.['invalidEmail']">Bitte eine gültige E-Mail Adresse angeben.</div>
       <div *ngIf="control?.errors?.['matching']">Die Passwörter müssen überein stimmen.</div>
+      <div *ngIf="control?.errors?.['invalidSecurePassword']">
+        Das Passwort ist zu unsicher. Es muss mind. 8 Zeichen lang sein und ein Großbustabe, ein Kleinbuchstabe, eine
+        Zahl und ein Sonderzeichen enthalten.
+      </div>
     </div>
   </div>
 </div>

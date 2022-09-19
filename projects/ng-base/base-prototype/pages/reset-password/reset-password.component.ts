@@ -1,6 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, UntypedFormGroup, Validators } from '@angular/forms';
-import { FormsService, ToastService, ToastType, UserService, Validation } from '@lenne.tech/ng-base/shared';
+import {
+  FormsService,
+  securePasswordValidator,
+  ToastService,
+  ToastType,
+  UserService,
+  Validation,
+} from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -40,8 +47,8 @@ export class ResetPasswordComponent implements OnInit {
   createForm() {
     this.form = new UntypedFormGroup(
       {
-        password: new FormControl<string>('', [Validators.required, Validators.minLength(6)]),
-        passwordConfirm: new FormControl<string>('', [Validators.required, Validators.minLength(6)]),
+        password: new FormControl<string>('', [Validators.required, securePasswordValidator()]),
+        passwordConfirm: new FormControl<string>('', [Validators.required, securePasswordValidator()]),
       },
       { validators: Validation.match('password', 'passwordConfirm') }
     );

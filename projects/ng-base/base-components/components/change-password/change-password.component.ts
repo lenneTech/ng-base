@@ -3,6 +3,7 @@ import { FormControl, FormGroup, UntypedFormGroup, Validators } from '@angular/f
 import {
   AuthService,
   FormsService,
+  securePasswordValidator,
   ToastService,
   ToastType,
   UserService,
@@ -35,8 +36,8 @@ export class ChangePasswordComponent implements OnInit {
   createForm() {
     this.form = new UntypedFormGroup(
       {
-        password: new FormControl<string>('', [Validators.required, Validators.minLength(6)]),
-        passwordConfirm: new FormControl<string>('', [Validators.required, Validators.minLength(6)]),
+        password: new FormControl<string>('', [Validators.required, securePasswordValidator()]),
+        passwordConfirm: new FormControl<string>('', [Validators.required, securePasswordValidator()]),
       },
       { validators: Validation.match('password', 'passwordConfirm') }
     );

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { FormsService, UserService, Validation, fullEmail } from '@lenne.tech/ng-base/shared';
+import { FormsService, fullEmail, securePasswordValidator, UserService, Validation } from '@lenne.tech/ng-base/shared';
 import { Router } from '@angular/router';
 
 @Component({
@@ -28,8 +28,8 @@ export class RegisterComponent implements OnInit {
         firstName: new UntypedFormControl('', [Validators.required]),
         lastName: new UntypedFormControl('', [Validators.required]),
         email: new UntypedFormControl('', [Validators.required, fullEmail()]),
-        password: new UntypedFormControl('', [Validators.required, Validators.minLength(6)]),
-        passwordConfirm: new UntypedFormControl('', [Validators.required, Validators.minLength(6)]),
+        password: new UntypedFormControl('', [Validators.required, securePasswordValidator()]),
+        passwordConfirm: new UntypedFormControl('', [Validators.required, securePasswordValidator()]),
         privacy: new UntypedFormControl(false, Validators.requiredTrue),
       },
       {

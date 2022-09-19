@@ -1,7 +1,8 @@
 <div class="fab-container" [ngClass]="{ 'fab-container-active': toggle }">
   <div class="fab shadow">
     <div class="fab-content" (click)="toggle = !toggle">
-      <i class="bi" [ngClass]="fabIcon"></i>
+      <i class="bi bi-x-lg" *ngIf="toggle"></i>
+      <i class="bi" *ngIf="!toggle" [ngClass]="fabIcon"></i>
     </div>
   </div>
   <div

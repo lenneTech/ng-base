@@ -113,13 +113,14 @@ export class TagsComponent {
       foundOption = this.options.find((e) => e.value === tag);
     }
 
+    this.control.markAsTouched();
     if (foundOption) {
       this.control.setValue(this.control.value.filter((item: string) => item !== foundOption.value));
-    } else {
+    } else if (this.control.value) {
       this.control.value.splice(-1);
     }
 
-    if (this.control.value.length === 0) {
+    if (this.control.value?.length === 0) {
       this.control.setErrors({ required: true });
     }
   }
@@ -139,19 +140,26 @@ export class TagsComponent {
    * Show dropdown focus
    */
   onFocus(event?) {
-    if (this.options) {
-      if (this.options.find((e) => e.text === this.inputValue)) {
-        this.control.setErrors({ invalidReference: false });
-      } else {
-        this.control.setErrors({ invalidReference: true });
-      }
-    }
-
     if (event) {
+      this.control.setErrors(null);
       this.selectedElement = event.target;
     } else {
       this.control.markAsTouched();
+
       setTimeout(() => {
+        if (this.options && this.inputValue) {
+          if (this.options.find((e) => e.text === this.inputValue)) {
+            this.addTag(this.inputValue);
+            this.control.setErrors(null);
+          } else {
+            this.inputValue = '';
+          }
+        }
+
+        if (!this.control.value || this.control.value?.length === 0) {
+          this.control.setErrors({ required: true });
+        }
+
         this.selectedElement = null;
       }, 250);
     }
