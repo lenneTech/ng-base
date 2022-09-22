@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.13.1](https://github.com/lenneTech/ng-base/compare/v14.13.0...v14.13.1) (2022-09-22)
+
+### Bug Fixes
+
+- fixed image overwrite ([ffdca46](https://github.com/lenneTech/ng-base/commit/ffdca465cac750a4607476ebd801c1c6d71f4d68))
+
 ## [14.13.0](https://github.com/lenneTech/ng-base/compare/v14.12.0...v14.13.0) (2022-09-19)
 
 ### Features
