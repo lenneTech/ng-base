@@ -47,7 +47,6 @@ export class FileService {
    */
   async upload(url: string, path: string, file: File, compressOptions?: CompressOptions): Promise<{ id: string }> {
     return new Promise(async (resolve, reject) => {
-      console.log(url, path, compressOptions, file);
       if (compressOptions) {
         file = await this.compress(file, compressOptions);
       }
