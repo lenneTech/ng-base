@@ -36,6 +36,7 @@ export class ChangePasswordComponent implements OnInit {
   createForm() {
     this.form = new UntypedFormGroup(
       {
+        current: new FormControl<string>('', [Validators.required]),
         password: new FormControl<string>('', [Validators.required, securePasswordValidator()]),
         passwordConfirm: new FormControl<string>('', [Validators.required, securePasswordValidator()]),
       },
@@ -48,36 +49,54 @@ export class ChangePasswordComponent implements OnInit {
    */
   submit() {
     this.loading = true;
+    this.userService
+      .login({
+        email: this.authService.currentUser.email,
+        password: this.form.get('current').value,
+      })
+      .subscribe({
+        next: () => {
+          if (this.form.invalid) {
+            this.formsService.validateAllFormFields(this.form);
+            this.loading = false;
+            return;
+          }
 
-    if (this.form.invalid) {
-      this.formsService.validateAllFormFields(this.form);
-      this.loading = false;
-      return;
-    }
+          this.userService.changePassword(this.authService.currentUser.id, this.form.get('password').value).subscribe({
+            next: (response) => {
+              if (response) {
+                this.form.reset();
+                this.toastService.show({
+                  id: 'password-change-success',
+                  title: 'Erfolgreich',
+                  description: 'Passwort wurde erfolgreich geändert.',
+                  type: ToastType.SUCCESS,
+                });
+              }
 
-    this.userService.changePassword(this.authService.currentUser.id, this.form.get('password').value).subscribe({
-      next: (response) => {
-        if (response) {
-          this.form.reset();
-          this.toastService.show({
-            id: 'password-change-success',
-            title: 'Erfolgreich',
-            description: 'Passwort wurde erfolgreich geändert.',
-            type: ToastType.SUCCESS,
+              this.loading = false;
+            },
+            error: () => {
+              this.loading = false;
+              this.toastService.show({
+                id: 'password-change-error',
+                title: 'Fehlgeschlagen',
+                description: 'Passwort ändern ist fehlgeschlagen, bitte versuche es später erneut.',
+                type: ToastType.ERROR,
+              });
+            },
           });
-        }
-
-        this.loading = false;
-      },
-      error: (error) => {
-        this.loading = false;
-        this.toastService.show({
-          id: 'password-change-error',
-          title: 'Fehlgeschlagen',
-          description: 'Passwort ändern ist fehlgeschlagen, bitte versuche es später erneut.',
-          type: ToastType.ERROR,
-        });
-      },
-    });
+        },
+        error: () => {
+          this.loading = false;
+          this.toastService.show({
+            id: 'password-change-error',
+            title: 'Fehlgeschlagen',
+            description: 'Passwort ändern ist fehlgeschlagen. Falsches Passwort.',
+            type: ToastType.ERROR,
+            errorCode: '401',
+          });
+        },
+      });
   }
 }
