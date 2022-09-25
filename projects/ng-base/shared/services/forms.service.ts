@@ -21,14 +21,24 @@ export class FormsService {
   }
 
   public findInvalidControls(formGroup: UntypedFormGroup): string[] {
-    const invalid: string[] = [];
+    return this.getInvalidControl(formGroup);
+  }
+
+  private getInvalidControl(formGroup: UntypedFormGroup, invalid?) {
+    let result = invalid ? [...invalid] : [];
+
     const controls = formGroup.controls;
     Object.keys(formGroup.controls).forEach((name) => {
       if (controls[name].invalid) {
-        invalid.push(name);
+        if ((controls[name] as any)?.controls) {
+          result = this.getInvalidControl(controls[name] as any, result);
+        } else {
+          result.push(name);
+        }
       }
     });
-    return invalid;
+
+    return result;
   }
 
   public scrollToInvalidControl(form: UntypedFormGroup) {

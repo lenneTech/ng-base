@@ -416,33 +416,9 @@ export class ModelFormComponent implements OnInit, OnChanges {
         console.log('ModelFormComponent::submit->formValue', this.form.value);
       }
 
-      const data = Object.assign({}, this.form.value);
-      for (const [key, value] of Object.entries(data)) {
-        if (
-          (this.config[key]?.roles ? !this.user.hasAllRoles(this.config[key]?.roles) : false) ||
-          this.config[key]?.exclude
-        ) {
-          delete data[key];
-        }
-
-        if (value && typeof value === 'object' && !Array.isArray(value)) {
-          data[key] = Object.keys(data[key])
-            .filter((k) => data[key][k] != null)
-            .reduce((a, k) => ({ ...a, [k]: data[key][k] }), {});
-
-          if (Object.keys(data[key])?.length === 0) {
-            if (this.logging) {
-              console.log('Object is empty from result');
-            }
-            data[key] = null;
-          }
-        }
-
-        // Set type for graphql method
-        if (this.fields[key]?.type === 'Float') {
-          data[key] = Number(value);
-        }
-      }
+      // Prepare data for server request
+      let data = Object.assign({}, this.form.value);
+      data = this.prepareDataForRequest(this.config, this.fields, data);
 
       if (this.logging) {
         console.log('ModelFormComponent::submit->valueToGraphql', data);
@@ -537,6 +513,41 @@ export class ModelFormComponent implements OnInit, OnChanges {
   }
 
   /**
+   * Prepare data for server
+   */
+  prepareDataForRequest(config, fieldsConfig, data) {
+    for (const [key, value] of Object.entries(data)) {
+      if ((config[key]?.roles ? !this.user.hasAllRoles(config[key]?.roles) : false) || config[key]?.exclude) {
+        delete data[key];
+      }
+
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        data[key] = Object.keys(data[key])
+          .filter((k) => data[key][k] != null)
+          .reduce((a, k) => ({ ...a, [k]: data[key][k] }), {});
+
+        if (Object.keys(data[key])?.length === 0) {
+          if (this.logging) {
+            console.log('Object is empty from result');
+          }
+          data[key] = null;
+        }
+      }
+
+      // Set type for graphql method
+      if (fieldsConfig[key]?.type === 'Float') {
+        data[key] = Number(value);
+      }
+
+      if (fieldsConfig[key]?.fields && Object.keys(fieldsConfig[key]?.fields).length > 0) {
+        data[key] = this.prepareDataForRequest(config[key]?.fields, fieldsConfig[key]?.fields, data[key]);
+      }
+    }
+
+    return data;
+  }
+
+  /**
    * Init fab buttons for mobile devices
    */
   initFabActions() {
@@ -557,6 +568,9 @@ export class ModelFormComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * Set file changes for process
+   */
   processFileChanges(event: { field: string; file: File | null }) {
     const index = this.fileChanges?.findIndex((e) => e.field === event.field);
 
