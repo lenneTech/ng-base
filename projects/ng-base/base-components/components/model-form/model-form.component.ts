@@ -516,6 +516,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * Prepare data for server
    */
   prepareDataForRequest(config, fieldsConfig, data) {
+    if (!data) {
+      return data;
+    }
+
     for (const [key, value] of Object.entries(data)) {
       if ((config[key]?.roles ? !this.user.hasAllRoles(config[key]?.roles) : false) || config[key]?.exclude) {
         delete data[key];
