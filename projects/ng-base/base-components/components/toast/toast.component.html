@@ -1,4 +1,8 @@
-<div class="toast-container position-fixed" [ngClass]="position" [@toastAnimation]="toasts.length">
+<div
+  class="toast-container position-fixed"
+  [ngClass]="position"
+  [@toastAnimation]="{ value: toasts.length, params: { x: position.includes('left') ? '-100%' : '100%' } }"
+>
   <div
     class="toast show"
     role="alert"

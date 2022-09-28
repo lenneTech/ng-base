@@ -7,10 +7,10 @@ const toastAnimation = trigger('toastAnimation', [
   transition('* <=> *', [
     query(
       ':enter',
-      [style({ transform: 'translateX(100%)' }), animate('200ms ease-in', style({ transform: 'translateX(0%)' }))],
+      [style({ transform: 'translateX({{ x }})' }), animate('200ms ease-in', style({ transform: 'translateX(0%)' }))],
       { optional: true }
     ),
-    query(':leave', animate('200ms ease-in', style({ transform: 'translateX(100%)' })), { optional: true }),
+    query(':leave', animate('200ms ease-in', style({ transform: 'translateX({{ x }})' })), { optional: true }),
   ]),
 ]);
 
@@ -24,7 +24,7 @@ export class ToastComponent implements OnInit, OnDestroy {
   toasts: Toast[] = [];
   ToastType = ToastType;
   subscriptions = new Subscription();
-  @Input() position: 'top-right' | 'bottom-right' = 'bottom-right';
+  @Input() position: 'top-right' | 'bottom-right' | 'bottom-left' | 'top-left' = 'bottom-right';
 
   constructor(private toastService: ToastService) {}
 
