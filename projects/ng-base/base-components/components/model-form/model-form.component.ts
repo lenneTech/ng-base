@@ -540,7 +540,11 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
       // Set type for graphql method
       if (fieldsConfig[key]?.type === 'Float') {
-        data[key] = Number(value);
+        if (value) {
+          data[key] = Number(value);
+        } else {
+          data[key] = null;
+        }
       }
 
       if (fieldsConfig[key]?.fields && Object.keys(fieldsConfig[key]?.fields).length > 0) {

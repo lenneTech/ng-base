@@ -94,6 +94,7 @@
             [name]="key"
             [isList]="fields[key]?.isList"
             [search]="config[key]?.searchable ?? true"
+            [placeholder]="config[key]?.placeholder || 'Bitte einen Wert auswählen'"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [control]="transformToControl(form?.get(key))"
             [method]="config[key]?.method || 'find'"

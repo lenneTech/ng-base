@@ -93,7 +93,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const foundElement = this.objects.find((e) => e[this.valueField] === this.currentValue);
+    const foundElement = this.objects.find((e) => e[this.nameField] === this.currentValue);
     if (!foundElement) {
       this.control.setValue(null);
       this.control.markAsTouched();

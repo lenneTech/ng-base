@@ -98,6 +98,10 @@ export class TagsComponent {
       this.inputValue = '';
       this.control.setErrors(null);
     }
+
+    if (this.control.value.some((item: string) => item === foundOption.value)) {
+      this.inputValue = '';
+    }
   }
 
   /**
@@ -144,6 +148,10 @@ export class TagsComponent {
       this.control.setErrors(null);
       this.selectedElement = event.target;
     } else {
+      if (this.inputValue) {
+        this.addTag(this.inputValue);
+      }
+
       this.control.markAsTouched();
 
       setTimeout(() => {

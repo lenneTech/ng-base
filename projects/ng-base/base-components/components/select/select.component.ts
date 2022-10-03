@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
 interface Option {
   text: string;
@@ -7,6 +7,7 @@ interface Option {
 
 @Component({
   selector: 'base-select',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
 })
