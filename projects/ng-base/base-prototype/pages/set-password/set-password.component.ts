@@ -11,11 +11,11 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'base-reset-password',
-  templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.scss'],
+  selector: 'base-set-password',
+  templateUrl: './set-password.component.html',
+  styleUrls: ['./set-password.component.scss'],
 })
-export class ResetPasswordComponent implements OnInit {
+export class SetPasswordComponent implements OnInit {
   @Input() redirectUrl = '/';
   form: FormGroup;
   loading = false;
@@ -71,9 +71,9 @@ export class ResetPasswordComponent implements OnInit {
         if (response) {
           this.form.reset();
           this.toastService.show({
-            id: 'password-reset-success',
+            id: 'set-password-success',
             title: 'Erfolgreich',
-            description: 'Passwort wurde erfolgreich geändert.',
+            description: 'Passwort wurde erfolgreich gesetzt. Du kannst Dich nun einloggen.',
             type: ToastType.SUCCESS,
           });
         }
@@ -84,9 +84,9 @@ export class ResetPasswordComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.toastService.show({
-          id: 'password-reset-error',
+          id: 'set-password-error',
           title: 'Fehlgeschlagen',
-          description: 'Passwort zurücksetzen ist fehlgeschlagen, bitte versuche es später erneut.',
+          description: 'Passwort setzen ist fehlgeschlagen, bitte versuche es später erneut.',
           type: ToastType.ERROR,
         });
       },
