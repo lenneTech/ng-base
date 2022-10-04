@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.13.6](https://github.com/lenneTech/ng-base/compare/v14.13.5...v14.13.6) (2022-10-04)
+
+### Bug Fixes
+
+- Rename of set password prototype component ([a57e8f0](https://github.com/lenneTech/ng-base/commit/a57e8f0d8e521933ccfca186ed3561b605954c15))
+
 ### [14.13.5](https://github.com/lenneTech/ng-base/compare/v14.13.4...v14.13.5) (2022-10-03)
 
 ### Bug Fixes
