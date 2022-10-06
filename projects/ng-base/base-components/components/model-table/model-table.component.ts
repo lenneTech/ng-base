@@ -5,6 +5,9 @@ import {
   GraphQLMetaService,
   GraphQLRequestType,
   GraphQLService,
+  GraphQLType,
+  ToastService,
+  ToastType,
 } from '@lenne.tech/ng-base/shared';
 
 @Component({
@@ -20,15 +23,17 @@ export class ModelTableComponent implements OnInit, OnChanges {
   @Input() create = true;
   @Input() update = true;
   @Input() delete = true;
+  @Input() import = true;
+  @Input() export = true;
   @Input() duplicate = true;
   @Input() config: any = {};
   @Input() fieldConfig: any = {};
   @Input() showFavButton = true;
-  uniqueField = 'id';
 
   @Output() idSelected = new EventEmitter<string>();
   @Output() createModeChanged = new EventEmitter<boolean>();
 
+  uniqueField = 'id';
   tableFields = {
     id: { label: 'ID' },
     name: { label: 'Name' },
@@ -44,11 +49,13 @@ export class ModelTableComponent implements OnInit, OnChanges {
   selectedId = '';
   queryName = null;
   camelModelName: string;
+  possibleFields: Record<string, GraphQLType> = {};
 
   constructor(
     private graphQLMetaService: GraphQLMetaService,
     private graphQLService: GraphQLService,
-    private cmsService: CmsService
+    private cmsService: CmsService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -85,7 +92,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
    * We're using the `meta` service to get the fields that are available for the `find` query for the model we're working
    * with. We're then using that information to populate the `availableFields` array
    */
-  init() {
+  async init() {
     this.availableFields = [];
     this.camelModelName = this.kebabToCamelCase(this.modelName);
     // Set query name
@@ -106,8 +113,9 @@ export class ModelTableComponent implements OnInit, OnChanges {
       console.log('ModelTableComponent::init->tableFields', this.tableFields);
     }
 
-    const possibleFields = this.meta.getFields(this.queryName).fields;
-    const keys = Object.keys(possibleFields);
+    this.possibleFields = this.meta.getFields(this.queryName).fields;
+    const keys = Object.keys(this.possibleFields);
+
     const tableFieldKeys = Object.keys(this.tableFields);
     tableFieldKeys?.forEach((field) => {
       if (keys.includes(field)) {
@@ -116,12 +124,12 @@ export class ModelTableComponent implements OnInit, OnChanges {
     });
 
     if (this.logging) {
-      console.log('ModelTableComponent::init->possibleFields', possibleFields);
+      console.log('ModelTableComponent::init->possibleFields', this.possibleFields);
       console.log('ModelTableComponent::init->keys', keys);
       console.log('ModelTableComponent::init->availableFields', this.availableFields);
     }
 
-    this.loadObjects(this.availableFields);
+    this.objects = await this.loadObjects(this.availableFields);
   }
 
   /**
@@ -138,37 +146,40 @@ export class ModelTableComponent implements OnInit, OnChanges {
    *
    * @param fields - string[] - The fields you want to load from the database.
    */
-  loadObjects(fields: string[]) {
-    const requestFields = [...fields];
-    const idInFields = requestFields.find((e) => e === 'id');
+  loadObjects(fields: string[]): Promise<any[]> {
+    return new Promise<any[]>((resolve, reject) => {
+      const requestFields = [...fields];
+      const idInFields = requestFields.find((e) => e === 'id');
 
-    if (!idInFields) {
-      requestFields.push('id');
-    }
+      if (!idInFields) {
+        requestFields.push('id');
+      }
 
-    this.objects = [];
-    this.graphQLService
-      .graphQl(this.queryName, {
-        fields: requestFields,
-        type: GraphQLRequestType.QUERY,
-      })
-      .subscribe({
-        next: (value) => {
-          if (this.logging) {
-            console.log('ModelTableComponent::loadObjects->value', value);
-          }
+      this.graphQLService
+        .graphQl(this.queryName, {
+          fields: requestFields,
+          type: GraphQLRequestType.QUERY,
+        })
+        .subscribe({
+          next: (value) => {
+            if (this.logging) {
+              console.log('ModelTableComponent::loadObjects->value', value);
+            }
 
-          const arrayForSort = [...value];
-          this.objects = arrayForSort.sort(
-            (a, b) =>
-              (b?.createdAt ? new Date(b?.createdAt)?.getTime() : new Date().getTime()) -
-              (a?.createdAt ? new Date(a?.createdAt)?.getTime() : new Date().getTime())
-          );
-        },
-        error: (err) => {
-          console.log('Error on loading objects', err);
-        },
-      });
+            const arrayForSort = [...value];
+            const objects = arrayForSort.sort(
+              (a, b) =>
+                (b?.createdAt ? new Date(b?.createdAt)?.getTime() : new Date().getTime()) -
+                (a?.createdAt ? new Date(a?.createdAt)?.getTime() : new Date().getTime())
+            );
+            resolve(objects);
+          },
+          error: (err) => {
+            console.log('Error on loading objects', err);
+            reject(err);
+          },
+        });
+    });
   }
 
   /**
@@ -193,7 +204,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
    */
   async duplicateObject(id: string) {
     await this.cmsService.duplicateObject(id, this.camelModelName);
-    this.loadObjects(this.availableFields);
+    this.objects = await this.loadObjects(this.availableFields);
   }
 
   /**
@@ -202,7 +213,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
    */
   async deleteObject(id: string) {
     await this.cmsService.deleteObject(id, this.camelModelName);
-    this.loadObjects(this.availableFields);
+    this.objects = await this.loadObjects(this.availableFields);
   }
 
   /**
@@ -217,5 +228,96 @@ export class ModelTableComponent implements OnInit, OnChanges {
    */
   kebabToCamelCase(str: string) {
     return str.replace(/-./g, (match) => match[1].toUpperCase());
+  }
+
+  /**
+   * Import objects from json file
+   */
+  processImport(event) {
+    // Create a new FileReader() object
+    const reader = new FileReader();
+
+    // Setup the callback event to run when the file is read
+    reader.onload = async (readerEvent) => {
+      let jsonResult = JSON.parse(readerEvent.target.result as any);
+
+      if (!Array.isArray(jsonResult)) {
+        jsonResult = [jsonResult];
+      }
+
+      for (let i = 0; i < jsonResult.length; i++) {
+        try {
+          this.graphQLService
+            .graphQl('create' + this.capitalizeFirstLetter(this.modelName), {
+              arguments: { input: jsonResult[i] },
+              fields: ['id'],
+              type: GraphQLRequestType.MUTATION,
+            })
+            .subscribe({
+              next: async () => {
+                this.toastService.show({
+                  id: this.modelName + '-' + i + '-success',
+                  type: ToastType.SUCCESS,
+                  title: 'Erfolgreich',
+                  description: 'Element ' + (i + 1) + ' von ' + jsonResult.length + ' erfolgreich importiert.',
+                });
+
+                if (i === jsonResult.length - 1) {
+                  this.objects = await this.loadObjects(this.availableFields);
+                }
+              },
+              error: () => {
+                this.toastService.show({
+                  id: this.modelName + '-' + i + '-error',
+                  type: ToastType.ERROR,
+                  title: 'Error',
+                  description: 'Element ' + (i + 1) + ' von ' + jsonResult.length + ' konnte nicht importiert werden.',
+                });
+              },
+            });
+        } catch (e) {
+          this.toastService.show({
+            id: this.modelName + '-' + i + '-error',
+            type: ToastType.ERROR,
+            title: 'Error',
+            description: 'Element ' + (i + 1) + ' von ' + jsonResult.length + ' konnte nicht importiert werden.',
+          });
+        }
+      }
+    };
+
+    // Read the file
+    reader.readAsText(event.target.files[0]);
+  }
+
+  /**
+   * Export objects as json
+   */
+  async processExport() {
+    const keys = this.getAllKeys();
+    const items = await this.loadObjects(keys);
+    const data = JSON.stringify(items);
+    const blob = new Blob([data], { type: 'text/json;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', this.modelName + 's.json');
+    document.body.appendChild(link);
+    link.click();
+  }
+
+  /**
+   * Get all keys for request to export objects as json
+   */
+  getAllKeys() {
+    const items = [];
+    for (const [key, value] of Object.entries(this.possibleFields)) {
+      if (!this.possibleFields[key].fields || Object.keys(this.possibleFields[key].fields).length === 0) {
+        items.push(key);
+      }
+    }
+
+    return items;
   }
 }
