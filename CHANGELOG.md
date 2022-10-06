@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.14.0](https://github.com/lenneTech/ng-base/compare/v14.13.6...v14.14.0) (2022-10-06)
+
+### Features
+
+- Add json import and export to cms ([b91ce92](https://github.com/lenneTech/ng-base/commit/b91ce92af333770cb2d20050dffb9f107f5b560a))
+
 ### [14.13.6](https://github.com/lenneTech/ng-base/compare/v14.13.5...v14.13.6) (2022-10-04)
 
 ### Bug Fixes
