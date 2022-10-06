@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.15.0](https://github.com/lenneTech/ng-base/compare/v14.14.0...v14.15.0) (2022-10-06)
+
+### Features
+
+- Add samples option to find args interface ([552d81b](https://github.com/lenneTech/ng-base/commit/552d81bf331cb914dc53e76f32134089eef1de3d))
+
 ## [14.14.0](https://github.com/lenneTech/ng-base/compare/v14.13.6...v14.14.0) (2022-10-06)
 
 ### Features
