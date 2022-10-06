@@ -6,6 +6,21 @@
       }}
     </h2>
     <div class="d-flex align-items-center d-none d-lg-block">
+      <input #importFile type="file" accept=".json" class="d-none" (change)="processImport($event)" />
+      <div class="btn-group me-4" *ngIf="import || export">
+        <i
+          class="bi bi-three-dots-vertical"
+          id="settingsDropdown"
+          type="button"
+          data-bs-toggle="dropdown"
+          data-bs-auto-close="true"
+          aria-expanded="false"
+        ></i>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
+          <li><a class="dropdown-item cursor-pointer" *ngIf="export" (click)="processExport()">Export</a></li>
+          <li><a class="dropdown-item cursor-pointer" *ngIf="import" (click)="importFile.click()"> Import </a></li>
+        </ul>
+      </div>
       <button class="btn btn-primary" (click)="createNewObject()" *ngIf="create">Erstellen</button>
     </div>
   </div>

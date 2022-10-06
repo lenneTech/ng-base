@@ -166,6 +166,28 @@ export class BaseCmsComponent implements OnInit, OnDestroy {
     return type ? type.create : false;
   }
 
+  isImportPossible(): boolean {
+    let result = false;
+    const config = this.moduleConfig?.modelConfig[this.camelModelName]?.import;
+
+    if (config !== null && config !== undefined) {
+      result = config;
+    }
+
+    return result;
+  }
+
+  isExportPossible(): boolean {
+    let result = false;
+    const config = this.moduleConfig?.modelConfig[this.camelModelName]?.export;
+
+    if (config !== null && config !== undefined) {
+      result = config;
+    }
+
+    return result;
+  }
+
   /**
    * If the model name is found in the type map, return the update property of the type object
    *
