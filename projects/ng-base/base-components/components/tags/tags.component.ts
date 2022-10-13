@@ -59,8 +59,31 @@ export class TagsComponent {
    * Add new tag
    *
    * @param tag
+   * @param reset
    */
-  addTag(tag: string): void {
+  addTag(tag: string, reset = true): void {
+    // Check if user copy string into input
+    if (tag.split(' ').length > 1) {
+      const tags = tag.split(' ');
+
+      for (let i = 0; i < tags.length; i++) {
+        this.addTag(tags[i], i + 1 === tags.length);
+      }
+
+      return;
+    }
+
+    // Check if user copy string into input
+    if (tag.split(',').length > 1) {
+      const tags = tag.split(',');
+
+      for (let i = 0; i < tags.length; i++) {
+        this.addTag(tags[i], i + 1 === tags.length);
+      }
+
+      return;
+    }
+
     if (tag.endsWith(',') || tag.endsWith(' ')) {
       tag = tag.slice(0, -1);
     }
@@ -84,7 +107,9 @@ export class TagsComponent {
 
     if (this.control.value?.length === 0) {
       this.control.setValue([foundOption.value]);
-      this.inputValue = '';
+      if (reset) {
+        this.inputValue = '';
+      }
       this.control.setErrors(null);
       return;
     }
@@ -95,12 +120,16 @@ export class TagsComponent {
       !this.control.value.some((item: string) => item === foundOption.value)
     ) {
       this.control.setValue([...this.control.value, foundOption.value]);
-      this.inputValue = '';
+      if (reset) {
+        this.inputValue = '';
+      }
       this.control.setErrors(null);
     }
 
     if (this.control.value.some((item: string) => item === foundOption.value)) {
-      this.inputValue = '';
+      if (reset) {
+        this.inputValue = '';
+      }
     }
   }
 
