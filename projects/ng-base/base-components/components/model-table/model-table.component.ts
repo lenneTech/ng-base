@@ -101,6 +101,8 @@ export class ModelTableComponent implements OnInit, OnChanges {
    */
   async init() {
     this.availableFields = [];
+    this.pages = [];
+    this.totalCount = null;
     this.camelModelName = this.kebabToCamelCase(this.modelName);
     // Set query name
     if (!this.config?.queryName) {
