@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.16.0](https://github.com/lenneTech/ng-base/compare/v14.15.1...v14.16.0) (2022-10-17)
+
+### Features
+
+- Add pagination for model-table.component ([ed4a2a2](https://github.com/lenneTech/ng-base/commit/ed4a2a2a02596a5d7ab370d6eb7bc22d45cdd494))
+
 ### [14.15.1](https://github.com/lenneTech/ng-base/compare/v14.15.0...v14.15.1) (2022-10-13)
 
 ### Bug Fixes
