@@ -60,10 +60,15 @@ export class TagsComponent {
    *
    * @param tag
    * @param reset
+   * @param isOption
    */
-  addTag(tag: string, reset = true): void {
+  addTag(tag: string, reset = true, isOption = false): void {
+    if (tag.endsWith(',') || tag.endsWith(' ')) {
+      tag = tag.slice(0, -1);
+    }
+
     // Check if user copy string into input
-    if (tag.split(' ').length > 1) {
+    if (tag.split(' ').length > 1 && !isOption) {
       const tags = tag.split(' ');
 
       for (let i = 0; i < tags.length; i++) {
@@ -74,7 +79,7 @@ export class TagsComponent {
     }
 
     // Check if user copy string into input
-    if (tag.split(',').length > 1) {
+    if (tag.split(',').length > 1 && !isOption) {
       const tags = tag.split(',');
 
       for (let i = 0; i < tags.length; i++) {
@@ -82,10 +87,6 @@ export class TagsComponent {
       }
 
       return;
-    }
-
-    if (tag.endsWith(',') || tag.endsWith(' ')) {
-      tag = tag.slice(0, -1);
     }
 
     let foundOption;

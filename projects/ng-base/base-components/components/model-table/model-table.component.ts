@@ -6,6 +6,8 @@ import {
   GraphQLRequestType,
   GraphQLService,
   GraphQLType,
+  ScrollService,
+  SortOrderEnum,
   ToastService,
   ToastType,
 } from '@lenne.tech/ng-base/shared';
@@ -47,15 +49,20 @@ export class ModelTableComponent implements OnInit, OnChanges {
   objects: any[] = [];
   availableFields: string[] = [];
   selectedId = '';
-  queryName = null;
+  queryName: string = null;
   camelModelName: string;
   possibleFields: Record<string, GraphQLType> = {};
+
+  totalCount: number;
+  selectedPageIndex = 0;
+  pages = [];
 
   constructor(
     private graphQLMetaService: GraphQLMetaService,
     private graphQLService: GraphQLService,
     private cmsService: CmsService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private scrollService: ScrollService
   ) {}
 
   ngOnInit(): void {
@@ -97,7 +104,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
     this.camelModelName = this.kebabToCamelCase(this.modelName);
     // Set query name
     if (!this.config?.queryName) {
-      this.queryName = 'find' + this.capitalizeFirstLetter(this.camelModelName) + 's';
+      this.queryName = 'findAndCount' + this.capitalizeFirstLetter(this.camelModelName) + 's';
     } else {
       this.queryName = this.config?.queryName;
     }
@@ -114,7 +121,12 @@ export class ModelTableComponent implements OnInit, OnChanges {
     }
 
     this.possibleFields = this.meta.getFields(this.queryName).fields;
-    const keys = Object.keys(this.possibleFields);
+    let keys;
+    if (this.possibleFields?.items && Object.keys(this.possibleFields?.items?.fields).length > 0) {
+      keys = Object.keys(this.possibleFields.items.fields);
+    } else {
+      keys = Object.keys(this.possibleFields);
+    }
 
     const tableFieldKeys = Object.keys(this.tableFields);
     tableFieldKeys?.forEach((field) => {
@@ -129,7 +141,8 @@ export class ModelTableComponent implements OnInit, OnChanges {
       console.log('ModelTableComponent::init->availableFields', this.availableFields);
     }
 
-    this.objects = await this.loadObjects(this.availableFields);
+    this.selectedPageIndex = 0;
+    this.objects = await this.loadObjects(this.availableFields, 0, 25);
   }
 
   /**
@@ -145,8 +158,10 @@ export class ModelTableComponent implements OnInit, OnChanges {
    * It loads the objects from the database and stores them in the objects variable
    *
    * @param fields - string[] - The fields you want to load from the database.
+   * @param skip
+   * @param limit
    */
-  loadObjects(fields: string[]): Promise<any[]> {
+  loadObjects(fields: string[], skip = 0, limit = 25): Promise<any[]> {
     return new Promise<any[]>((resolve, reject) => {
       const requestFields = [...fields];
       const idInFields = requestFields.find((e) => e === 'id');
@@ -155,24 +170,44 @@ export class ModelTableComponent implements OnInit, OnChanges {
         requestFields.push('id');
       }
 
+      const isFindAndCount = this.queryName.includes('findAndCount');
+
       this.graphQLService
         .graphQl(this.queryName, {
-          fields: requestFields,
+          arguments: {
+            sort: [{ field: 'createdAt', order: SortOrderEnum.ASC }],
+            limit: isFindAndCount ? limit : null,
+            skip: isFindAndCount ? skip : null,
+          },
+          fields: isFindAndCount ? ['totalCount', { items: requestFields }] : requestFields,
           type: GraphQLRequestType.QUERY,
         })
         .subscribe({
           next: (value) => {
+            let items;
             if (this.logging) {
               console.log('ModelTableComponent::loadObjects->value', value);
             }
 
-            const arrayForSort = [...value];
-            const objects = arrayForSort.sort(
-              (a, b) =>
-                (b?.createdAt ? new Date(b?.createdAt)?.getTime() : new Date().getTime()) -
-                (a?.createdAt ? new Date(a?.createdAt)?.getTime() : new Date().getTime())
-            );
-            resolve(objects);
+            if (value?.totalCount >= 0) {
+              items = value.items;
+              this.totalCount = value.totalCount;
+              this.pages = [];
+              let numbers = 0;
+
+              while (numbers < this.totalCount) {
+                this.pages.push({
+                  skip: numbers,
+                  limit: numbers + 25 < this.totalCount ? numbers + 25 : this.totalCount,
+                });
+
+                numbers = numbers + 25;
+              }
+            } else {
+              items = value;
+            }
+
+            resolve(items);
           },
           error: (err) => {
             console.log('Error on loading objects', err);
@@ -204,7 +239,12 @@ export class ModelTableComponent implements OnInit, OnChanges {
    */
   async duplicateObject(id: string) {
     await this.cmsService.duplicateObject(id, this.camelModelName);
-    this.objects = await this.loadObjects(this.availableFields);
+    this.selectedPageIndex = 0;
+    this.objects = await this.loadObjects(
+      this.availableFields,
+      this.pages[this.selectedPageIndex].skip,
+      this.pages[this.selectedPageIndex].limit
+    );
   }
 
   /**
@@ -213,7 +253,12 @@ export class ModelTableComponent implements OnInit, OnChanges {
    */
   async deleteObject(id: string) {
     await this.cmsService.deleteObject(id, this.camelModelName);
-    this.objects = await this.loadObjects(this.availableFields);
+    this.selectedPageIndex = 0;
+    this.objects = await this.loadObjects(
+      this.availableFields,
+      this.pages[this.selectedPageIndex].skip,
+      this.pages[this.selectedPageIndex].limit
+    );
   }
 
   /**
@@ -263,7 +308,12 @@ export class ModelTableComponent implements OnInit, OnChanges {
                 });
 
                 if (i === jsonResult.length - 1) {
-                  this.objects = await this.loadObjects(this.availableFields);
+                  this.selectedPageIndex = 0;
+                  this.objects = await this.loadObjects(
+                    this.availableFields,
+                    this.pages[this.selectedPageIndex].skip,
+                    this.pages[this.selectedPageIndex].limit
+                  );
                 }
               },
               error: () => {
@@ -295,7 +345,11 @@ export class ModelTableComponent implements OnInit, OnChanges {
    */
   async processExport() {
     const keys = this.getAllKeys();
-    const items = await this.loadObjects(keys);
+    const items = await this.loadObjects(
+      keys,
+      this.pages[this.selectedPageIndex].skip,
+      this.pages[this.selectedPageIndex].limit
+    );
     const data = JSON.stringify(items);
     const blob = new Blob([data], { type: 'text/json;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -319,5 +373,15 @@ export class ModelTableComponent implements OnInit, OnChanges {
     }
 
     return items;
+  }
+
+  async selectPage(i: number) {
+    this.selectedPageIndex = i;
+    await this.scrollService.scrollTo('model-table-top');
+    this.objects = await this.loadObjects(
+      this.availableFields,
+      this.pages[this.selectedPageIndex].skip,
+      this.pages[this.selectedPageIndex].limit
+    );
   }
 }

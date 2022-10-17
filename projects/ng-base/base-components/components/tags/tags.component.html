@@ -24,7 +24,7 @@
   />
 
   <div class="tag-options" *ngIf="options && selectedElement">
-    <div class="tag-option-item" *ngFor="let option of filterOptions()" (click)="addTag(option?.text)">
+    <div class="tag-option-item" *ngFor="let option of filterOptions()" (click)="addTag(option?.text, true, true)">
       {{ option?.text }}
     </div>
   </div>
