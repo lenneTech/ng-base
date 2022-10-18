@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.16.2](https://github.com/lenneTech/ng-base/compare/v14.16.1...v14.16.2) (2022-10-18)
+
+### Bug Fixes
+
+- Fix pagination limit ([c79ab21](https://github.com/lenneTech/ng-base/commit/c79ab21dea5aef7fbd769190c927cfcb22e91b16))
+
 ### [14.16.1](https://github.com/lenneTech/ng-base/compare/v14.16.0...v14.16.1) (2022-10-17)
 
 ### Bug Fixes
