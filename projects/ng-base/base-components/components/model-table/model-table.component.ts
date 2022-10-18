@@ -200,7 +200,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
               while (numbers < this.totalCount) {
                 this.pages.push({
                   skip: numbers,
-                  limit: numbers + 25 < this.totalCount ? numbers + 25 : this.totalCount,
+                  limit: 25,
                 });
 
                 numbers = numbers + 25;
