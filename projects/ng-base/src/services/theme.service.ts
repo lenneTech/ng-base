@@ -35,7 +35,7 @@ export class ThemeService {
    * Check theme from system
    */
   checkSystemTheme() {
-    if (window.matchMedia) {
+    if (window?.matchMedia) {
       this.theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
   }

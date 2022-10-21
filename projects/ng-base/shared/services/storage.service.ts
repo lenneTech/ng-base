@@ -24,8 +24,15 @@ export class StorageService {
   constructor(@Inject(BASE_MODULE_CONFIG) private moduleConfig: BaseModuleConfig) {
     // Set storage
     const type = moduleConfig.storageType ? moduleConfig.storageType : 'local';
-    if (window[type + 'Storage']) {
-      this.storage = window[type + 'Storage'];
+
+    if (type === 'session') {
+      this.storage = sessionStorage;
+    } else {
+      if (localStorage) {
+        this.storage = localStorage;
+      } else {
+        this.storage = null;
+      }
     }
 
     // Set prefix

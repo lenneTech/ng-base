@@ -51,7 +51,7 @@ export class SEOService {
     this.metaTagService.updateTag({ name: 'twitter:description', content: data.description });
     this.metaTagService.updateTag({
       property: 'twitter:url',
-      content: data.url ? data.url : window.location.href,
+      content: data.url ? data.url : window?.location.href,
     });
 
     if (data.image) {
@@ -82,7 +82,7 @@ export class SEOService {
     });
     this.metaTagService.updateTag({
       property: 'og:url',
-      content: data.url ? data.url : window.location.href,
+      content: data.url ? data.url : window?.location.href,
     });
 
     if (data.image) {
