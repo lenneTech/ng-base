@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.16.4](https://github.com/lenneTech/ng-base/compare/v14.16.3...v14.16.4) (2022-10-21)
+
+### Bug Fixes
+
+- Fix for ssr ([6172296](https://github.com/lenneTech/ng-base/commit/6172296f925a5037728c65e1bef441762f0ed14b))
+
 ### [14.16.3](https://github.com/lenneTech/ng-base/compare/v14.16.2...v14.16.3) (2022-10-19)
 
 ### Bug Fixes
