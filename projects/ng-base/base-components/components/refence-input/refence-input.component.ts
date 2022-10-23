@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { GraphQLRequestType, GraphQLService } from '@lenne.tech/ng-base/shared';
+import { GraphQLRequestType, GraphQLService, SortOrderEnum } from '@lenne.tech/ng-base/shared';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -67,6 +67,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
     this.graphQLService
       .graphQl(this.method, {
         fields,
+        arguments: { sort: [{ field: fields.includes('name') ? 'name' : fields[0], order: SortOrderEnum.ASC }] },
         type: GraphQLRequestType.QUERY,
       })
       .subscribe(async (result) => {
@@ -188,7 +189,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
       for (const field of this.nameField) {
         if (!result) {
           result = object[field];
-        } else {
+        } else if (object[field]) {
           result = result + ' ' + object[field];
         }
       }
