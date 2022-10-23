@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.16.5](https://github.com/lenneTech/ng-base/compare/v14.16.4...v14.16.5) (2022-10-23)
+
+### Bug Fixes
+
+- Fix height of dropdown options ([ef4c2db](https://github.com/lenneTech/ng-base/commit/ef4c2db7c3705b0a0926cf2350c1e2db56e7aaca))
+
 ### [14.16.4](https://github.com/lenneTech/ng-base/compare/v14.16.3...v14.16.4) (2022-10-21)
 
 ### Bug Fixes
