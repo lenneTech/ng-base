@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.17.0](https://github.com/lenneTech/ng-base/compare/v14.16.5...v14.17.0) (2022-10-24)
+
+### Features
+
+- Update apollo-angular and apollo-client ([4e914a0](https://github.com/lenneTech/ng-base/commit/4e914a0872775193b3c1b6ea20e9bcd49adff851))
+
 ### [14.16.5](https://github.com/lenneTech/ng-base/compare/v14.16.4...v14.16.5) (2022-10-23)
 
 ### Bug Fixes
