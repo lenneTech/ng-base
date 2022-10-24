@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.18.0](https://github.com/lenneTech/ng-base/compare/v14.17.0...v14.18.0) (2022-10-24)
+
+### Features
+
+- Add useParamAsArg option ([e99fe6d](https://github.com/lenneTech/ng-base/commit/e99fe6d4da16cb4d6dc608ffd54f2fdef8739beb))
+
 ## [14.17.0](https://github.com/lenneTech/ng-base/compare/v14.16.5...v14.17.0) (2022-10-24)
 
 ### Features
