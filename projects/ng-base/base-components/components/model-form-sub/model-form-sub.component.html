@@ -93,6 +93,8 @@
             [id]="key"
             [name]="key"
             [isList]="fields[key]?.isList"
+            [useParamAsArg]="config[key]?.useParamAsArg ?? false"
+            [param]="id"
             [search]="config[key]?.searchable ?? true"
             [placeholder]="config[key]?.placeholder || 'Bitte einen Wert auswählen'"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"

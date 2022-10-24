@@ -13,6 +13,8 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
   @Input() label?: string;
   @Input() isList = false;
   @Input() search = true;
+  @Input() useParamAsArg = false;
+  @Input() param: string;
   @Input() placeholder?: string = '';
   @Input() autocomplete?: string;
   @Input() tabIndex?: number;
@@ -64,10 +66,20 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
       }
     }
 
+    let args;
+    if (!this.useParamAsArg) {
+      args = { sort: [{ field: fields.includes('name') ? 'name' : fields[0], order: SortOrderEnum.ASC }] };
+    } else {
+      args = {
+        id: this.param,
+        sort: [{ field: fields.includes('name') ? 'name' : fields[0], order: SortOrderEnum.ASC }],
+      };
+    }
+
     this.graphQLService
       .graphQl(this.method, {
         fields,
-        arguments: { sort: [{ field: fields.includes('name') ? 'name' : fields[0], order: SortOrderEnum.ASC }] },
+        arguments: args,
         type: GraphQLRequestType.QUERY,
       })
       .subscribe(async (result) => {

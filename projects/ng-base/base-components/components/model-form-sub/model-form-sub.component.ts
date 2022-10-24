@@ -8,6 +8,7 @@ import { AuthService, BasicUser, GraphQLType } from '@lenne.tech/ng-base/shared'
   styleUrls: ['./model-form-sub.component.scss'],
 })
 export class ModelFormSubComponent implements OnInit {
+  @Input() id: string;
   @Input() fields: Record<string, GraphQLType>;
   @Input() form: any;
   @Input() config: any = {};
