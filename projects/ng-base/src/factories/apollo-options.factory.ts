@@ -5,9 +5,9 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import {
   AuthService,
   BaseModuleConfig,
+  createRestartableClient,
   RestartableClient,
   WsService,
-  createRestartableClient,
 } from '@lenne.tech/ng-base/shared';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 
