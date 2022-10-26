@@ -174,7 +174,11 @@ export class ModelFormComponent implements OnInit, OnChanges {
           this.form.patchValue({ ...{}, ...response });
 
           // Process patchFields for reference input
-          for (const [key, value] of Object.entries(this.config)) {
+          for (const [key, value] of Object.entries(this.fields)) {
+            if (this.fields[key]?.type === 'DateTime' || this.config[key]?.type === 'DateTime') {
+              this.form.get(key).patchValue(this.formatDate(response[key]));
+            }
+
             // If it not an array
             if (this.config[key]?.type === 'Reference' && !this.fields[key]?.isList) {
               if (this.form.get(key)) {
@@ -521,8 +525,14 @@ export class ModelFormComponent implements OnInit, OnChanges {
     }
 
     for (const [key, value] of Object.entries(data)) {
+      // if ((this.fields[key]?.type === 'DateTime' || this.config[key]?.type === 'DateTime') && value === '') {
+      //   data[key] = null;
+      //   continue;
+      // }
+
       if ((config[key]?.roles ? !this.user.hasAllRoles(config[key]?.roles) : false) || config[key]?.exclude) {
         delete data[key];
+        continue;
       }
 
       if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -589,5 +599,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
     } else {
       this.fileChanges = [event];
     }
+  }
+
+  private formatDate(date) {
+    const newDate = new Date(date);
+    return newDate.toISOString().substring(0, 16);
   }
 }
