@@ -525,10 +525,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
     }
 
     for (const [key, value] of Object.entries(data)) {
-      // if ((this.fields[key]?.type === 'DateTime' || this.config[key]?.type === 'DateTime') && value === '') {
-      //   data[key] = null;
-      //   continue;
-      // }
+      if ((this.fields[key]?.type === 'DateTime' || this.config[key]?.type === 'DateTime') && value === '') {
+        data[key] = null;
+        continue;
+      }
 
       if ((config[key]?.roles ? !this.user.hasAllRoles(config[key]?.roles) : false) || config[key]?.exclude) {
         delete data[key];
@@ -602,6 +602,9 @@ export class ModelFormComponent implements OnInit, OnChanges {
   }
 
   private formatDate(date) {
+    if (!date) {
+      return null;
+    }
     const newDate = new Date(date);
     return newDate.toISOString().substring(0, 16);
   }

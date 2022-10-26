@@ -299,14 +299,14 @@ export class GraphQLService {
           continue;
         }
 
-        // Handling to set a float to null because empty string is invalid
-        if (allowed.fields[key].type === 'Float' && value === null) {
-          result.push(key + ':' + null);
+        // Skip value if not exists
+        if (value === undefined) {
           continue;
         }
 
-        // Skip value if not exists
-        if (value === undefined || value === null) {
+        // Set null e.g. for resetting
+        if (value === null) {
+          result.push(key + ':' + null);
           continue;
         }
 
