@@ -23,6 +23,7 @@ import { FabButtonComponent } from './components/fab-button/fab-button.component
 import { BackButtonDirective } from './directives/back-button.directive';
 import { SortDirective } from './directives/sort.directive';
 import { ContextMenuDirective } from './directives/context-menu.directive';
+import { StopPropagationDirective } from './directives/stop-propagation.directive';
 
 import { EllipsesPipe } from './pipes/ellipses.pipe';
 import { RouterModule } from '@angular/router';
@@ -36,6 +37,7 @@ const elements = [
   SortDirective,
   BackButtonDirective,
   ContextMenuDirective,
+  StopPropagationDirective,
 
   // Components
   InputComponent,

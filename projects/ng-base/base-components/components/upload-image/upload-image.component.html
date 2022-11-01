@@ -5,7 +5,8 @@
     (dragover)="dragOver($event)"
     (dragleave)="dragLeave($event)"
     (drop)="drop($event)"
-    [ngClass]="{ active: dragActive }"
+    [ngClass]="{ active: dragActive, pointer: !loading }"
+    (click)="!loading && fileInput.click()"
   >
     <div class="d-flex justify-content-center" *ngIf="loading">
       <div class="spinner-border text-primary" role="status">
@@ -15,12 +16,14 @@
 
     <ng-container *ngIf="selectedFile && !loading">
       <img [src]="fileUrl" *ngIf="selectedFile" />
-      <button class="btn btn-danger" type="button" (click)="deleteFile()">Löschen</button>
+      <button class="btn btn-danger" type="button" (click)="deleteFile()" baseStopPropagation>Löschen</button>
     </ng-container>
 
     <ng-container *ngIf="control?.value && !selectedFile && !loading">
-      <img [src]="url + path + control?.value" />
-      <button class="btn btn-danger" type="button" (click)="deleteFile(control?.value)">Löschen</button>
+      <img [src]="control?.value.startsWith('data:') ? control?.value : url + path + control?.value" />
+      <button class="btn btn-danger" type="button" (click)="deleteFile(control?.value)" baseStopPropagation>
+        Löschen
+      </button>
     </ng-container>
 
     <ng-container *ngIf="!selectedFile && !control?.value && !loading">
@@ -30,11 +33,13 @@
 
       <span class="header">{{ dragText }}</span>
       <span class="header"
-        >{{ preButtonText }} <span class="button" (click)="fileInput.click()">{{ buttonText }}</span></span
+        >{{ preButtonText }}
+        <span class="button" (click)="fileInput.click()" baseStopPropagation>{{ buttonText }}</span></span
       >
-      <input type="file" (change)="selectFile($event)" [attr.accept]="validExtensions?.join(',')" hidden #fileInput />
       <span class="support" [innerText]="supportText"></span>
     </ng-container>
+
+    <input type="file" (change)="selectFile($event)" [attr.accept]="validExtensions?.join(',')" hidden #fileInput />
   </div>
 
   <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">
