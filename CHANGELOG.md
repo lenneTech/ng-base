@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.20.0](https://github.com/lenneTech/ng-base/compare/v14.19.0...v14.20.0) (2022-11-01)
+
+### Features
+
+- Extended UploadImage component for Base64 usage ([d75ad7c](https://github.com/lenneTech/ng-base/commit/d75ad7cd2073184721e6d2f385f5ef34c61bc368))
+
 ## [14.19.0](https://github.com/lenneTech/ng-base/compare/v14.18.0...v14.19.0) (2022-10-26)
 
 ## [14.18.0](https://github.com/lenneTech/ng-base/compare/v14.17.0...v14.18.0) (2022-10-24)
