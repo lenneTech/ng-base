@@ -1,17 +1,22 @@
+/**
+ * Decorator for automatically unsubscribe subscriptions
+ * Inspired by https://codereacter.medium.com/angular-advanced-features-and-tips-you-may-not-know-about-cae3b8527184#9bd6
+ */
 export function AutoUnsubscribe(blackList: string[] = []) {
-  // tslint:disable-next-line
   return function (constructor: any) {
     const original = constructor.prototype.ngOnDestroy;
-    // tslint:disable-next-line
-    constructor.prototype.ngonDestroy = function () {
+
+    constructor.prototype.ngOnDestroy = function () {
       for (const prop of Object.keys(this)) {
-        const property = this[prop];
         if (!blackList.includes(prop)) {
+          const property = this[prop];
           if (property && typeof property.unsubscribe === 'function') {
             property.unsubscribe();
           }
         }
-        original && typeof original === 'function' && original.apply(this, arguments);
+      }
+      if (original && typeof original === 'function') {
+        original.apply(this, arguments);
       }
     };
   };

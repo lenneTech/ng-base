@@ -29,7 +29,7 @@ export class UploadImageComponent {
 
   @Output() imageUploaded = new EventEmitter();
   @Output() imageDeleted = new EventEmitter();
-  @Output() fileChanged = new EventEmitter<{ field: string; file: File | null }>();
+  @Output() fileChanged = new EventEmitter<{ field: string; file: File | null; base64: string | null }>();
 
   dragActive = false;
   dragText = 'Drag & Drop';
@@ -105,7 +105,7 @@ export class UploadImageComponent {
       return;
     }
 
-    if (this.validExtensions.includes(file.type)) {
+    if (this.validExtensions.includes(file?.type)) {
       const fileReader = new FileReader();
       fileReader.onload = (result) => {
         this.loading = true;
@@ -142,18 +142,16 @@ export class UploadImageComponent {
    */
   async upload() {
     let result;
+    const fileData = { field: this.id, file: this.selectedFile, base64: await this.getBase64(this.selectedFile) };
+    this.fileChanged.emit(fileData);
     if (this.uploadDirectly) {
       result = await this.fileService.upload(this.url, this.uploadPath, this.selectedFile, this.compressOptions);
+      if (result?.id) {
+        this.control.setValue(result.id);
+        this.imageUploaded.emit(result.id);
+      }
     } else {
-      this.control.markAsTouched();
-      this.fileChanged.emit({ field: this.id, file: this.selectedFile });
-      this.loading = false;
-      return;
-    }
-
-    if (result?.id) {
-      this.control.setValue(result.id);
-      this.imageUploaded.emit(result.id);
+      this.control.setValue(fileData.base64);
     }
 
     this.control.markAsTouched();
@@ -171,7 +169,7 @@ export class UploadImageComponent {
       this.fileUrl = null;
       this.control.setValue('');
       this.control.markAsTouched();
-      this.fileChanged.emit({ field: this.id, file: null });
+      this.fileChanged.emit({ field: this.id, file: null, base64: null });
       return;
     }
 
@@ -189,5 +187,27 @@ export class UploadImageComponent {
         this.loading = false;
       }
     }
+  }
+
+  /**
+   * Convert a file into a BASE64 encoded string
+   */
+  protected getBase64(file): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      if (!file) {
+        return resolve(null);
+      }
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        if (!reader.result) {
+          return reject(new Error('Conversion failed'));
+        }
+        resolve(reader.result.toString());
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+    });
   }
 }

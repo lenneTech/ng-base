@@ -5,6 +5,9 @@
 // Module
 export * from './src/base.module';
 
+// Decorators
+export * from './src/decorators/auto-unsubscribe.decorator';
+
 // Directives
 export * from './src/directives/lazy-load.directive';
 export * from './src/directives/match-height.directive';

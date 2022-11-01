@@ -9,6 +9,7 @@ export * from './base-components.module';
 export * from './directives/sort.directive';
 export * from './directives/back-button.directive';
 export * from './directives/context-menu.directive';
+export * from './directives/stop-propagation.directive';
 
 // Pipes
 export * from './pipes/ellipses.pipe';
