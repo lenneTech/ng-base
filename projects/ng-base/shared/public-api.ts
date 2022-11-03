@@ -60,6 +60,10 @@ export * from './interfaces/toast.interface';
 export * from './interfaces/breadcrumb.interface';
 export * from './interfaces/graphql-crud-type.interface';
 export * from './interfaces/compress-options.interface';
+export * from './interfaces/cms-enum-values.interface';
+export * from './interfaces/cms-field-config.interface';
+export * from './interfaces/cms-model-config.interface';
+export * from './interfaces/cms-table-field.interface';
 
 // Types
 export * from './types/storage.type';

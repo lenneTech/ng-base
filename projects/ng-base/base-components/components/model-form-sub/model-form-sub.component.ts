@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, UntypedFormControl } from '@angular/forms';
-import { AuthService, BasicUser, GraphQLType } from '@lenne.tech/ng-base/shared';
+import { AuthService, BasicUser, CMSFieldConfig, GraphQLType } from '@lenne.tech/ng-base/shared';
 
 @Component({
   selector: 'base-model-form-sub',
@@ -11,7 +11,7 @@ export class ModelFormSubComponent implements OnInit {
   @Input() id: string;
   @Input() fields: Record<string, GraphQLType>;
   @Input() form: any;
-  @Input() config: any = {};
+  @Input() config: { [key: string]: CMSFieldConfig };
 
   @Output() imageChanged = new EventEmitter<string>();
   @Output() fileChanged = new EventEmitter<{ field: string; file: File | null }>();

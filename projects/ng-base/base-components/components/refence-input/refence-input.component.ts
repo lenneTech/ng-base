@@ -23,7 +23,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
   @Input() method = 'find';
   @Input() fields = ['id', 'name'];
   @Input() valueField = 'id';
-  @Input() nameField = 'name';
+  @Input() nameField: string[] | string = 'name';
   objects: any[] = [];
   currentValue: any;
   optionsForTagInput = [];
@@ -106,7 +106,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const foundElement = this.objects.find((e) => e[this.nameField] === this.currentValue);
+    const foundElement = this.objects.find((e) => this.checkForNameFields(e));
     if (!foundElement) {
       this.control.setValue(null);
       this.control.markAsTouched();

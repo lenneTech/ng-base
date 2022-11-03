@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import {
+  CMSFieldConfig,
   CmsService,
   GraphQLMeta,
   GraphQLMetaService,
@@ -29,7 +30,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
   @Input() export = true;
   @Input() duplicate = true;
   @Input() config: any = {};
-  @Input() fieldConfig: any = {};
+  @Input() fieldConfig: { [key: string]: CMSFieldConfig };
   @Input() showFavButton = true;
 
   @Output() idSelected = new EventEmitter<string>();

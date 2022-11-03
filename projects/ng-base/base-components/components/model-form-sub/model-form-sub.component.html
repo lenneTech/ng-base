@@ -100,7 +100,7 @@
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [control]="transformToControl(form?.get(key))"
             [method]="config[key]?.method || 'find'"
-            [fields]="config[key]?.fields || ['id', 'name']"
+            [fields]="config[key]?.requestFields || ['id', 'name']"
             [valueField]="config[key]?.valueField || 'id'"
             [nameField]="config[key]?.nameField || 'name'"
             [required]="

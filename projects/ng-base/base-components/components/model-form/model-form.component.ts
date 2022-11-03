@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import {
   AuthService,
   BasicUser,
+  CMSFieldConfig,
   CmsService,
   FileService,
   FormsService,
@@ -32,7 +33,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   @Input() onlyUpdateMode = false;
   @Input() duplicate = false;
   @Input() logging = false;
-  @Input() config: any = {};
+  @Input() config: { [key: string]: CMSFieldConfig };
   @Input() showFavButton = true;
 
   @Output() finished = new EventEmitter();
