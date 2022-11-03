@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.21.2](https://github.com/lenneTech/ng-base/compare/v14.21.1...v14.21.2) (2022-11-03)
+
+### Bug Fixes
+
+- Fix required handling for upload-image component ([b873f3e](https://github.com/lenneTech/ng-base/commit/b873f3ef77230672953e69600c3a40ac0dda3e63))
+
 ### [14.21.1](https://github.com/lenneTech/ng-base/compare/v14.21.0...v14.21.1) (2022-11-03)
 
 ### Bug Fixes
