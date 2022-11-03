@@ -9,7 +9,7 @@
   </div>
   <input [formControl]="control" hidden />
   <input
-    [id]="id"
+    [id]="objectPath ? objectPath + '.' + id : id"
     [name]="name"
     [placeholder]="placeholder"
     [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"

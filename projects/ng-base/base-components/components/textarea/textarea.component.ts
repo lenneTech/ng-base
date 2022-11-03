@@ -14,4 +14,5 @@ export class TextareaComponent {
   @Input() rows = 5;
   @Input() required = false;
   @Input() tabIndex?: number;
+  @Input() objectPath = '';
 }

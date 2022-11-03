@@ -24,16 +24,19 @@ export class FormsService {
     return this.getInvalidControl(formGroup);
   }
 
-  private getInvalidControl(formGroup: UntypedFormGroup, invalid?) {
+  private getInvalidControl(formGroup: UntypedFormGroup, invalid?, parents: any = []) {
     let result = invalid ? [...invalid] : [];
+    let nestedParents = [...[], ...parents];
 
     const controls = formGroup.controls;
     Object.keys(formGroup.controls).forEach((name) => {
       if (controls[name].invalid) {
         if ((controls[name] as any)?.controls) {
-          result = this.getInvalidControl(controls[name] as any, result);
+          nestedParents.push(name);
+          result = this.getInvalidControl(controls[name] as any, result, nestedParents);
+          nestedParents = [];
         } else {
-          result.push(name);
+          result.push(nestedParents.length ? nestedParents.join('.') + '.' + name : name);
         }
       }
     });

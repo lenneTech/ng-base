@@ -2,7 +2,7 @@
   <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
   <div class="input-group">
     <input
-      [id]="id"
+      [id]="objectPath ? objectPath + '.' + id : id"
       [name]="name"
       class="form-control"
       [type]="type"

@@ -2,7 +2,7 @@
   <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
   <textarea
     class="form-control"
-    [id]="id"
+    [id]="objectPath ? objectPath + '.' + id : id"
     [name]="name"
     [rows]="rows"
     [placeholder]="placeholder"

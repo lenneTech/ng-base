@@ -26,6 +26,7 @@ export class UploadImageComponent {
   @Input() compressOptions: CompressOptions;
   @Input() maxSize: number;
   @Input() uploadDirectly = false;
+  @Input() objectPath: string;
 
   @Output() imageUploaded = new EventEmitter();
   @Output() imageDeleted = new EventEmitter();
@@ -142,7 +143,11 @@ export class UploadImageComponent {
    */
   async upload() {
     let result;
-    const fileData = { field: this.id, file: this.selectedFile, base64: await this.getBase64(this.selectedFile) };
+    const fileData = {
+      field: this.objectPath ? this.objectPath + '.' + this.id : this.id,
+      file: this.selectedFile,
+      base64: await this.getBase64(this.selectedFile),
+    };
     this.fileChanged.emit(fileData);
     if (this.uploadDirectly) {
       result = await this.fileService.upload(this.url, this.uploadPath, this.selectedFile, this.compressOptions);
@@ -169,7 +174,11 @@ export class UploadImageComponent {
       this.fileUrl = null;
       this.control.setValue('');
       this.control.markAsTouched();
-      this.fileChanged.emit({ field: this.id, file: null, base64: null });
+      this.fileChanged.emit({
+        field: this.objectPath ? this.objectPath + '.' + this.id : this.id,
+        file: null,
+        base64: null,
+      });
       return;
     }
 

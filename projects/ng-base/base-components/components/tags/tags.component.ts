@@ -17,6 +17,7 @@ export class TagsComponent {
   @Input() custom = true;
   @Input() removeByKey = true;
   @Input() required = false;
+  @Input() objectPath = '';
   inputValue = '';
   selectedElement: HTMLElement;
 

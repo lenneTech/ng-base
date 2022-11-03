@@ -5,7 +5,7 @@
     [formControl]="control"
     [required]="required"
     [value]="value"
-    [id]="id"
+    [id]="objectPath ? objectPath + '.' + id : id"
     [name]="name"
     [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
   />

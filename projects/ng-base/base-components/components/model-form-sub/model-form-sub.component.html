@@ -7,9 +7,12 @@
         {{ config[key]?.label ? config[key].label : capitalizeFirstLetter(key) }}
       </legend>
       <base-model-form-sub
+        [parentKey]="key"
         [fields]="fields[key].fields"
         [config]="config[key]?.fields || {}"
         [form]="form.get(key)"
+        (imageChanged)="imageChanged.emit($event)"
+        (fileChanged)="fileChanged.emit($event)"
       ></base-model-form-sub>
     </fieldset>
   </ng-container>
@@ -26,6 +29,7 @@
         [options]="prepareEnumForSelect(fields[key]?.validEnums, config[key]?.enumValues)"
         [control]="transformToControl(form?.get(key))"
         [required]="config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired"
+        [objectPath]="objectPath"
       ></base-select>
     </ng-container>
 
@@ -42,6 +46,7 @@
               [required]="
                 config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
               "
+              [objectPath]="objectPath"
             ></base-tags>
           </ng-container>
 
@@ -56,6 +61,7 @@
               [required]="
                 config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
               "
+              [objectPath]="objectPath"
             ></base-input>
           </ng-container>
         </ng-container>
@@ -82,6 +88,7 @@
             [compressOptions]="config[key]?.compressOptions"
             [maxSize]="config[key]?.maxSize"
             [uploadDirectly]="false"
+            [objectPath]="objectPath"
             (fileChanged)="fileChanged.emit($event)"
             (imageDeleted)="imageChanged.emit(key)"
             (imageUploaded)="imageChanged.emit(key)"
@@ -106,6 +113,7 @@
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
+            [objectPath]="objectPath"
           ></base-refence-input>
         </ng-container>
 
@@ -118,6 +126,7 @@
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
+            [objectPath]="objectPath"
           ></base-checkbox>
         </ng-container>
 
@@ -130,6 +139,7 @@
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
+            [objectPath]="objectPath"
           ></base-textarea>
         </ng-container>
 
@@ -144,6 +154,7 @@
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
+            [objectPath]="objectPath"
           ></base-input>
         </ng-container>
 
@@ -158,6 +169,7 @@
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
+            [objectPath]="objectPath"
           ></base-input>
         </ng-container>
 
@@ -172,6 +184,7 @@
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
+            [objectPath]="objectPath"
           ></base-input>
         </ng-container>
 
@@ -186,6 +199,7 @@
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
+            [objectPath]="objectPath"
           ></base-input>
         </ng-container>
 
@@ -200,6 +214,7 @@
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
+            [objectPath]="objectPath"
           ></base-input>
         </ng-container>
 
@@ -214,6 +229,7 @@
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
+            [objectPath]="objectPath"
           ></base-input>
         </ng-container>
       </ng-container>

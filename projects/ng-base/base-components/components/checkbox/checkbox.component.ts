@@ -12,4 +12,5 @@ export class CheckboxComponent {
   @Input() value: string | number;
   @Input() control: any;
   @Input() required = false;
+  @Input() objectPath = '';
 }

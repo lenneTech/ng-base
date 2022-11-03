@@ -9,15 +9,17 @@ import { AuthService, BasicUser, CMSFieldConfig, GraphQLType } from '@lenne.tech
 })
 export class ModelFormSubComponent implements OnInit {
   @Input() id: string;
+  @Input() parentKey: string;
   @Input() fields: Record<string, GraphQLType>;
   @Input() form: any;
   @Input() config: { [key: string]: CMSFieldConfig };
 
   @Output() imageChanged = new EventEmitter<string>();
-  @Output() fileChanged = new EventEmitter<{ field: string; file: File | null }>();
+  @Output() fileChanged = new EventEmitter<{ field: string; file: File | null; base64: string | null }>();
 
   keys: string[] = [];
   user: BasicUser;
+  objectPath: string;
 
   constructor(private authService: AuthService) {}
 
@@ -34,6 +36,14 @@ export class ModelFormSubComponent implements OnInit {
 
     // Set user for roles check
     this.user = BasicUser.map(this.authService.currentUser);
+
+    if (this.parentKey) {
+      if (!this.objectPath) {
+        this.objectPath = this.parentKey;
+      } else {
+        this.objectPath = this.objectPath + '.' + this.parentKey;
+      }
+    }
   }
 
   /**

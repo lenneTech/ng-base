@@ -23,6 +23,7 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
   @Input() method = 'find';
   @Input() fields = ['id', 'name'];
   @Input() valueField = 'id';
+  @Input() objectPath = '';
   @Input() nameField: string[] | string = 'name';
   objects: any[] = [];
   currentValue: any;

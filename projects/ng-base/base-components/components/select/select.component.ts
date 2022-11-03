@@ -18,6 +18,7 @@ export class SelectComponent implements OnInit {
   @Input() name: string;
   @Input() label?: string;
   @Input() placeholder?: string = '';
+  @Input() objectPath = '';
   @Input() control: any;
   @Input() tabIndex?: number;
   @Input() required = false;

@@ -16,6 +16,7 @@ export class InputComponent {
   @Input() type = 'text';
   @Input() required = false;
   @Input() eyeButton = false;
+  @Input() objectPath = '';
 
   @Output() enter = new EventEmitter();
 

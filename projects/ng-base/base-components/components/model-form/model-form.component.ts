@@ -176,26 +176,45 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
           // Process patchFields for reference input
           for (const [key, value] of Object.entries(this.fields)) {
-            if (this.fields[key]?.type === 'DateTime' || this.config[key]?.type === 'DateTime') {
-              this.form.get(key).patchValue(this.formatDate(response[key]));
+            if (
+              this.nestedObject(key, this.fields)?.type === 'DateTime' ||
+              this.nestedObject(key, this.config)?.type === 'DateTime'
+            ) {
+              this.form.get(key).patchValue(this.formatDate(this.nestedObject(key, response)));
             }
 
             // If it not an array
-            if (this.config[key]?.type === 'Reference' && !this.fields[key]?.isList) {
-              if (this.form.get(key)) {
-                this.form
-                  .get(key)
-                  .patchValue(response[this.config[key]?.patchField ? this.config[key]?.patchField : key]?.id);
-              }
-            }
-
-            // If value is an array
-            if (this.config[key]?.type === 'Reference' && this.fields[key]?.isList) {
+            if (
+              this.nestedObject(key, this.config)?.type === 'Reference' &&
+              !this.nestedObject(key, this.fields)?.isList
+            ) {
               if (this.form.get(key)) {
                 this.form
                   .get(key)
                   .patchValue(
-                    response[this.config[key]?.patchField ? this.config[key]?.patchField : key]?.map((e) => e?.id)
+                    response[
+                      this.nestedObject(key, this.config)?.patchField
+                        ? this.nestedObject(key, this.config)?.patchField
+                        : key
+                    ]?.id
+                  );
+              }
+            }
+
+            // If value is an array
+            if (
+              this.nestedObject(key, this.config)?.type === 'Reference' &&
+              this.nestedObject(key, this.fields)?.isList
+            ) {
+              if (this.form.get(key)) {
+                this.form
+                  .get(key)
+                  .patchValue(
+                    response[
+                      this.nestedObject(key, this.config)?.patchField
+                        ? this.nestedObject(key, this.config)?.patchField
+                        : key
+                    ]?.map((e) => e?.id)
                   );
               }
             }
@@ -252,15 +271,25 @@ export class ModelFormComponent implements OnInit, OnChanges {
    * It takes a collection of GraphQL types and creates a form group with a form control for each type
    *
    * @param fields - IGraphQLTypeCollection
+   * @param parents
    */
-  createForm(fields: IGraphQLTypeCollection) {
+  createForm(fields: IGraphQLTypeCollection, parents: any[] = []) {
     const group: any = {};
+    let internParents = [...[], ...parents];
 
     for (const [key, value] of Object.entries(fields)) {
       if (Object.keys(value?.fields)?.length === 0) {
-        group[key] = new UntypedFormControl(null, this.processValidators(this.config[key], value));
+        group[key] = new UntypedFormControl(
+          null,
+          this.processValidators(
+            this.nestedObject(internParents.length ? internParents.join('.') + '.' + key : key, this.config),
+            value
+          )
+        );
       } else {
-        group[key] = this.createForm(fields[key].fields as IGraphQLTypeCollection);
+        internParents.push(key);
+        group[key] = this.createForm(fields[key].fields as IGraphQLTypeCollection, internParents);
+        internParents = [];
       }
     }
 
@@ -427,46 +456,48 @@ export class ModelFormComponent implements OnInit, OnChanges {
 
       if (this.logging) {
         console.log('ModelFormComponent::submit->valueToGraphql', data);
+        console.log('ModelFormComponent::submit->fileChanges', this.fileChanges);
       }
 
       if (this.fileChanges?.length) {
         for (const fileChange of this.fileChanges) {
           const key = fileChange.field;
+
           if (fileChange.file) {
             // Upload
             if (this.form.get(key).value && !this.form.get(key).value?.startsWith('data:')) {
               // Delete
               const deleteResult = await this.fileService.delete(
-                this.config[key]?.url,
-                this.config[key]?.deletePath || '/files/',
-                this.object[key]
+                this.nestedObject(key, this.config)?.url,
+                this.nestedObject(key, this.config)?.deletePath || '/files/',
+                this.nestedObject(key, this.object)
               );
 
               if (deleteResult) {
-                data[key] = '';
+                this.nestedObject(key, data, '');
               }
             }
 
             const uploadResult = await this.fileService.upload(
-              this.config[key]?.url,
-              this.config[key]?.uploadPath || '/files/upload',
+              this.nestedObject(key, this.config)?.url,
+              this.nestedObject(key, this.config)?.uploadPath || '/files/upload',
               fileChange.file,
-              this.config[key]?.compressOptions
+              this.nestedObject(key, this.config)?.compressOptions
             );
 
             if (uploadResult?.id) {
-              data[key] = uploadResult.id;
+              this.nestedObject(key, data, uploadResult.id);
             }
           } else {
             // Delete
             const result = await this.fileService.delete(
-              this.config[key]?.url,
-              this.config[key]?.deletePath || '/files/',
-              this.object[key]
+              this.nestedObject(key, this.config)?.url,
+              this.nestedObject(key, this.config)?.deletePath || '/files/',
+              this.nestedObject(key, this.object)
             );
 
             if (result) {
-              data[key] = '';
+              this.nestedObject(key, data, '');
             }
           }
         }
@@ -590,7 +621,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
   /**
    * Set file changes for process
    */
-  processFileChanges(event: { field: string; file: File | null }) {
+  processFileChanges(event: { field: string; file: File | null; base64: string | null }) {
     const index = this.fileChanges?.findIndex((e) => e.field === event.field);
 
     if (index !== undefined && index !== -1) {
@@ -608,5 +639,21 @@ export class ModelFormComponent implements OnInit, OnChanges {
     }
     const newDate = new Date(date);
     return newDate.toISOString().substring(0, 16);
+  }
+
+  private nestedObject(key: string, nestedObject: any, value?: any) {
+    const props = key.split('.');
+    let result: any = nestedObject;
+
+    for (let i = 0; i < props.length; i++) {
+      if (value && i === props.length - 1) {
+        result[props[i]] = value;
+        return result[props[i]];
+      }
+
+      result = result[props[i]]?.fields ? result[props[i]]?.fields : result[props[i]];
+    }
+
+    return result;
   }
 }
