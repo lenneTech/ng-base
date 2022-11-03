@@ -2,8 +2,8 @@ import { InjectionToken } from '@angular/core';
 import { CMSFieldConfig, CMSModelConfig } from '@lenne.tech/ng-base/shared';
 
 export interface BaseCMSModuleConfig {
-  modelConfig?: { [key: string]: CMSModelConfig };
-  fieldConfig?: { [key: string]: CMSFieldConfig };
+  modelConfig?: { [key: string]: CMSModelConfig | any };
+  fieldConfig?: { [key: string]: { [key: string]: CMSFieldConfig | any } };
   logging?: boolean;
   logoUrl?: string;
   branding?: boolean;

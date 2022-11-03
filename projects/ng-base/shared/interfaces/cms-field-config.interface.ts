@@ -5,6 +5,7 @@ export interface CMSFieldConfig {
   label: string;
   required?: boolean;
   exclude?: boolean;
+  restricted?: boolean;
   enumValues?: { [key: string]: CMSEnumValues };
   order?: number;
   type?: string;

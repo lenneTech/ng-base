@@ -434,7 +434,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
           const key = fileChange.field;
           if (fileChange.file) {
             // Upload
-            if (this.form.get(key).value) {
+            if (this.form.get(key).value && !this.form.get(key).value?.startsWith('data:')) {
               // Delete
               const deleteResult = await this.fileService.delete(
                 this.config[key]?.url,
