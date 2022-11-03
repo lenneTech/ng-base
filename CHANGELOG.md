@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.21.3](https://github.com/lenneTech/ng-base/compare/v14.21.2...v14.21.3) (2022-11-03)
+
+### Bug Fixes
+
+- Add better support for nested objects ([a80596a](https://github.com/lenneTech/ng-base/commit/a80596acd6241afcd6af46637461b0beee7d5b46))
+
 ### [14.21.2](https://github.com/lenneTech/ng-base/compare/v14.21.1...v14.21.2) (2022-11-03)
 
 ### Bug Fixes
