@@ -89,7 +89,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
 
         // User not found
-        if (error?.message?.includes('Not user found')) {
+        if (error?.message?.includes('No user found')) {
           this.error = 'Es konnte kein Konto mit der E-Mail gefunden werden. Bitte gib eine gültige E-Mail ein!';
         }
 
