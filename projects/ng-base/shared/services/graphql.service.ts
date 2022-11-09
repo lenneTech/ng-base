@@ -24,10 +24,10 @@ export class GraphQLService {
   /**
    * GraphQL request
    */
-  public graphQl(graphql: string, options: IGraphQLOptions = {}): Observable<any> {
-    // Check arguments
-    if (!graphql) {
-      throwError('Missing graphql argument');
+  public graphQl(graphqlMethodName: string, options: IGraphQLOptions = {}): Observable<any> {
+    // Check parameters
+    if (!graphqlMethodName) {
+      throwError(() => new Error('Missing graphql method name'));
     }
 
     // Get config
@@ -36,7 +36,6 @@ export class GraphQLService {
       fields: null,
       log: false,
       model: null,
-      type: GraphQLRequestType.QUERY,
       ...options,
     };
 
@@ -59,6 +58,22 @@ export class GraphQLService {
     return new Observable((subscriber) => {
       // Get meta
       this.graphQLMetaService.getMeta({ log: config.log }).subscribe((meta) => {
+        // Set GraphQLRequestType automatically
+        if (!config.type) {
+          const types = meta.getRequestTypesViaMethod(graphqlMethodName);
+          if (!types?.length) {
+            throwError(() => new Error('No GraphQLRequestType detected'));
+          }
+          config.type = types[0] as GraphQLRequestType;
+          if (config.type) {
+            throwError(() => new Error('No GraphQLRequestType detected'));
+          }
+          if (types.length > 1) {
+            // eslint-disable-next-line no-console
+            console.debug('GraphQLRequestType ' + config.type + ' used for ' + graphqlMethodName, types);
+          }
+        }
+
         // Prepare fields
         let fields;
         let allowedFields;
@@ -69,7 +84,7 @@ export class GraphQLService {
         }
 
         if (config.fields) {
-          allowedFields = meta.getFields(graphql, { type: config.type });
+          allowedFields = meta.getFields(graphqlMethodName, { type: config.type });
 
           // Log meta
           if (config.log) {
@@ -93,7 +108,7 @@ export class GraphQLService {
         }
 
         // Get allowed args
-        const allowedArgs = meta.getArgs(graphql, { type: config.type });
+        const allowedArgs = meta.getArgs(graphqlMethodName, { type: config.type });
 
         // Log allowed args
         if (config.log) {
@@ -122,14 +137,16 @@ export class GraphQLService {
 
         // Log
         if (config.log) {
-          console.log({ graphQL: graphql, args, fields, type: config.type });
+          console.log({ graphQL: graphqlMethodName, args, fields, type: config.type });
         }
 
         // Prepare request
         const request: any = {};
 
         // Prepare GraphQL
-        const gQlFuncBody = fields ? ' {\n' + graphql + args + fields + '\n}' : ' {\n' + graphql + args + '\n}';
+        const gQlFuncBody = fields
+          ? ' {\n' + graphqlMethodName + args + fields + '\n}'
+          : ' {\n' + graphqlMethodName + args + '\n}';
         let gQlBody = config.type + gQlFuncBody;
 
         // Handling for variables (e.g. for file uploads)
@@ -139,7 +156,7 @@ export class GraphQLService {
           let multipart = false;
 
           // Add surrounding
-          gQlBody = config.type + ' Variables(';
+          gQlBody = config.type + ' Request(';
           for (const [key, item] of Object.entries(argsData.variables)) {
             gQlBody += '\n$' + key + ':' + item.type + ',';
             request.variables[key] = item.value;
@@ -185,7 +202,7 @@ export class GraphQLService {
 
         (this.apollo as any)[func](request).subscribe(
           (result: any) => {
-            const data = result?.data?.[graphql] !== undefined ? result.data[graphql] : result;
+            const data = result?.data?.[graphqlMethodName] !== undefined ? result.data[graphqlMethodName] : result;
 
             // Direct data
             if (!config.model) {
