@@ -10,7 +10,7 @@ import {
   WsService,
 } from '@lenne.tech/ng-base/shared';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import { extractFiles } from 'extract-files';
+import extractFiles from '../functions/extract-files.function';
 
 /**
  * Factory for apollo-angular options
