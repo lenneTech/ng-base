@@ -7,6 +7,7 @@ import { GraphQLMetaService } from './graphql-meta.service';
 import { GraphQLEnum } from '../classes/graphql-enum.class';
 import { GraphQLType } from '../classes/graphql-type.class';
 import { sha256 } from 'js-sha256';
+import { Helper } from '../classes/helper.class';
 
 /**
  * GraphQL service
@@ -125,16 +126,44 @@ export class GraphQLService {
         }
 
         // Prepare request
-        const documentNode = fields
-          ? gql(config.type + '{\n' + graphql + args + fields + '\n}')
-          : gql(config.type + '{\n' + graphql + args + '\n}');
+        const request: any = {};
+
+        // Prepare GraphQL
+        const gQlFuncBody = fields ? ' {\n' + graphql + args + fields + '\n}' : ' {\n' + graphql + args + '\n}';
+        let gQlBody = config.type + gQlFuncBody;
+
+        // Handling for variables (e.g. for file uploads)
+        if (Object.keys(argsData.variables).length) {
+          // Preparations
+          request.variables = {};
+          let multipart = false;
+
+          // Add surrounding
+          gQlBody = config.type + ' Variables(';
+          for (const [key, item] of Object.entries(argsData.variables)) {
+            gQlBody += '\n$' + key + ':' + item.type + ',';
+            request.variables[key] = item.value;
+            if (item.type.startsWith('Upload')) {
+              multipart = true;
+            }
+          }
+          gQlBody = gQlBody.slice(0, -1) + '\n)' + gQlFuncBody;
+
+          // Set Multipart
+          if (multipart) {
+            request.context = {
+              useMultipart: true,
+            };
+          }
+        }
+        const documentNode = gql(gQlBody);
 
         // Log
         if (config.log) {
           console.log({ documentNode });
         }
 
-        const request: any = {};
+        // Set document node
         request[config.type] = documentNode;
 
         // Log
@@ -220,24 +249,33 @@ export class GraphQLService {
     options: {
       allowed?: GraphQLType;
       level?: number;
+      levelKey?: string;
       parent?: string;
       schemaArgs?: string[];
       usedArgs?: string[];
+      variables?: { [key: string]: { type: string; value: any } };
     } = {}
-  ): { argsString: string; schemaArgs: string[]; usedArgs: string[] } {
+  ): {
+    argsString: string;
+    schemaArgs: string[];
+    usedArgs: string[];
+    variables: { [key: string]: { type: string; value: any } };
+  } {
     // Init config variables
-    const { allowed, level, parent, schemaArgs, usedArgs } = {
+    const { allowed, levelKey, level, parent, schemaArgs, usedArgs, variables } = {
       allowed: null,
+      levelKey: '',
       level: 1,
       parent: '',
       schemaArgs: [],
       usedArgs: [],
+      variables: {},
       ...options,
     };
 
     // Check args
     if (args === undefined || args === null) {
-      return { argsString: '', schemaArgs, usedArgs };
+      return { argsString: '', schemaArgs, usedArgs, variables };
     }
 
     // Init args
@@ -259,10 +297,12 @@ export class GraphQLService {
         result.push(
           this.prepareArguments(item, {
             allowed: key ? allowed.fields[key] : null,
+            levelKey: key,
             level: level + 1,
             parent: parent + key + '.',
             schemaArgs,
             usedArgs,
+            variables,
           }).argsString
         );
       }
@@ -271,22 +311,30 @@ export class GraphQLService {
       if (result.length) {
         // Complete result, encapsulated via round brackets
         if (level === 1) {
-          return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs };
+          return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs, variables };
         }
 
         // Deeper result part, encapsulated via square brackets
         else {
-          return { argsString: '[' + result.join(', ') + ']', schemaArgs, usedArgs };
+          return { argsString: '[' + result.join(', ') + ']', schemaArgs, usedArgs, variables };
         }
       }
     }
 
     // Process object
     else if (typeof args === 'object') {
+      // Check for Upload type for variable handling
+      if (allowed?.type === 'Upload') {
+        const name = levelKey + '_' + Helper.getUID(6);
+        variables[name] = { type: allowed.type + (allowed.isRequired ? '!' : ''), value: args };
+        return { argsString: '$' + name, schemaArgs, usedArgs, variables };
+      }
+
       // Check object is empty
       if (args && Object.keys(args).length === 0 && Object.getPrototypeOf(args) === Object.prototype) {
-        return { argsString: '{}', schemaArgs, usedArgs };
+        return { argsString: '{}', schemaArgs, usedArgs, variables };
       }
+
       // Process all object entries
       for (const [key, value] of Object.entries(args)) {
         // Init data for current entry
@@ -333,10 +381,12 @@ export class GraphQLService {
                 (item) =>
                   this.prepareArguments(item, {
                     allowed: allowed.fields[key],
+                    levelKey: key,
                     level: level + 1,
                     parent: currentKey + '.',
                     schemaArgs,
                     usedArgs,
+                    variables,
                   }).argsString
               ) +
               ']'
@@ -372,13 +422,21 @@ export class GraphQLService {
 
         // Others
         else {
-          additionalResult += this.prepareArguments(value, {
+          const prepareOptions = {
             allowed: allowed.fields[key],
+            levelKey: key,
             level: level + 1,
             parent: currentKey + '.',
             schemaArgs,
             usedArgs,
-          }).argsString;
+            variables,
+          };
+          try {
+            additionalResult += this.prepareArguments(value, prepareOptions).argsString;
+          } catch (e) {
+            console.error('Error during preparing arguments', value, prepareOptions);
+            throw e;
+          }
         }
 
         // Push deeper part into result array
@@ -389,19 +447,19 @@ export class GraphQLService {
       if (result.length) {
         // Complete result, encapsulated via round brackets
         if (level === 1) {
-          return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs };
+          return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs, variables };
         }
 
         // Deeper result part, encapsulated via curly brackets
         else {
-          return { argsString: '{' + result.join(', ') + '}', schemaArgs, usedArgs };
+          return { argsString: '{' + result.join(', ') + '}', schemaArgs, usedArgs, variables };
         }
       }
     }
 
     // Prepare and process other / unknown values as JSON
     else {
-      return { argsString: JSON.stringify(args), schemaArgs, usedArgs };
+      return { argsString: JSON.stringify(args), schemaArgs, usedArgs, variables };
     }
   }
 

@@ -10,6 +10,7 @@ import {
   WsService,
 } from '@lenne.tech/ng-base/shared';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { extractFiles } from 'extract-files';
 
 /**
  * Factory for apollo-angular options
@@ -24,6 +25,7 @@ export function apolloOptionsFactory(
 
   const http = httpLink.create({
     uri: baseModuleConfig.apiUrl,
+    extractFiles,
   });
 
   const authMiddleware = new ApolloLink((operation, forward) => {

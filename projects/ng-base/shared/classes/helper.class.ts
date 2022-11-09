@@ -183,11 +183,11 @@ export class Helper {
   }
 
   /**
-   * Generates an unique identifier with 24 characters
+   * Generates an unique identifier with a specific length
    */
-  public static getUID(): string {
+  public static getUID(length: number = 24): string {
     let dt = new Date().getTime();
-    const uuid = 'xxxxxxxxxxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const uuid = 'x'.repeat(length).replace(/[xy]/g, (c) => {
       // eslint-disable-next-line no-bitwise
       const r = (dt + Math.random() * 16) % 16 | 0;
       dt = Math.floor(dt / 16);
