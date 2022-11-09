@@ -35,4 +35,5 @@ export interface CMSFieldConfig {
   releaseText?: string;
   maxSize?: number;
   compressOptions?: CompressOptions;
+  imageMode?: 'base64' | 'file';
 }

@@ -27,6 +27,7 @@ export class UploadImageComponent {
   @Input() maxSize: number;
   @Input() uploadDirectly = false;
   @Input() objectPath: string;
+  @Input() mode: 'file' | 'base64' = 'file';
 
   @Output() imageUploaded = new EventEmitter();
   @Output() imageDeleted = new EventEmitter();
@@ -156,7 +157,7 @@ export class UploadImageComponent {
         this.imageUploaded.emit(result.id);
       }
     } else {
-      this.control.setValue(fileData.base64);
+      this.control.setValue(this.mode === 'base64' ? fileData.base64 : this.selectedFile);
     }
 
     this.control.markAsTouched();

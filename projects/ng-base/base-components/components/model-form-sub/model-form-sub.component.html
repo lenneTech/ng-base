@@ -89,6 +89,7 @@
             [maxSize]="config[key]?.maxSize"
             [uploadDirectly]="false"
             [objectPath]="objectPath"
+            [mode]="config[key]?.imageMode"
             (fileChanged)="fileChanged.emit($event)"
             (imageDeleted)="imageChanged.emit(key)"
             (imageUploaded)="imageChanged.emit(key)"
