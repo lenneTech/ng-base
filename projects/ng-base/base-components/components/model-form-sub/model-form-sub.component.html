@@ -96,6 +96,28 @@
           ></base-upload-image>
         </ng-container>
 
+        <ng-container *ngSwitchCase="'Upload'">
+          <base-upload-image
+            [id]="key"
+            [name]="key"
+            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+            [control]="transformToControl(form?.get(key))"
+            [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
+            [defaultDragText]="config[key]?.dragText || 'Drag & Drop'"
+            [defaultReleaseText]="config[key]?.releaseText || 'Loslassen zum hochladen'"
+            [preButtonText]="config[key]?.preButtonText || 'or'"
+            [buttonText]="config[key]?.buttonText || 'browse'"
+            [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+            [compressOptions]="config[key]?.compressOptions"
+            [maxSize]="config[key]?.maxSize"
+            [objectPath]="objectPath"
+            [mode]="'file'"
+          ></base-upload-image>
+        </ng-container>
+
         <ng-container *ngSwitchCase="'Reference'">
           <base-refence-input
             [id]="key"
