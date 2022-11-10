@@ -30,6 +30,31 @@ export class GraphQLMeta {
   }
 
   /**
+   * Get an object with GraphQLRequestType (operation type) as keys and method (fields) names as value
+   */
+  getMethodNames(): Record<string, string[]> {
+    return {
+      query: Object.keys(this.schema.getQueryType()?.getFields() || {}),
+      mutation: Object.keys(this.schema.getMutationType()?.getFields() || {}),
+      subscription: Object.keys(this.schema.getSubscriptionType()?.getFields() || {}),
+    };
+  }
+
+  /**
+   * Get GraphQLRequestTypes (operation types) via method (field) name
+   */
+  getRequestTypesViaMethod(methodName: string): string[] {
+    const result = [];
+    const methodNames = this.getMethodNames();
+    for (const [key, value] of Object.entries(methodNames)) {
+      if (value.includes(methodName)) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+
+  /**
    * We're going to get the query and mutation types from the schema, then we're going to loop through the fields of each
    * type and check if the field name starts with `find`, `create`, `update`, or `delete`. If it does, we're going to add
    * the model name to the `possibleTypes` array

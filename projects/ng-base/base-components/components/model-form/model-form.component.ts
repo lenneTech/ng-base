@@ -462,42 +462,48 @@ export class ModelFormComponent implements OnInit, OnChanges {
       if (this.fileChanges?.length) {
         for (const fileChange of this.fileChanges) {
           const key = fileChange.field;
+          const config = this.nestedObject(key, this.config);
 
           if (fileChange.file) {
             // Upload
-            if (this.form.get(key).value && !this.form.get(key).value?.startsWith('data:')) {
-              // Delete
-              const deleteResult = await this.fileService.delete(
+            const value = this.form.get(key).value;
+
+            // Check if file is an ID or a base64 string
+            if (typeof value === 'string') {
+              // Delete if ID
+              if (!this.form.get(key).value?.startsWith('data:')) {
+                const deleteResult = await this.fileService.delete(
+                  this.nestedObject(key, this.config)?.url,
+                  this.nestedObject(key, this.config)?.deletePath || '/files/',
+                  this.nestedObject(key, this.object)
+                );
+
+                if (deleteResult) {
+                  this.nestedObject(key, data, '');
+                }
+              }
+
+              const uploadResult = await this.fileService.upload(
                 this.nestedObject(key, this.config)?.url,
+                this.nestedObject(key, this.config)?.uploadPath || '/files/upload',
+                fileChange.file,
+                this.nestedObject(key, this.config)?.compressOptions
+              );
+
+              if (uploadResult?.id) {
+                this.nestedObject(key, data, uploadResult.id);
+              }
+            } else if (config?.imageMode && config?.imageMode !== 'file') {
+              // Delete
+              const result = await this.fileService.delete(
+                config?.url,
                 this.nestedObject(key, this.config)?.deletePath || '/files/',
                 this.nestedObject(key, this.object)
               );
 
-              if (deleteResult) {
+              if (result) {
                 this.nestedObject(key, data, '');
               }
-            }
-
-            const uploadResult = await this.fileService.upload(
-              this.nestedObject(key, this.config)?.url,
-              this.nestedObject(key, this.config)?.uploadPath || '/files/upload',
-              fileChange.file,
-              this.nestedObject(key, this.config)?.compressOptions
-            );
-
-            if (uploadResult?.id) {
-              this.nestedObject(key, data, uploadResult.id);
-            }
-          } else {
-            // Delete
-            const result = await this.fileService.delete(
-              this.nestedObject(key, this.config)?.url,
-              this.nestedObject(key, this.config)?.deletePath || '/files/',
-              this.nestedObject(key, this.object)
-            );
-
-            if (result) {
-              this.nestedObject(key, data, '');
             }
           }
         }
@@ -567,7 +573,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
         continue;
       }
 
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
+      if (value && typeof value === 'object' && !Array.isArray(value) && this.fields[key]?.type !== 'Upload') {
         data[key] = Object.keys(data[key])
           .filter((k) => data[key][k] != null)
           .reduce((a, k) => ({ ...a, [k]: data[key][k] }), {});

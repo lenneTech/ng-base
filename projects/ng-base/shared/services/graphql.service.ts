@@ -7,6 +7,7 @@ import { GraphQLMetaService } from './graphql-meta.service';
 import { GraphQLEnum } from '../classes/graphql-enum.class';
 import { GraphQLType } from '../classes/graphql-type.class';
 import { sha256 } from 'js-sha256';
+import { Helper } from '../classes/helper.class';
 
 /**
  * GraphQL service
@@ -23,10 +24,10 @@ export class GraphQLService {
   /**
    * GraphQL request
    */
-  public graphQl(graphql: string, options: IGraphQLOptions = {}): Observable<any> {
-    // Check arguments
-    if (!graphql) {
-      throwError('Missing graphql argument');
+  public graphQl(graphqlMethodName: string, options: IGraphQLOptions = {}): Observable<any> {
+    // Check parameters
+    if (!graphqlMethodName) {
+      throwError(() => new Error('Missing graphql method name'));
     }
 
     // Get config
@@ -35,7 +36,6 @@ export class GraphQLService {
       fields: null,
       log: false,
       model: null,
-      type: GraphQLRequestType.QUERY,
       ...options,
     };
 
@@ -58,6 +58,22 @@ export class GraphQLService {
     return new Observable((subscriber) => {
       // Get meta
       this.graphQLMetaService.getMeta({ log: config.log }).subscribe((meta) => {
+        // Set GraphQLRequestType automatically
+        if (!config.type) {
+          const types = meta.getRequestTypesViaMethod(graphqlMethodName);
+          if (!types?.length) {
+            throwError(() => new Error('No GraphQLRequestType detected'));
+          }
+          config.type = types[0] as GraphQLRequestType;
+          if (config.type) {
+            throwError(() => new Error('No GraphQLRequestType detected'));
+          }
+          if (types.length > 1) {
+            // eslint-disable-next-line no-console
+            console.debug('GraphQLRequestType ' + config.type + ' used for ' + graphqlMethodName, types);
+          }
+        }
+
         // Prepare fields
         let fields;
         let allowedFields;
@@ -68,7 +84,7 @@ export class GraphQLService {
         }
 
         if (config.fields) {
-          allowedFields = meta.getFields(graphql, { type: config.type });
+          allowedFields = meta.getFields(graphqlMethodName, { type: config.type });
 
           // Log meta
           if (config.log) {
@@ -92,7 +108,7 @@ export class GraphQLService {
         }
 
         // Get allowed args
-        const allowedArgs = meta.getArgs(graphql, { type: config.type });
+        const allowedArgs = meta.getArgs(graphqlMethodName, { type: config.type });
 
         // Log allowed args
         if (config.log) {
@@ -121,20 +137,50 @@ export class GraphQLService {
 
         // Log
         if (config.log) {
-          console.log({ graphQL: graphql, args, fields, type: config.type });
+          console.log({ graphQL: graphqlMethodName, args, fields, type: config.type });
         }
 
         // Prepare request
-        const documentNode = fields
-          ? gql(config.type + '{\n' + graphql + args + fields + '\n}')
-          : gql(config.type + '{\n' + graphql + args + '\n}');
+        const request: any = {};
+
+        // Prepare GraphQL
+        const gQlFuncBody = fields
+          ? ' {\n' + graphqlMethodName + args + fields + '\n}'
+          : ' {\n' + graphqlMethodName + args + '\n}';
+        let gQlBody = config.type + gQlFuncBody;
+
+        // Handling for variables (e.g. for file uploads)
+        if (Object.keys(argsData.variables).length) {
+          // Preparations
+          request.variables = {};
+          let multipart = false;
+
+          // Add surrounding
+          gQlBody = config.type + ' Request(';
+          for (const [key, item] of Object.entries(argsData.variables)) {
+            gQlBody += '\n$' + key + ':' + item.type + ',';
+            request.variables[key] = item.value;
+            if (item.type.startsWith('Upload')) {
+              multipart = true;
+            }
+          }
+          gQlBody = gQlBody.slice(0, -1) + '\n)' + gQlFuncBody;
+
+          // Set Multipart
+          if (multipart) {
+            request.context = {
+              useMultipart: true,
+            };
+          }
+        }
+        const documentNode = gql(gQlBody);
 
         // Log
         if (config.log) {
           console.log({ documentNode });
         }
 
-        const request: any = {};
+        // Set document node
         request[config.type] = documentNode;
 
         // Log
@@ -156,7 +202,7 @@ export class GraphQLService {
 
         (this.apollo as any)[func](request).subscribe(
           (result: any) => {
-            const data = result?.data?.[graphql] !== undefined ? result.data[graphql] : result;
+            const data = result?.data?.[graphqlMethodName] !== undefined ? result.data[graphqlMethodName] : result;
 
             // Direct data
             if (!config.model) {
@@ -220,24 +266,33 @@ export class GraphQLService {
     options: {
       allowed?: GraphQLType;
       level?: number;
+      levelKey?: string;
       parent?: string;
       schemaArgs?: string[];
       usedArgs?: string[];
+      variables?: { [key: string]: { type: string; value: any } };
     } = {}
-  ): { argsString: string; schemaArgs: string[]; usedArgs: string[] } {
+  ): {
+    argsString: string;
+    schemaArgs: string[];
+    usedArgs: string[];
+    variables: { [key: string]: { type: string; value: any } };
+  } {
     // Init config variables
-    const { allowed, level, parent, schemaArgs, usedArgs } = {
+    const { allowed, levelKey, level, parent, schemaArgs, usedArgs, variables } = {
       allowed: null,
+      levelKey: '',
       level: 1,
       parent: '',
       schemaArgs: [],
       usedArgs: [],
+      variables: {},
       ...options,
     };
 
     // Check args
     if (args === undefined || args === null) {
-      return { argsString: '', schemaArgs, usedArgs };
+      return { argsString: '', schemaArgs, usedArgs, variables };
     }
 
     // Init args
@@ -259,10 +314,12 @@ export class GraphQLService {
         result.push(
           this.prepareArguments(item, {
             allowed: key ? allowed.fields[key] : null,
+            levelKey: key,
             level: level + 1,
             parent: parent + key + '.',
             schemaArgs,
             usedArgs,
+            variables,
           }).argsString
         );
       }
@@ -271,22 +328,30 @@ export class GraphQLService {
       if (result.length) {
         // Complete result, encapsulated via round brackets
         if (level === 1) {
-          return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs };
+          return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs, variables };
         }
 
         // Deeper result part, encapsulated via square brackets
         else {
-          return { argsString: '[' + result.join(', ') + ']', schemaArgs, usedArgs };
+          return { argsString: '[' + result.join(', ') + ']', schemaArgs, usedArgs, variables };
         }
       }
     }
 
     // Process object
     else if (typeof args === 'object') {
+      // Check for Upload type for variable handling
+      if (allowed?.type === 'Upload') {
+        const name = levelKey + '_' + Helper.getUID(6);
+        variables[name] = { type: allowed.type + (allowed.isRequired ? '!' : ''), value: args };
+        return { argsString: '$' + name, schemaArgs, usedArgs, variables };
+      }
+
       // Check object is empty
       if (args && Object.keys(args).length === 0 && Object.getPrototypeOf(args) === Object.prototype) {
-        return { argsString: '{}', schemaArgs, usedArgs };
+        return { argsString: '{}', schemaArgs, usedArgs, variables };
       }
+
       // Process all object entries
       for (const [key, value] of Object.entries(args)) {
         // Init data for current entry
@@ -333,10 +398,12 @@ export class GraphQLService {
                 (item) =>
                   this.prepareArguments(item, {
                     allowed: allowed.fields[key],
+                    levelKey: key,
                     level: level + 1,
                     parent: currentKey + '.',
                     schemaArgs,
                     usedArgs,
+                    variables,
                   }).argsString
               ) +
               ']'
@@ -372,13 +439,21 @@ export class GraphQLService {
 
         // Others
         else {
-          additionalResult += this.prepareArguments(value, {
+          const prepareOptions = {
             allowed: allowed.fields[key],
+            levelKey: key,
             level: level + 1,
             parent: currentKey + '.',
             schemaArgs,
             usedArgs,
-          }).argsString;
+            variables,
+          };
+          try {
+            additionalResult += this.prepareArguments(value, prepareOptions).argsString;
+          } catch (e) {
+            console.error('Error during preparing arguments', value, prepareOptions);
+            throw e;
+          }
         }
 
         // Push deeper part into result array
@@ -389,19 +464,19 @@ export class GraphQLService {
       if (result.length) {
         // Complete result, encapsulated via round brackets
         if (level === 1) {
-          return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs };
+          return { argsString: '(' + result.join(', ') + ')', schemaArgs, usedArgs, variables };
         }
 
         // Deeper result part, encapsulated via curly brackets
         else {
-          return { argsString: '{' + result.join(', ') + '}', schemaArgs, usedArgs };
+          return { argsString: '{' + result.join(', ') + '}', schemaArgs, usedArgs, variables };
         }
       }
     }
 
     // Prepare and process other / unknown values as JSON
     else {
-      return { argsString: JSON.stringify(args), schemaArgs, usedArgs };
+      return { argsString: JSON.stringify(args), schemaArgs, usedArgs, variables };
     }
   }
 
