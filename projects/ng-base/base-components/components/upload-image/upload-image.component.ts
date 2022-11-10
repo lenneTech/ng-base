@@ -143,15 +143,23 @@ export class UploadImageComponent {
    * We create a new FormData object, append the selected file to it, and then send it to the server
    */
   async upload() {
-    let result;
+    // Prepare file data
+    let file = this.selectedFile;
+    if (this.compressOptions) {
+      file = await this.fileService.compress(file, this.compressOptions);
+    }
     const fileData = {
       field: this.objectPath ? this.objectPath + '.' + this.id : this.id,
-      file: this.selectedFile,
-      base64: await this.getBase64(this.selectedFile),
+      file,
+      base64: await this.getBase64(file),
     };
+
+    // Emit file data
     this.fileChanged.emit(fileData);
+
+    // Set control value and upload directly if required
     if (this.uploadDirectly) {
-      result = await this.fileService.upload(this.url, this.uploadPath, this.selectedFile, this.compressOptions);
+      const result = await this.fileService.upload(this.url, this.uploadPath, this.selectedFile);
       if (result?.id) {
         this.control.setValue(result.id);
         this.imageUploaded.emit(result.id);
@@ -160,6 +168,7 @@ export class UploadImageComponent {
       this.control.setValue(this.mode === 'base64' ? fileData.base64 : this.selectedFile);
     }
 
+    // Final processes
     this.control.markAsTouched();
     this.loading = false;
   }

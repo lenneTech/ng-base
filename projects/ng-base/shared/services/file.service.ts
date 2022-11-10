@@ -15,29 +15,25 @@ export class FileService {
    */
   compress(file: File, options?: CompressOptions): Promise<File> {
     const config = {
-      ...{
-        quality: 0.6,
-        checkOrientation: false,
-      },
+      quality: 0.6,
+      checkOrientation: false,
       ...options,
     };
 
     return new Promise((resolve, reject) => {
       new Compressor(file, {
-        ...config,
-        ...{
-          success(result: Blob | File) {
-            // Check if result is blob for convert to file
-            if (result instanceof Blob) {
-              resolve(new File([result], (result as any).name));
-            } else {
-              resolve(result);
-            }
-          },
-          error(err) {
-            reject(err.message);
-          },
+        success(result: Blob | File) {
+          // Check if result is blob for convert to file
+          if (result instanceof Blob) {
+            resolve(new File([result], (result as any).name));
+          } else {
+            resolve(result);
+          }
         },
+        error(err) {
+          reject(err.message);
+        },
+        ...config,
       });
     });
   }
