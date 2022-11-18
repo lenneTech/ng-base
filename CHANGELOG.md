@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.23.0](https://github.com/lenneTech/ng-base/compare/v14.22.0...v14.23.0) (2022-11-18)
+
+### Features
+
+- Tag Validators ([#31](https://github.com/lenneTech/ng-base/issues/31)) ([36c6af8](https://github.com/lenneTech/ng-base/commit/36c6af830853bf2cf895ffeb1831ff9a42a7ef36))
+
 ## [14.22.0](https://github.com/lenneTech/ng-base/compare/v14.21.4...v14.22.0) (2022-11-11)
 
 ### Features
