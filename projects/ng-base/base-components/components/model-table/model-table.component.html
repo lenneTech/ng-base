@@ -1,8 +1,12 @@
-<div *ngIf="!selectedId && !createMode">
+<div *ngIf="!id && !createMode">
   <div class="w-100 d-flex flex-row justify-content-between align-items-center mb-2 mb-lg-4">
     <h2 id="model-table-top" class="mb-0" *ngIf="modelName">
       {{
-        config?.plural ? config?.plural : config?.label ? config?.label : capitalizeFirstLetter(camelModelName) + 's'
+        modelConfig?.plural
+          ? modelConfig?.plural
+          : modelConfig?.label
+          ? modelConfig?.label
+          : capitalizeFirstLetter(camelModelName) + 's'
       }}
     </h2>
     <div class="d-flex align-items-center d-none d-lg-block">
@@ -127,25 +131,27 @@
   </div>
 </div>
 
-<div class="w-100" *ngIf="selectedId || createMode">
+<div class="w-100" *ngIf="id || createMode">
   <button class="d-none d-lg-block btn btn-outline-primary mb-3" (click)="selectId('')">Zurück</button>
   <base-model-form
+    *ngIf="!modelConfig?.customFormComponent"
     [modelName]="camelModelName"
-    [label]="config?.label"
-    [config]="fieldConfig"
+    [label]="modelConfig?.label"
+    [config]="config"
     [logging]="logging"
-    [id]="selectedId"
+    [id]="id"
     (finished)="selectId('')"
     [delete]="delete"
     [duplicate]="duplicate"
     [showFavButton]="showFavButton"
   ></base-model-form>
+  <ng-template *ngIf="modelConfig?.customFormComponent" #customFormTemplate></ng-template>
 </div>
 
 <div class="responsive-action-button d-block d-lg-none">
   <base-fab-button
     [fabIcon]="'bi-plus'"
     (click)="createNewObject()"
-    *ngIf="!(selectedId || createMode) && showFavButton"
+    *ngIf="!(id || createMode) && showFavButton"
   ></base-fab-button>
 </div>

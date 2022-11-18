@@ -1,4 +1,16 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ComponentRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import {
   CMSFieldConfig,
   CmsService,
@@ -18,7 +30,7 @@ import {
   templateUrl: './model-table.component.html',
   styleUrls: ['./model-table.component.scss'],
 })
-export class ModelTableComponent implements OnInit, OnChanges {
+export class ModelTableComponent implements AfterViewInit, OnInit, OnChanges {
   @Input() modelName: string;
   @Input() objectId: string;
   @Input() createMode = false;
@@ -29,12 +41,14 @@ export class ModelTableComponent implements OnInit, OnChanges {
   @Input() import = true;
   @Input() export = true;
   @Input() duplicate = true;
-  @Input() config: any = {};
-  @Input() fieldConfig: { [key: string]: CMSFieldConfig };
+  @Input() modelConfig: any = {};
+  @Input() config: { [key: string]: CMSFieldConfig };
   @Input() showFavButton = true;
 
   @Output() idSelected = new EventEmitter<string>();
   @Output() createModeChanged = new EventEmitter<boolean>();
+
+  @ViewChild('customFormTemplate', { read: ViewContainerRef }) customFormTemplate: ViewContainerRef;
 
   uniqueField = 'id';
   tableFields = {
@@ -49,10 +63,11 @@ export class ModelTableComponent implements OnInit, OnChanges {
   meta!: GraphQLMeta;
   objects: any[] = [];
   availableFields: string[] = [];
-  selectedId = '';
+  id = '';
   queryName: string = null;
   camelModelName: string;
   possibleFields: Record<string, GraphQLType> = {};
+  componentRef: ComponentRef<any> = undefined;
 
   totalCount: number;
   selectedPageIndex = 0;
@@ -66,6 +81,10 @@ export class ModelTableComponent implements OnInit, OnChanges {
     private scrollService: ScrollService
   ) {}
 
+  ngAfterViewInit() {
+    this.integrateCustomFormComponent();
+  }
+
   ngOnInit(): void {
     this.graphQLMetaService.getMeta().subscribe((meta) => {
       this.meta = meta;
@@ -75,7 +94,7 @@ export class ModelTableComponent implements OnInit, OnChanges {
       }
 
       if (this.objectId) {
-        this.selectedId = this.objectId;
+        this.id = this.objectId;
       }
     });
   }
@@ -86,14 +105,16 @@ export class ModelTableComponent implements OnInit, OnChanges {
     }
 
     if (changes['objectId'] && this.meta) {
-      if (this.selectedId !== this.objectId) {
+      if (this.id !== this.objectId) {
         if (this.logging) {
-          console.log('ModelTableComponent::ngOnChanges->selectedId', this.selectedId);
+          console.log('ModelTableComponent::ngOnChanges->selectedId', this.id);
         }
 
-        this.selectedId = this.objectId;
+        this.id = this.objectId;
       }
     }
+
+    this.setChangesInComponentRef();
   }
 
   /**
@@ -106,14 +127,14 @@ export class ModelTableComponent implements OnInit, OnChanges {
     this.totalCount = null;
     this.camelModelName = this.kebabToCamelCase(this.modelName);
     // Set query name
-    if (!this.config?.queryName) {
+    if (!this.modelConfig?.queryName) {
       this.queryName = 'findAndCount' + this.capitalizeFirstLetter(this.camelModelName) + 's';
     } else {
-      this.queryName = this.config?.queryName;
+      this.queryName = this.modelConfig?.queryName;
     }
 
-    if (this.config?.tableFields) {
-      this.tableFields = this.config.tableFields;
+    if (this.modelConfig?.tableFields) {
+      this.tableFields = this.modelConfig.tableFields;
     }
 
     if (this.logging) {
@@ -146,6 +167,38 @@ export class ModelTableComponent implements OnInit, OnChanges {
 
     this.selectedPageIndex = 0;
     this.objects = await this.loadObjects(this.availableFields, 0, 25);
+  }
+
+  integrateCustomFormComponent() {
+    if (!(this.id || this.createMode)) {
+      return;
+    }
+    const customComponent = this.modelConfig?.customFormComponent;
+    if (customComponent) {
+      this.componentRef = this.customFormTemplate?.createComponent<any>(customComponent);
+      this.setChangesInComponentRef();
+      this.componentRef.instance.finished.subscribe(() => {
+        this.selectId('');
+      });
+    }
+  }
+
+  setChangesInComponentRef() {
+    if (this.componentRef) {
+      const data = {
+        config: this.config,
+        delete: this.delete,
+        duplicate: this.duplicate,
+        id: this.id,
+        label: this.modelConfig?.label,
+        logging: this.logging,
+        modelName: this.camelModelName,
+        showFavButton: this.showFavButton,
+      };
+      for (const [key, value] of Object.entries(data)) {
+        this.componentRef.setInput(key, value);
+      }
+    }
   }
 
   /**
@@ -231,8 +284,8 @@ export class ModelTableComponent implements OnInit, OnChanges {
     }
 
     if (this.update) {
-      this.selectedId = object['id'];
-      this.idSelected.emit(this.selectedId);
+      this.id = object['id'];
+      this.idSelected.emit(this.id);
     }
   }
 

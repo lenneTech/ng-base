@@ -20,6 +20,12 @@ import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } fro
 import { ActivatedRoute, Router } from '@angular/router';
 import { Button } from '../fab-button/fab-button.component';
 
+/**
+ * ModelFormComponent
+ *
+ * Hint for handling extensions of this component in project:
+ * If you want to use complete custom services and methods, extend ModelFormBaseComponent instead of ModelFormComponent
+ */
 @Component({
   selector: 'base-model-form',
   templateUrl: './model-form.component.html',
