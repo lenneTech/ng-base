@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.24.0](https://github.com/lenneTech/ng-base/compare/v14.23.0...v14.24.0) (2022-11-18)
+
+### Features
+
+- Dynamic model form component ([5a795b6](https://github.com/lenneTech/ng-base/commit/5a795b64c7064f5e8e8b658d1ab04d5533629142))
+
 ## [14.23.0](https://github.com/lenneTech/ng-base/compare/v14.22.0...v14.23.0) (2022-11-18)
 
 ### Features
