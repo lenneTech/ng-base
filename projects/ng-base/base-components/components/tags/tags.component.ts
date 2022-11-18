@@ -70,13 +70,10 @@ export class TagsComponent {
       tag = tag.slice(0, -1);
     }
 
-    const validators = this.validators?.map((v) => v.name);
     const temp = new FormControl(tag, this.validators);
-    this.control.setErrors(null);
+    this.control.setErrors({ ...this.control.errors, ...temp.errors });
 
-    if (validators?.includes('email') && temp.invalid) {
-      this.control.setErrors({ ...this.control.errors, email: true });
-    }
+    console.log(this.control.errors);
 
     if (temp.invalid) {
       return;
@@ -170,7 +167,7 @@ export class TagsComponent {
     }
 
     if (this.control.value?.length === 0) {
-      this.control.setErrors({ required: true });
+      this.control.setErrors({ ...this.control.errors, required: true });
     }
   }
 
@@ -210,7 +207,7 @@ export class TagsComponent {
         }
 
         if (!this.control.value || this.control.value?.length === 0) {
-          this.control.setErrors({ required: true });
+          this.control.setErrors({ ...this.control.errors, required: true });
         }
 
         this.selectedElement = null;

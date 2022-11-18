@@ -13,7 +13,6 @@ export * from './directives/stop-propagation.directive';
 
 // Pipes
 export * from './pipes/ellipses.pipe';
-export * from './pipes/input-error.pipe';
 
 // Components
 export * from './components/input/input.component';
