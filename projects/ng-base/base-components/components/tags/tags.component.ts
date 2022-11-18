@@ -73,8 +73,6 @@ export class TagsComponent {
     const temp = new FormControl(tag, this.validators);
     this.control.setErrors({ ...this.control.errors, ...temp.errors });
 
-    console.log(this.control.errors);
-
     if (temp.invalid) {
       return;
     }
