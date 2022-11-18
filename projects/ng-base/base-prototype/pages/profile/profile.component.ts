@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AuthService, BasicUser, UserService } from '@lenne.tech/ng-base/shared';
+import { AuthService, BasicUser, CMSFieldConfig, UserService } from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -8,11 +8,16 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
-  @Input() config: any = {};
-  profileConfig = {
+  @Input() config: { [key: string]: CMSFieldConfig } = {};
+  profileConfig: { [key: string]: CMSFieldConfig } = {
     avatar: {
-      label: 'E-Mail',
+      label: 'Profilbild',
       placeholder: '',
+      croppingImage: true,
+      croppingOptions: {
+        aspectRatio: 1 / 1,
+        format: 'png',
+      },
     },
     email: {
       label: 'E-Mail',
@@ -27,6 +32,7 @@ export class ProfileComponent implements OnInit {
       placeholder: '',
     },
     roles: {
+      label: '',
       exclude: true,
       roles: ['admin'],
     },
@@ -35,6 +41,7 @@ export class ProfileComponent implements OnInit {
       placeholder: '',
     },
     password: {
+      label: '',
       exclude: true,
     },
   };

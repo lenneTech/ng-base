@@ -5,5 +5,11 @@
     "entryFile": "public-api.ts",
     "cssUrl": "inline"
   },
-  "allowedNonPeerDependencies": ["@apollo/client", "apollo-angular", "graphql", "subscriptions-transport-ws"]
+  "allowedNonPeerDependencies": [
+    "@apollo/client",
+    "apollo-angular",
+    "graphql",
+    "subscriptions-transport-ws",
+    "ngx-image-cropper"
+  ]
 }
