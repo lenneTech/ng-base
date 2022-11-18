@@ -34,5 +34,6 @@
     <div *ngIf="control?.errors?.['invalidReference'] && inputValue">
       {{ inputValue }} ist kein gültiger Wert für {{ label }}.
     </div>
+    <div *ngIf="control?.errors?.['email']">Bitte gib eine gültige E-Mail Adresse ein.</div>
   </div>
 </div>

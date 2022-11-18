@@ -326,6 +326,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
       if (typeof config?.max === 'number') {
         validators.push(Validators.max(config.max));
       }
+
+      if (Array.isArray(config?.validators)) {
+        validators.push(...config?.validators);
+      }
     }
 
     return validators;

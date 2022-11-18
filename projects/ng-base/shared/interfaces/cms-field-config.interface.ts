@@ -1,5 +1,6 @@
 import { CMSEnumValues } from './cms-enum-values.interface';
 import { CompressOptions } from './compress-options.interface';
+import { ValidatorFn } from '@angular/forms';
 
 export interface CMSFieldConfig {
   label: string;
@@ -36,4 +37,7 @@ export interface CMSFieldConfig {
   maxSize?: number;
   compressOptions?: CompressOptions;
   imageMode?: 'base64' | 'file';
+
+  // Tags
+  validators?: ValidatorFn[];
 }

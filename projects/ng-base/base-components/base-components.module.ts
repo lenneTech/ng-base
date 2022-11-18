@@ -26,6 +26,7 @@ import { ContextMenuDirective } from './directives/context-menu.directive';
 import { StopPropagationDirective } from './directives/stop-propagation.directive';
 
 import { EllipsesPipe } from './pipes/ellipses.pipe';
+
 import { RouterModule } from '@angular/router';
 
 // Modules
