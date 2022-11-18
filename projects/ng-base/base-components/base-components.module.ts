@@ -26,6 +26,8 @@ import { ContextMenuDirective } from './directives/context-menu.directive';
 import { StopPropagationDirective } from './directives/stop-propagation.directive';
 
 import { EllipsesPipe } from './pipes/ellipses.pipe';
+import { InputErrorPipe } from './pipes/input-error.pipe';
+
 import { RouterModule } from '@angular/router';
 
 // Modules
@@ -60,6 +62,7 @@ const elements = [
 
   // Pipes
   EllipsesPipe,
+  InputErrorPipe,
 ];
 
 @NgModule({

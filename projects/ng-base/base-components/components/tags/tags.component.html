@@ -30,9 +30,6 @@
   </div>
 
   <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">
-    <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
-    <div *ngIf="control?.errors?.['invalidReference'] && inputValue">
-      {{ inputValue }} ist kein gültiger Wert für {{ label }}.
-    </div>
+    <div *ngIf="control?.errors">{{ control?.errors | baseInputError: { inputValue, label } }}</div>
   </div>
 </div>

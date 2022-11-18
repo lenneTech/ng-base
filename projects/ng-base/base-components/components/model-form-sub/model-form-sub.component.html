@@ -46,6 +46,7 @@
               [required]="
                 config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
               "
+              [validators]="config[key].validators"
               [objectPath]="objectPath"
             ></base-tags>
           </ng-container>

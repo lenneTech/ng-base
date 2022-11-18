@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { FormControl, ValidatorFn } from '@angular/forms';
 
 @Component({
   selector: 'base-tags',
@@ -18,6 +19,7 @@ export class TagsComponent {
   @Input() removeByKey = true;
   @Input() required = false;
   @Input() objectPath = '';
+  @Input() validators: ValidatorFn[] = [];
   inputValue = '';
   selectedElement: HTMLElement;
 
@@ -66,6 +68,18 @@ export class TagsComponent {
   addTag(tag: string, reset = true, isOption = false): void {
     if (tag.endsWith(',') || tag.endsWith(' ')) {
       tag = tag.slice(0, -1);
+    }
+
+    const validators = this.validators?.map((v) => v.name);
+    const temp = new FormControl(tag, this.validators);
+    this.control.setErrors(null);
+
+    if (validators?.includes('email') && temp.invalid) {
+      this.control.setErrors({ ...this.control.errors, email: true });
+    }
+
+    if (temp.invalid) {
+      return;
     }
 
     // Check if user copy string into input
@@ -150,7 +164,7 @@ export class TagsComponent {
 
     this.control.markAsTouched();
     if (foundOption) {
-      this.control.setValue(this.control.value.filter((item: string) => item !== foundOption.value));
+      this.control.setValue(this.control.value?.filter((item: string) => item !== foundOption.value));
     } else if (this.control.value) {
       this.control.value.splice(-1);
     }
