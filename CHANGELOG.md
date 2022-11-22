@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.25.0](https://github.com/lenneTech/ng-base/compare/v14.24.0...v14.25.0) (2022-11-22)
+
+### Features
+
+- Add securePasswordTransfer flag to config ([a419a00](https://github.com/lenneTech/ng-base/commit/a419a00fd975d9ad9f5e61162bbda74d03d52368))
+
 ## [14.24.0](https://github.com/lenneTech/ng-base/compare/v14.23.0...v14.24.0) (2022-11-18)
 
 ### Features
