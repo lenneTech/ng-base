@@ -13,7 +13,9 @@ import {
 } from '@angular/core';
 import {
   CMSFieldConfig,
+  CMSModelConfig,
   CmsService,
+  CMSTableField,
   GraphQLMeta,
   GraphQLMetaService,
   GraphQLRequestType,
@@ -41,9 +43,9 @@ export class ModelTableComponent implements AfterViewInit, OnInit, OnChanges {
   @Input() import = true;
   @Input() export = true;
   @Input() duplicate = true;
-  @Input() modelConfig: any = {};
+  @Input() modelConfig: CMSModelConfig = null;
   @Input() config: { [key: string]: CMSFieldConfig };
-  @Input() showFavButton = true;
+  @Input() showFavButton = false;
 
   @Output() idSelected = new EventEmitter<string>();
   @Output() createModeChanged = new EventEmitter<boolean>();
@@ -51,7 +53,7 @@ export class ModelTableComponent implements AfterViewInit, OnInit, OnChanges {
   @ViewChild('customFormTemplate', { read: ViewContainerRef }) customFormTemplate: ViewContainerRef;
 
   uniqueField = 'id';
-  tableFields = {
+  tableFields: CMSTableField = {
     id: { label: 'ID' },
     name: { label: 'Name' },
     title: { label: 'Titel' },
@@ -95,6 +97,7 @@ export class ModelTableComponent implements AfterViewInit, OnInit, OnChanges {
 
       if (this.objectId) {
         this.id = this.objectId;
+        this.integrateCustomFormComponent();
       }
     });
   }
@@ -126,6 +129,7 @@ export class ModelTableComponent implements AfterViewInit, OnInit, OnChanges {
     this.pages = [];
     this.totalCount = null;
     this.camelModelName = this.kebabToCamelCase(this.modelName);
+
     // Set query name
     if (!this.modelConfig?.queryName) {
       this.queryName = 'findAndCount' + this.capitalizeFirstLetter(this.camelModelName) + 's';
@@ -170,10 +174,11 @@ export class ModelTableComponent implements AfterViewInit, OnInit, OnChanges {
   }
 
   integrateCustomFormComponent() {
-    if (!(this.id || this.createMode)) {
+    if (!this.customFormTemplate || this.componentRef) {
       return;
     }
-    const customComponent = this.modelConfig?.customFormComponent;
+
+    const customComponent = this.modelConfig?.customTemplateComponent;
     if (customComponent) {
       this.componentRef = this.customFormTemplate?.createComponent<any>(customComponent);
       this.setChangesInComponentRef();

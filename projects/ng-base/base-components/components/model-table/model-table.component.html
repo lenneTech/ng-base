@@ -134,7 +134,7 @@
 <div class="w-100" *ngIf="id || createMode">
   <button class="d-none d-lg-block btn btn-outline-primary mb-3" (click)="selectId('')">Zurück</button>
   <base-model-form
-    *ngIf="!modelConfig?.customFormComponent"
+    *ngIf="!modelConfig?.customTemplateComponent"
     [modelName]="camelModelName"
     [label]="modelConfig?.label"
     [config]="config"
@@ -145,8 +145,8 @@
     [duplicate]="duplicate"
     [showFavButton]="showFavButton"
   ></base-model-form>
-  <ng-template *ngIf="modelConfig?.customFormComponent" #customFormTemplate></ng-template>
 </div>
+<ng-template *ngIf="modelConfig?.customTemplateComponent" #customFormTemplate></ng-template>
 
 <div class="responsive-action-button d-block d-lg-none">
   <base-fab-button

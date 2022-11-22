@@ -1,11 +1,12 @@
 import { Apollo } from 'apollo-angular';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GraphQLService } from './graphql.service';
 import { GraphQLMetaService } from './graphql-meta.service';
 import { IGraphQLPlusOptions } from '../interfaces/graphql-plus-options.interfacen';
 import { LoaderService } from './loader.service';
 import { GraphQLRequestType } from '../enums/graphql-request-type.enum';
+import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-config.interface';
 
 /**
  * GraphQL plus service, for extra error handling and loading indication
@@ -20,9 +21,10 @@ export class GraphQLPlusService extends GraphQLService {
   constructor(
     protected apollo: Apollo,
     protected graphqlMetaService: GraphQLMetaService,
-    protected loaderService: LoaderService
+    protected loaderService: LoaderService,
+    @Inject(BASE_MODULE_CONFIG) protected moduleConfig: BaseModuleConfig
   ) {
-    super(apollo, graphqlMetaService);
+    super(apollo, graphqlMetaService, moduleConfig);
   }
 
   public graphQl(graphql: string, options: IGraphQLPlusOptions = {}): Observable<any> {

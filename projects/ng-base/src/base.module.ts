@@ -8,7 +8,7 @@ import { MatchHeightDirective } from './directives/match-height.directive';
 import { ResizableDirective } from './directives/resizable.directive';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { DateAgoPipe } from './pipes/date-ago.pipe';
-import { AuthService, BaseModuleConfig, BASE_MODULE_CONFIG, WsService } from '@lenne.tech/ng-base/shared';
+import { AuthService, BASE_MODULE_CONFIG, BaseModuleConfig, WsService } from '@lenne.tech/ng-base/shared';
 import { HttpClientModule } from '@angular/common/http';
 
 // Imported and exported elements
@@ -46,6 +46,7 @@ export class BaseModule {
       scrollDetectionOffset: 200,
       scrollOffset: 100,
       storageType: 'local',
+      securePasswordTransfer: true,
       ...baseModuleConfig,
     };
 

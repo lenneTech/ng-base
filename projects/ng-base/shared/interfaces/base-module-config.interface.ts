@@ -63,6 +63,11 @@ export interface BaseModuleConfig {
    * Default: 'local'
    */
   storageType?: StorageType;
+
+  /**
+   * Enable secure password transfer
+   */
+  securePasswordTransfer?: boolean;
 }
 
 export const BASE_MODULE_CONFIG = new InjectionToken('BASE_MODULE_CONFIG');

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { map } from 'rxjs';
 import { Auth } from '../classes/auth.class';
@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { GraphQLMetaService } from './graphql-meta.service';
 import { GraphQLPlusService } from './graphql-plus.service';
 import { LoaderService } from './loader.service';
+import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-config.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -17,9 +18,10 @@ export class UserService extends GraphQLPlusService {
     protected apollo: Apollo,
     protected graphqlMetaService: GraphQLMetaService,
     protected loaderService: LoaderService,
-    protected authService: AuthService
+    protected authService: AuthService,
+    @Inject(BASE_MODULE_CONFIG) protected moduleConfig: BaseModuleConfig
   ) {
-    super(apollo, graphqlMetaService, loaderService);
+    super(apollo, graphqlMetaService, loaderService, moduleConfig);
   }
 
   /**

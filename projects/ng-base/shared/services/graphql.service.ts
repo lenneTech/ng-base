@@ -1,5 +1,5 @@
 import { Apollo, gql } from 'apollo-angular';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { IGraphQLOptions } from '../interfaces/graphql-options.interface';
 import { GraphQLRequestType } from '../enums/graphql-request-type.enum';
 import { Observable, throwError } from 'rxjs';
@@ -8,6 +8,7 @@ import { GraphQLEnum } from '../classes/graphql-enum.class';
 import { GraphQLType } from '../classes/graphql-type.class';
 import { sha256 } from 'js-sha256';
 import { Helper } from '../classes/helper.class';
+import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-config.interface';
 
 /**
  * GraphQL service
@@ -19,7 +20,11 @@ export class GraphQLService {
   /**
    * Include services
    */
-  constructor(protected apollo: Apollo, protected graphQLMetaService: GraphQLMetaService) {}
+  constructor(
+    protected apollo: Apollo,
+    protected graphQLMetaService: GraphQLMetaService,
+    @Inject(BASE_MODULE_CONFIG) protected moduleConfig: BaseModuleConfig
+  ) {}
 
   /**
    * GraphQL request
@@ -384,7 +389,7 @@ export class GraphQLService {
           continue;
         }
 
-        if (key === 'password') {
+        if (this.moduleConfig.securePasswordTransfer && key === 'password') {
           result.push(key + ':' + `"${sha256(value as string)}"`);
           continue;
         }
