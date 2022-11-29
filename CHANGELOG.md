@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.25.3](https://github.com/lenneTech/ng-base/compare/v14.25.2...v14.25.3) (2022-11-29)
+
+### Bug Fixes
+
+- Extend model form base component for usage ([9b78f5d](https://github.com/lenneTech/ng-base/commit/9b78f5dcb0a8a8d944674e8822bbc7e772610f9a))
+
 ### [14.25.2](https://github.com/lenneTech/ng-base/compare/v14.25.1...v14.25.2) (2022-11-29)
 
 ### Bug Fixes
