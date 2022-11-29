@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.25.1](https://github.com/lenneTech/ng-base/compare/v14.25.0...v14.25.1) (2022-11-29)
+
+### Bug Fixes
+
+- Fix nested object function with empty object ([0214938](https://github.com/lenneTech/ng-base/commit/0214938cbf7623b26e8c9119510f7a61ec607a06))
+
 ## [14.25.0](https://github.com/lenneTech/ng-base/compare/v14.24.0...v14.25.0) (2022-11-22)
 
 ### Features
