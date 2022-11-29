@@ -667,7 +667,10 @@ export class ModelFormComponent implements OnInit, OnChanges {
         return result[props[i]];
       }
 
-      result = result[props[i]]?.fields ? result[props[i]]?.fields : result[props[i]];
+      result =
+        result[props[i]]?.fields && Object.keys(result[props[i]]?.fields)?.length > 0
+          ? result[props[i]]?.fields
+          : result[props[i]];
     }
 
     return result;
