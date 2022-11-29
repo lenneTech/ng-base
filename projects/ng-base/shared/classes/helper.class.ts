@@ -56,6 +56,10 @@ export class Helper {
       str = str.replace('ü', 'ue');
       str = str.replace('ß', 'ss');
 
+      // Remove double characters
+      str = str.replace('---', '-');
+      str = str.replace('--', '-');
+
       // Remove other special chars
       str = str.replace(/[^a-zA-Z0-9-]/g, '');
     }
