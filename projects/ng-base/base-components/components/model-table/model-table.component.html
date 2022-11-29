@@ -145,8 +145,8 @@
     [duplicate]="duplicate"
     [showFavButton]="showFavButton"
   ></base-model-form>
+  <ng-template *ngIf="modelConfig?.customTemplateComponent" #customFormTemplate></ng-template>
 </div>
-<ng-template *ngIf="modelConfig?.customTemplateComponent" #customFormTemplate></ng-template>
 
 <div class="responsive-action-button d-block d-lg-none">
   <base-fab-button

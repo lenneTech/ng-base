@@ -1,7 +1,8 @@
-import { CMSFieldConfig, CmsService } from '@lenne.tech/ng-base/shared';
+import { CMSFieldConfig, CmsService, ToastService, ToastType } from '@lenne.tech/ng-base/shared';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, UntypedFormControl } from '@angular/forms';
 import { Button } from '../fab-button/fab-button.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /**
  * Abstract Component for inputs and outputs only
@@ -10,9 +11,7 @@ import { Button } from '../fab-button/fab-button.component';
  * If you want to use complete custom services and methods, extend ModelFormComponent instead of ModelFormBaseComponent
  */
 @Component({
-  selector: 'base-model-form',
-  templateUrl: './model-form.component.html',
-  styleUrls: ['./model-form.component.scss'],
+  template: '',
 })
 export abstract class ModelFormBaseComponent implements OnInit {
   @Input() modelName: string;
@@ -30,7 +29,12 @@ export abstract class ModelFormBaseComponent implements OnInit {
   fabButtons: Button[] = [];
   operation: string;
 
-  constructor(private cmsService: CmsService) {}
+  protected constructor(
+    protected cmsService: CmsService,
+    protected toastService: ToastService,
+    protected router: Router,
+    protected route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     this.initFabActions();
@@ -59,9 +63,39 @@ export abstract class ModelFormBaseComponent implements OnInit {
 
   submit() {}
 
-  duplicateObject() {}
+  /**
+   * It calls the graphQLService to delete the object with the id of the object that is currently being edited
+   */
+  deleteObject() {
+    this.cmsService.deleteObject(this.id, this.modelName).then(() => {
+      this.toastService.show({
+        id: this.modelName + '-success',
+        type: ToastType.SUCCESS,
+        title: 'Erfolgreich',
+        description: this.label + ' wurde erfolgreich gelöscht.',
+      });
+      this.finished.emit(null);
+    });
+  }
 
-  deleteObject() {}
+  /**
+   * It sends a GraphQL mutation to the server to duplicate the object
+   */
+  async duplicateObject() {
+    this.cmsService.duplicateObject(this.id, this.modelName).then(async (value) => {
+      if (value?.id) {
+        await this.router.navigate(['../'], { relativeTo: this.route });
+        this.toastService.show({
+          id: this.modelName + '-success',
+          type: ToastType.SUCCESS,
+          title: 'Erfolgreich',
+          description: this.label + ' wurde erfolgreich dupliziert.',
+        });
+      } else {
+        this.finished.emit(null);
+      }
+    });
+  }
 
   /**
    * It takes a string, capitalizes the first letter, and returns the modified string
@@ -81,5 +115,13 @@ export abstract class ModelFormBaseComponent implements OnInit {
    */
   transformToControl(control: AbstractControl | null | undefined) {
     return control as UntypedFormControl;
+  }
+
+  formatDate(date) {
+    if (!date) {
+      return null;
+    }
+    const newDate = new Date(date);
+    return newDate.toISOString().substring(0, 16);
   }
 }
