@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.25.2](https://github.com/lenneTech/ng-base/compare/v14.25.1...v14.25.2) (2022-11-29)
+
+### Bug Fixes
+
+- Fix wrong characters in url helper function ([a3a07a8](https://github.com/lenneTech/ng-base/commit/a3a07a8e549da80dc2e7e0a20ee0e68b22d6bf30))
+
 ### [14.25.1](https://github.com/lenneTech/ng-base/compare/v14.25.0...v14.25.1) (2022-11-29)
 
 ### Bug Fixes
