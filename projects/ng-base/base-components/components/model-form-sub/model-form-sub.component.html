@@ -90,7 +90,7 @@
             [maxSize]="config[key]?.maxSize"
             [uploadDirectly]="false"
             [objectPath]="objectPath"
-            [mode]="config[key]?.imageMode || 'file'"
+            [mode]="config[key]?.imageMode || 'base64'"
             (fileChanged)="fileChanged.emit($event)"
             (imageDeleted)="imageChanged.emit(key)"
             (imageUploaded)="imageChanged.emit(key)"

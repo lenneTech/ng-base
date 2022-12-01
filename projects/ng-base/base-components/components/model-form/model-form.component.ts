@@ -496,8 +496,7 @@ export class ModelFormComponent implements OnInit, OnChanges {
               const uploadResult = await this.fileService.upload(
                 this.nestedObject(key, this.config)?.url,
                 this.nestedObject(key, this.config)?.uploadPath || '/files/upload',
-                fileChange.file,
-                this.nestedObject(key, this.config)?.compressOptions
+                fileChange.file
               );
 
               if (uploadResult?.id) {
