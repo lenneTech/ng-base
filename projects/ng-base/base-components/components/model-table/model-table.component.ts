@@ -32,7 +32,7 @@ import {
   templateUrl: './model-table.component.html',
   styleUrls: ['./model-table.component.scss'],
 })
-export class ModelTableComponent implements AfterViewInit, OnInit, OnChanges {
+export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() modelName: string;
   @Input() objectId: string;
   @Input() createMode = false;
@@ -84,7 +84,10 @@ export class ModelTableComponent implements AfterViewInit, OnInit, OnChanges {
   ) {}
 
   ngAfterViewInit() {
-    this.integrateCustomFormComponent();
+    // Needed time out to prevent ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(() => {
+      this.integrateCustomFormComponent();
+    }, 10);
   }
 
   ngOnInit(): void {
@@ -97,7 +100,11 @@ export class ModelTableComponent implements AfterViewInit, OnInit, OnChanges {
 
       if (this.objectId) {
         this.id = this.objectId;
-        this.integrateCustomFormComponent();
+
+        // Needed time out for rerender
+        setTimeout(() => {
+          this.integrateCustomFormComponent();
+        }, 10);
       }
     });
   }
@@ -200,6 +207,7 @@ export class ModelTableComponent implements AfterViewInit, OnInit, OnChanges {
         modelName: this.camelModelName,
         showFavButton: this.showFavButton,
       };
+
       for (const [key, value] of Object.entries(data)) {
         this.componentRef.setInput(key, value);
       }
