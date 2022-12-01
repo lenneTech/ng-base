@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.25.5](https://github.com/lenneTech/ng-base/compare/v14.25.4...v14.25.5) (2022-12-01)
+
+### Bug Fixes
+
+- Fixes for customTemplateComponent handling ([4217efe](https://github.com/lenneTech/ng-base/commit/4217efedebf276401eb894c1960dacda1ca87fb2))
+
 ### [14.25.4](https://github.com/lenneTech/ng-base/compare/v14.25.3...v14.25.4) (2022-12-01)
 
 ### Bug Fixes
