@@ -6,7 +6,7 @@
     (dragover)="dragOver($event)"
     (dragleave)="dragLeave($event)"
     (drop)="drop($event)"
-    [ngClass]="{ active: dragActive, pointer: !loading }"
+    [ngClass]="{ active: dragActive, pointer: !loading, 'is-invalid': control?.invalid && control?.touched }"
     (click)="!loading && fileInput.click()"
   >
     <div class="d-flex justify-content-center" *ngIf="loading">
