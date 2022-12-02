@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.25.6](https://github.com/lenneTech/ng-base/compare/v14.25.5...v14.25.6) (2022-12-02)
+
+### Bug Fixes
+
+- Fix validation for select and upload image component ([23a44a0](https://github.com/lenneTech/ng-base/commit/23a44a06262da924a3565a9f8e38aca0d1391a5c))
+
 ### [14.25.5](https://github.com/lenneTech/ng-base/compare/v14.25.4...v14.25.5) (2022-12-01)
 
 ### Bug Fixes
