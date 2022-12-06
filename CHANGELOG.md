@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.25.7](https://github.com/lenneTech/ng-base/compare/v14.25.6...v14.25.7) (2022-12-06)
+
+### Bug Fixes
+
+- Fix role handling in auth.guard ([d6f771e](https://github.com/lenneTech/ng-base/commit/d6f771e62e8b0448d498e8d40dcde38a2b2b18cc))
+
 ### [14.25.6](https://github.com/lenneTech/ng-base/compare/v14.25.5...v14.25.6) (2022-12-02)
 
 ### Bug Fixes
