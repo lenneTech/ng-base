@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.25.8](https://github.com/lenneTech/ng-base/compare/v14.25.7...v14.25.8) (2022-12-06)
+
+### Bug Fixes
+
+- Add different redirect urls to auth guard ([69e6bc9](https://github.com/lenneTech/ng-base/commit/69e6bc922e91cf6607ac87ce8102bc5c863f4407))
+
 ### [14.25.7](https://github.com/lenneTech/ng-base/compare/v14.25.6...v14.25.7) (2022-12-06)
 
 ### Bug Fixes
