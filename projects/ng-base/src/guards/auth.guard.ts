@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService, BaseModuleConfig, BASE_MODULE_CONFIG } from '@lenne.tech/ng-base/shared';
+import { AuthService, BASE_MODULE_CONFIG, BaseModuleConfig } from '@lenne.tech/ng-base/shared';
 
 /**
  * Authentication guard
@@ -27,9 +27,9 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       const redirectUrl = route?.data?.redirectUrl ? route.data.redirectUrl : this.moduleConfig.authGuardRedirectUrl;
 
       if (this.authService.token && !opposite) {
-        if (route.data.allowedRole) {
+        if (route.data?.roles) {
           const user = this.authService.currentUser;
-          allowed = user?.roles?.includes(route.data.allowedRole);
+          allowed = !!route.data.roles.find((role) => user.roles?.includes(role));
         } else {
           allowed = true;
         }
