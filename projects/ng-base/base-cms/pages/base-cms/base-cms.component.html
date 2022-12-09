@@ -1,5 +1,11 @@
 <div class="main">
-  <div class="sidebar" [ngStyle]="{ 'flex-basis': !responsiveToggle ? sideBarWidth : '100%' }">
+  <div
+    class="sidebar"
+    [ngStyle]="{
+      'flex-basis': !responsiveToggle ? sideBarWidth : '100%',
+      'min-width': !responsiveToggle ? sideBarWidth : ''
+    }"
+  >
     <div class="d-none d-md-flex flex-column flex-shrink-0 p-3 h-100">
       <ng-container *ngIf="moduleConfig.branding">
         <a
