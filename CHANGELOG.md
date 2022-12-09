@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.25.9](https://github.com/lenneTech/ng-base/compare/v14.25.8...v14.25.9) (2022-12-09)
+
+### Bug Fixes
+
+- Fix sidebar width ([7853b7b](https://github.com/lenneTech/ng-base/commit/7853b7b9976364d19b224df6c6121892246a958c))
+
 ### [14.25.8](https://github.com/lenneTech/ng-base/compare/v14.25.7...v14.25.8) (2022-12-06)
 
 ### Bug Fixes
