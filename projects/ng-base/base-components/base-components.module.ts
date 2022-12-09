@@ -29,9 +29,10 @@ import { EllipsesPipe } from './pipes/ellipses.pipe';
 
 import { RouterModule } from '@angular/router';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
 // Modules
-const imports = [FormsModule, ReactiveFormsModule, CommonModule, RouterModule, ImageCropperModule];
+const imports = [FormsModule, ReactiveFormsModule, CommonModule, RouterModule, ImageCropperModule, NgbModalModule];
 
 // Imported and exported elements
 const elements = [

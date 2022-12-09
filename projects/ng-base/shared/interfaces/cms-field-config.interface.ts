@@ -4,7 +4,7 @@ import { CompressOptions } from './compress-options.interface';
 import { CroppingOptions } from './cropping-options.interface';
 
 export interface CMSFieldConfig {
-  label: string;
+  label?: string;
   required?: boolean;
   exclude?: boolean;
   restricted?: boolean;
@@ -20,6 +20,9 @@ export interface CMSFieldConfig {
   patchField?: string;
   useParamAsArg?: boolean;
   searchable?: boolean;
+  allowCreation?: boolean;
+  creationOptions?: { [key: string]: CMSFieldConfig };
+  referenceModelName?: string;
   valueField?: string;
   nameField?: string[] | string;
   requestFields?: string[];

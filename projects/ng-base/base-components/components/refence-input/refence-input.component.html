@@ -3,21 +3,26 @@
     <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
 
     <div class="position-relative" *ngIf="search">
-      <input [formControl]="control" hidden />
-      <input
-        [id]="objectPath ? objectPath + '.' + id : id"
-        [name]="name"
-        class="form-control"
-        [(ngModel)]="currentValue"
-        [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
-        (focus)="onFocus($event)"
-        (blur)="onFocus()"
-        [required]="required"
-        [placeholder]="placeholder"
-        [autocomplete]="autocomplete ?? null"
-        [tabIndex]="tabIndex ?? null"
-        (keyup)="enterKey($event)"
-      />
+      <div class="d-flex flex-row">
+        <input [formControl]="control" hidden />
+        <input
+          [id]="objectPath ? objectPath + '.' + id : id"
+          [name]="name"
+          class="form-control"
+          [(ngModel)]="currentValue"
+          [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+          (focus)="onFocus($event)"
+          (blur)="onFocus()"
+          [required]="required"
+          [placeholder]="placeholder"
+          [autocomplete]="autocomplete ?? null"
+          [tabIndex]="tabIndex ?? null"
+          (keyup)="enterKey($event)"
+        />
+        <button class="btn btn-primary" (click)="openCreationModal(creationModal)" *ngIf="allowCreation">
+          Erstellen
+        </button>
+      </div>
       <div class="options" *ngIf="objects && selectedElement">
         <div class="option-item" *ngFor="let object of filterOptions()" (click)="set(object[valueField])">
           {{ prepareNameField(object) }}
@@ -26,21 +31,26 @@
     </div>
 
     <div *ngIf="!search">
-      <select
-        [id]="objectPath ? objectPath + '.' + id : id"
-        [name]="name"
-        class="form-select"
-        [attr.aria-label]="placeholder"
-        [formControl]="control"
-        [required]="required"
-        [tabIndex]="tabIndex ?? null"
-        [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
-      >
-        <option [ngValue]="null" selected>{{ placeholder }}</option>
-        <option *ngFor="let object of objects" [ngValue]="object[valueField]">
-          {{ prepareNameField(object) }}
-        </option>
-      </select>
+      <div class="d-flex flex-row">
+        <select
+          [id]="objectPath ? objectPath + '.' + id : id"
+          [name]="name"
+          class="form-select"
+          [attr.aria-label]="placeholder"
+          [formControl]="control"
+          [required]="required"
+          [tabIndex]="tabIndex ?? null"
+          [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+        >
+          <option [ngValue]="null" selected>{{ placeholder }}</option>
+          <option *ngFor="let object of objects" [ngValue]="object[valueField]">
+            {{ prepareNameField(object) }}
+          </option>
+        </select>
+        <button class="btn btn-primary" (click)="openCreationModal(creationModal)" *ngIf="allowCreation">
+          Erstellen
+        </button>
+      </div>
     </div>
 
     <div
@@ -77,3 +87,18 @@
     [options]="optionsForTagInput"
   ></base-tags>
 </ng-container>
+
+<template #creationModal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{ label }} erstellen</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <base-model-form
+      [modelName]="key"
+      [config]="creationOptions || {}"
+      [delete]="false"
+      (finished)="modalRef.close('submit')"
+    ></base-model-form>
+  </div>
+</template>

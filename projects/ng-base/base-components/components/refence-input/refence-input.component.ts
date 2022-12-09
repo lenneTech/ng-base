@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { GraphQLRequestType, GraphQLService, SortOrderEnum } from '@lenne.tech/ng-base/shared';
+import { CMSFieldConfig, GraphQLRequestType, GraphQLService, SortOrderEnum } from '@lenne.tech/ng-base/shared';
 import { Subscription } from 'rxjs';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'base-refence-input',
@@ -10,6 +11,7 @@ import { Subscription } from 'rxjs';
 export class RefenceInputComponent implements OnInit, OnDestroy {
   @Input() id: string;
   @Input() name: string;
+  @Input() key: string;
   @Input() label?: string;
   @Input() isList = false;
   @Input() search = true;
@@ -20,6 +22,8 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
   @Input() tabIndex?: number;
   @Input() control: any;
   @Input() required = false;
+  @Input() allowCreation = false;
+  @Input() creationOptions: { [key: string]: CMSFieldConfig };
   @Input() method = 'find';
   @Input() fields = ['id', 'name'];
   @Input() valueField = 'id';
@@ -30,8 +34,9 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
   optionsForTagInput = [];
   selectedElement: HTMLElement;
   subscription = new Subscription();
+  modalRef: NgbModalRef;
 
-  constructor(private graphQLService: GraphQLService) {}
+  constructor(private graphQLService: GraphQLService, private modalService: NgbModal) {}
 
   async ngOnInit() {
     this.getReferences();
@@ -231,5 +236,12 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
     } else {
       return object[this.nameField]?.includes(this.currentValue);
     }
+  }
+
+  openCreationModal(template) {
+    this.modalRef = this.modalService.open(template, { size: 'lg' });
+    this.modalRef.componentInstance.modelName = this.key;
+    this.modalRef.componentInstance.label = this.label;
+    this.modalRef.componentInstance.config = this.creationOptions;
   }
 }
