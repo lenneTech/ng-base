@@ -1,6 +1,7 @@
+import { ValidatorFn } from '@angular/forms';
 import { CMSEnumValues } from './cms-enum-values.interface';
 import { CompressOptions } from './compress-options.interface';
-import { ValidatorFn } from '@angular/forms';
+import { CroppingOptions } from './cropping-options.interface';
 
 export interface CMSFieldConfig {
   label: string;
@@ -35,6 +36,8 @@ export interface CMSFieldConfig {
   supportText?: string;
   releaseText?: string;
   maxSize?: number;
+  croppingImage?: boolean;
+  croppingOptions?: CroppingOptions;
   compressOptions?: CompressOptions;
   imageMode?: 'base64' | 'file';
 

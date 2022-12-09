@@ -87,6 +87,8 @@
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
             [compressOptions]="config[key]?.compressOptions"
+            [croppingOptions]="config[key]?.croppingOptions"
+            [croppingImage]="config[key]?.croppingImage"
             [maxSize]="config[key]?.maxSize"
             [uploadDirectly]="false"
             [objectPath]="objectPath"

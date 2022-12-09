@@ -28,9 +28,10 @@ import { StopPropagationDirective } from './directives/stop-propagation.directiv
 import { EllipsesPipe } from './pipes/ellipses.pipe';
 
 import { RouterModule } from '@angular/router';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 // Modules
-const imports = [FormsModule, ReactiveFormsModule, CommonModule, RouterModule];
+const imports = [FormsModule, ReactiveFormsModule, CommonModule, RouterModule, ImageCropperModule];
 
 // Imported and exported elements
 const elements = [

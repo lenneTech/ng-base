@@ -27,13 +27,14 @@
     "bootstrap": "5.*.*",
     "compressorjs": "1.1.*",
     "js-sha256": "*",
-    "rxjs": "7.*.*"
-  },
-  "dependencies": {
+    "rxjs": "7.*.*",
+    "ngx-image-cropper": "6.3.1",
     "@apollo/client": "3.7.0",
     "apollo-angular": "4.1.0",
     "graphql": "16.5.0",
-    "graphql-ws": "5.9.1",
+    "graphql-ws": "5.9.1"
+  },
+  "dependencies": {
     "tslib": "2.4.0"
   }
 }

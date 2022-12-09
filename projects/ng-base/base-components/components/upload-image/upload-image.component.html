@@ -7,7 +7,7 @@
     (dragleave)="dragLeave($event)"
     (drop)="drop($event)"
     [ngClass]="{ active: dragActive, pointer: !loading, 'is-invalid': control?.invalid && control?.touched }"
-    (click)="!loading && fileInput.click()"
+    (click)="!croppedInProgress && !loading && fileInput.click()"
   >
     <div class="d-flex justify-content-center" *ngIf="loading">
       <div class="spinner-border text-primary" role="status">
@@ -15,19 +15,19 @@
       </div>
     </div>
 
-    <ng-container *ngIf="selectedFile && !loading">
+    <ng-container *ngIf="selectedFile && !fileEvent && !croppedInProgress && !loading">
       <img [src]="fileUrl" *ngIf="selectedFile" />
       <button class="btn btn-danger" type="button" (click)="deleteFile()" baseStopPropagation>Löschen</button>
     </ng-container>
 
-    <ng-container *ngIf="control?.value && !selectedFile && !loading">
+    <ng-container *ngIf="control?.value && !fileEvent && !selectedFile && !loading && !croppedInProgress">
       <img [src]="control?.value.startsWith('data:') ? control?.value : url + path + control?.value" />
       <button class="btn btn-danger" type="button" (click)="deleteFile(control?.value)" baseStopPropagation>
         Löschen
       </button>
     </ng-container>
 
-    <ng-container *ngIf="!selectedFile && !control?.value && !loading">
+    <ng-container *ngIf="!selectedFile && !control?.value && !loading && !fileEvent">
       <div class="icon">
         <i class="bi bi-images"></i>
       </div>
@@ -41,6 +41,24 @@
     </ng-container>
 
     <input type="file" (change)="selectFile($event)" [attr.accept]="validExtensions?.join(',')" hidden #fileInput />
+
+    <ng-container *ngIf="croppedInProgress && fileEvent">
+      <image-cropper
+        [imageChangedEvent]="fileEvent"
+        [maintainAspectRatio]="cOptions.maintainAspectRatio"
+        [aspectRatio]="cOptions.aspectRatio"
+        [alignImage]="cOptions.alignImage"
+        [autoCrop]="cOptions.autoCrop"
+        [imageQuality]="cOptions.imageQuality"
+        [onlyScaleDown]="cOptions.onlyScaleDown"
+        [format]="cOptions.format"
+        (imageCropped)="imageCropped($event, fileEvent)"
+        (loadImageFailed)="loadImageFailed()"
+      ></image-cropper>
+      <button class="btn btn-primary" type="button" (click)="finishedCropping()" baseStopPropagation>
+        Zuschneiden
+      </button>
+    </ng-container>
   </div>
 
   <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">

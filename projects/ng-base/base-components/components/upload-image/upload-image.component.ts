@@ -1,13 +1,21 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AuthService, CompressOptions, FileService, ToastService, ToastType } from '@lenne.tech/ng-base/shared';
+import {
+  AuthService,
+  CompressOptions,
+  CroppingOptions,
+  FileService,
+  ToastService,
+  ToastType,
+} from '@lenne.tech/ng-base/shared';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
   selector: 'base-upload-image',
   templateUrl: './upload-image.component.html',
   styleUrls: ['./upload-image.component.scss'],
 })
-export class UploadImageComponent {
+export class UploadImageComponent implements OnInit {
   @Input() id: string;
   @Input() name: string;
   @Input() label?: string;
@@ -26,6 +34,8 @@ export class UploadImageComponent {
   @Input() compressOptions: CompressOptions;
   @Input() maxSize: number;
   @Input() uploadDirectly = false;
+  @Input() croppingImage = false;
+  @Input() croppingOptions: CroppingOptions;
   @Input() objectPath: string;
   @Input() mode: 'file' | 'base64' = 'file';
 
@@ -36,8 +46,12 @@ export class UploadImageComponent {
   dragActive = false;
   dragText = 'Drag & Drop';
   selectedFile: File;
+  croppedFile: File;
   fileUrl: string;
   loading = false;
+  croppedInProgress = false;
+  fileEvent: any;
+  cOptions: CroppingOptions;
 
   constructor(
     private httpClient: HttpClient,
@@ -45,6 +59,20 @@ export class UploadImageComponent {
     private fileService: FileService,
     private toastService: ToastService
   ) {}
+
+  ngOnInit() {
+    // Set default options for cropping
+    this.cOptions = {
+      maintainAspectRatio: true,
+      aspectRatio: 4 / 3,
+      onlyScaleDown: false,
+      imageQuality: 92,
+      autoCrop: true,
+      alignImage: 'center',
+      format: 'jpeg',
+      ...this.croppingOptions,
+    };
+  }
 
   /**
    * The dragOver function is called when the user drags a file over the dropzone. It prevents the default action of the
@@ -78,6 +106,10 @@ export class UploadImageComponent {
    */
   drop(event: any) {
     event.preventDefault();
+    if (!this.checkFile(event.dataTransfer.files[0])) {
+      return;
+    }
+
     this.setUrl(event.dataTransfer.files[0]);
     this.dragText = 'Drag & Drop';
     this.dragActive = false;
@@ -91,6 +123,17 @@ export class UploadImageComponent {
    * @param file - any - this is the file that is selected by the user.
    */
   setUrl(file: File) {
+    const fileReader = new FileReader();
+    fileReader.onload = (result) => {
+      this.loading = true;
+      this.fileUrl = fileReader.result as string;
+      this.selectedFile = file;
+      this.upload();
+    };
+    fileReader.readAsDataURL(file);
+  }
+
+  checkFile(file: File) {
     if (this.maxSize && file.size > this.maxSize) {
       this.toastService.show(
         {
@@ -104,28 +147,22 @@ export class UploadImageComponent {
         },
         3500
       );
-      return;
-    }
-
-    if (this.validExtensions.includes(file?.type)) {
-      const fileReader = new FileReader();
-      fileReader.onload = (result) => {
-        this.loading = true;
-        this.fileUrl = fileReader.result as string;
-        this.selectedFile = file;
-        this.upload();
-      };
-      fileReader.readAsDataURL(file);
+      return false;
     } else {
-      this.toastService.show(
-        {
-          id: 'image-invalid-format',
-          type: ToastType.ERROR,
-          title: 'Fehlgeschlagen',
-          description: 'Das Format der Datei wird nicht unterstützt.',
-        },
-        3500
-      );
+      if (this.validExtensions.includes(file?.type)) {
+        return true;
+      } else {
+        this.toastService.show(
+          {
+            id: 'image-invalid-format',
+            type: ToastType.ERROR,
+            title: 'Fehlgeschlagen',
+            description: 'Das Format der Datei wird nicht unterstützt.',
+          },
+          3500
+        );
+        return false;
+      }
     }
   }
 
@@ -136,7 +173,16 @@ export class UploadImageComponent {
    * @param event - any - The event that is triggered when the user selects a file.
    */
   selectFile(event: any) {
-    this.setUrl(event.target.files[0]);
+    if (!this.checkFile(event.target.files[0])) {
+      return;
+    }
+
+    if (this.croppingImage) {
+      this.croppedInProgress = true;
+      this.fileEvent = event;
+    } else {
+      this.setUrl(event.target.files[0]);
+    }
   }
 
   /**
@@ -228,5 +274,45 @@ export class UploadImageComponent {
         reject(error);
       };
     });
+  }
+
+  base64ToFile(base64: string, fileName: string, fileType: string): Promise<File> {
+    return new Promise<File>((resolve, reject) => {
+      fetch(base64)
+        .then((res) => res.blob())
+        .then(
+          (blob) => {
+            resolve(new File([blob], fileName, { type: fileType }));
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  }
+
+  async imageCropped($event: ImageCroppedEvent, fileEvent: any) {
+    const file = fileEvent.target.files[0];
+    this.croppedFile = await this.base64ToFile($event.base64, file.name, file.type);
+  }
+
+  finishedCropping() {
+    this.fileEvent = null;
+    this.setUrl(this.croppedFile);
+    this.croppedInProgress = false;
+    this.croppedFile = null;
+  }
+
+  loadImageFailed() {
+    this.toastService.show(
+      {
+        id: 'image-invalid-cropped',
+        type: ToastType.ERROR,
+        title: 'Fehlgeschlagen',
+        description:
+          'Es ist ein Fehler aufgetreten. Bitte probieren Sie es später erneut oder wenden Sie sich an den Support.',
+      },
+      3500
+    );
   }
 }
