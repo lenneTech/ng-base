@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.27.0](https://github.com/lenneTech/ng-base/compare/v14.26.0...v14.27.0) (2023-01-12)
+
+### Features
+
+- add config as an input to logincomponent e.g. to specify the redirectUrl ([049bdbe](https://github.com/lenneTech/ng-base/commit/049bdbee1bbc8546e61ea9fcb1181c8a3ea8108e))
+
 ## [14.26.0](https://github.com/lenneTech/ng-base/compare/v14.25.9...v14.26.0) (2022-12-09)
 
 ### Features
