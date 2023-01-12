@@ -65,6 +65,7 @@ export * from './interfaces/cms-enum-values.interface';
 export * from './interfaces/cms-field-config.interface';
 export * from './interfaces/cms-model-config.interface';
 export * from './interfaces/cms-table-field.interface';
+export * from './interfaces/login-config.interface';
 
 // Types
 export * from './types/storage.type';
