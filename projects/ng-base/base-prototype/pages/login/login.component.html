@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-center align-items-center h-100 py-5">
   <div class="d-flex flex-column login-container">
     <div class="container">
-      <img *ngIf="config?.logoUrl" class="img-fluid mb-5" [src]="config.logoUrl" alt="Logo" />
+      <img *ngIf="loginConfig?.logoUrl" class="img-fluid mb-5" [src]="loginConfig.logoUrl" alt="Logo" />
 
       <form [formGroup]="form">
         <div class="alert alert-danger" role="alert" *ngIf="error">
@@ -31,8 +31,10 @@
             Loading...
           </button>
           <hr />
-          <a routerLink="../passwort-vergessen" *ngIf="config?.showPasswordForget">Passwort vergessen</a>
-          <a routerLink="../registrieren" *ngIf="config?.showRegister">Noch kein Konto? Dann registriere Dich jetzt!</a>
+          <a routerLink="../passwort-vergessen" *ngIf="loginConfig?.showPasswordForget">Passwort vergessen</a>
+          <a routerLink="../registrieren" *ngIf="loginConfig?.showRegister"
+            >Noch kein Konto? Dann registriere Dich jetzt!</a
+          >
         </div>
       </form>
     </div>
