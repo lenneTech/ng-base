@@ -20,6 +20,7 @@ export interface CMSFieldConfig {
   patchField?: string;
   useParamAsArg?: boolean;
   searchable?: boolean;
+  creationLink?: string;
   valueField?: string;
   nameField?: string[] | string;
   requestFields?: string[];

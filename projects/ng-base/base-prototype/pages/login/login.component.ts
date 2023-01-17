@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormsService, UserService, fullEmail, LoginConfig } from '@lenne.tech/ng-base/shared';
+import { FormsService, fullEmail, LoginConfig, UserService } from '@lenne.tech/ng-base/shared';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -22,6 +22,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     showRegister: true,
     logoUrl: '',
   };
+  redirectUrl: '';
 
   constructor(
     private formsService: FormsService,
@@ -41,6 +42,12 @@ export class LoginComponent implements OnInit, OnDestroy {
         if (data?.config) {
           this.loginConfig = { ...this.loginConfig, ...data.config };
         }
+      })
+    );
+
+    this.subscription.add(
+      this.route.queryParams.subscribe((params) => {
+        this.redirectUrl = params.redirectUrl;
       })
     );
   }
@@ -76,7 +83,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.userService.login(this.form.value).subscribe({
       next: (response) => {
         if (response) {
-          this.router.navigate([this.loginConfig.redirectUrl]);
+          this.router.navigate([this.redirectUrl ? this.redirectUrl : this.loginConfig.redirectUrl]);
           this.form.reset();
         } else {
           this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';

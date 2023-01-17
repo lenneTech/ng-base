@@ -136,6 +136,7 @@
             [fields]="config[key]?.requestFields || ['id', 'name']"
             [valueField]="config[key]?.valueField || 'id'"
             [nameField]="config[key]?.nameField || 'name'"
+            [creationLink]="config[key]?.creationLink || ''"
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "

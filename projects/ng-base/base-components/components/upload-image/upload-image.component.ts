@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   AuthService,
@@ -16,6 +16,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper';
   styleUrls: ['./upload-image.component.scss'],
 })
 export class UploadImageComponent implements OnInit {
+  @ViewChild('fileInput') fileInput: ElementRef;
   @Input() id: string;
   @Input() name: string;
   @Input() label?: string;
@@ -106,11 +107,10 @@ export class UploadImageComponent implements OnInit {
    */
   drop(event: any) {
     event.preventDefault();
-    if (!this.checkFile(event.dataTransfer.files[0])) {
-      return;
-    }
+    this.fileInput.nativeElement.files = event.dataTransfer.files;
+    const e = new Event('change');
+    this.fileInput.nativeElement.dispatchEvent(e);
 
-    this.setUrl(event.dataTransfer.files[0]);
     this.dragText = 'Drag & Drop';
     this.dragActive = false;
   }

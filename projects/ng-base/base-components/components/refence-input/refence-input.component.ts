@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { GraphQLRequestType, GraphQLService, SortOrderEnum } from '@lenne.tech/ng-base/shared';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'base-refence-input',
@@ -25,13 +26,14 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
   @Input() valueField = 'id';
   @Input() objectPath = '';
   @Input() nameField: string[] | string = 'name';
+  @Input() creationLink = '';
   objects: any[] = [];
   currentValue: any;
   optionsForTagInput = [];
   selectedElement: HTMLElement;
   subscription = new Subscription();
 
-  constructor(private graphQLService: GraphQLService) {}
+  constructor(private graphQLService: GraphQLService, private router: Router) {}
 
   async ngOnInit() {
     this.getReferences();
@@ -47,6 +49,13 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  /**
+   * Open creation link for new reference if enabled
+   */
+  openLink() {
+    this.router.navigate([this.creationLink]);
   }
 
   /**

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { FormsService, fullEmail, securePasswordValidator, UserService, Validation } from '@lenne.tech/ng-base/shared';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'base-register',
@@ -12,11 +13,24 @@ export class RegisterComponent implements OnInit {
   form: UntypedFormGroup;
   error: string;
   loading: boolean;
+  redirectUrl = '';
+  subscription = new Subscription();
 
-  constructor(private formsService: FormsService, private userService: UserService, private router: Router) {}
+  constructor(
+    private formsService: FormsService,
+    private userService: UserService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.createForm();
+
+    this.subscription.add(
+      this.route.queryParams.subscribe((params) => {
+        this.redirectUrl = params.redirectUrl;
+      })
+    );
   }
 
   /**
@@ -58,7 +72,7 @@ export class RegisterComponent implements OnInit {
     this.userService.register(input).subscribe({
       next: (auth) => {
         if (auth) {
-          this.router.navigate(['/main']);
+          this.router.navigate([this.redirectUrl ? this.redirectUrl : '/main']);
         } else {
           this.error = 'Etwas ist schiefgelaufen. Bitte probiere es später erneut.';
           this.scrollToTop();
