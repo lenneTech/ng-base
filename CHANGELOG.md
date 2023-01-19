@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.28.0](https://github.com/lenneTech/ng-base/compare/v14.27.1...v14.28.0) (2023-01-19)
+
+### Features
+
+- Add queryparams on site change auth ([02d2ca5](https://github.com/lenneTech/ng-base/commit/02d2ca5b8f56152a53244bef5daab46ab63c13ff))
+- Add redirectUrl to guard and login ([b9d62fe](https://github.com/lenneTech/ng-base/commit/b9d62fe0237b5a35e0a177bcee8131eee1ef4d8e))
+
 ### [14.27.1](https://github.com/lenneTech/ng-base/compare/v14.27.0...v14.27.1) (2023-01-17)
 
 ### Bug Fixes
