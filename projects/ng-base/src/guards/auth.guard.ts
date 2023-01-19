@@ -32,6 +32,14 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       const redirectRoleUrl = route?.data?.redirectRoleUrl
         ? route.data.redirectRoleUrl
         : this.moduleConfig.authGuardRedirectUrl;
+      const disableQueryParams = route?.data?.disableQueryParams ?? false;
+      const queryParams = disableQueryParams
+        ? {}
+        : {
+            queryParams: {
+              redirectUrl: route['_routerState'].url,
+            },
+          };
 
       if (this.authService.token && !opposite) {
         if (route.data?.roles) {
@@ -39,7 +47,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
           allowed = !!route.data.roles.find((role) => user.roles?.includes(role));
 
           if (!allowed && redirectRoleUrl) {
-            this.router.navigate([redirectRoleUrl]);
+            this.router.navigate([redirectRoleUrl], queryParams);
             redirected = true;
           }
         } else {
@@ -50,7 +58,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       }
 
       if (!allowed && redirectAuthUrl && !redirected) {
-        this.router.navigate([redirectAuthUrl]);
+        this.router.navigate([redirectAuthUrl], queryParams);
       }
 
       subscriber.next(allowed);
