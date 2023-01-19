@@ -32,7 +32,7 @@
           </button>
           <hr />
           <a routerLink="../passwort-vergessen" *ngIf="loginConfig?.showPasswordForget">Passwort vergessen</a>
-          <a routerLink="../registrieren" *ngIf="loginConfig?.showRegister"
+          <a routerLink="../registrieren" [queryParams]="{redirectUrl}" *ngIf="loginConfig?.showRegister"
             >Noch kein Konto? Dann registriere Dich jetzt!</a
           >
         </div>
