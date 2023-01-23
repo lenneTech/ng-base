@@ -20,6 +20,8 @@ export class MatchHeightDirective implements AfterViewInit {
   // Wether current platform is a browser
   readonly isBrowser: boolean;
 
+  observer: MutationObserver;
+
   constructor(protected el: ElementRef, protected imageService: ImageService, @Inject(PLATFORM_ID) platformId: string) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
@@ -31,6 +33,12 @@ export class MatchHeightDirective implements AfterViewInit {
 
   ngAfterViewInit() {
     this.matchHeight(this.el.nativeElement, this.ltMatchHeight);
+    this.observer = new MutationObserver(() => {
+      this.matchHeight(this.el.nativeElement, this.ltMatchHeight);
+    });
+
+    //Observes if one or more elements get added to or removed from the childlist and applies matching heights
+    this.observer.observe(this.el.nativeElement, { childList: true });
   }
 
   async matchHeight(parent: HTMLElement, target: string | string[]) {
