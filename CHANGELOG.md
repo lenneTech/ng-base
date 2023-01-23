@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.28.1](https://github.com/lenneTech/ng-base/compare/v14.28.0...v14.28.1) (2023-01-23)
+
+### Bug Fixes
+
+- fixed match-height directive to be executed on changes in the childlist ([80954ba](https://github.com/lenneTech/ng-base/commit/80954ba2b9e4d659fb1a29c15d0690a0872c86f8))
+
 ## [14.28.0](https://github.com/lenneTech/ng-base/compare/v14.27.1...v14.28.0) (2023-01-19)
 
 ### Features
