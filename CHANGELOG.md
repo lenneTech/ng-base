@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.29.1](https://github.com/lenneTech/ng-base/compare/v14.29.0...v14.29.1) (2023-01-26)
+
+### Bug Fixes
+
+- Fix authservice ([146ee76](https://github.com/lenneTech/ng-base/commit/146ee761a04a61012445d96fe20093ca87bff5c5))
+
 ## [14.29.0](https://github.com/lenneTech/ng-base/compare/v14.28.1...v14.29.0) (2023-01-26)
 
 ### Features
