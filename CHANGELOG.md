@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.29.0](https://github.com/lenneTech/ng-base/compare/v14.28.1...v14.29.0) (2023-01-26)
+
+### Features
+
+- Optimize authservice for app_initializer ([66ce565](https://github.com/lenneTech/ng-base/commit/66ce56592bdb9f9633f1101db5ad4462381d23e4))
+
 ### [14.28.1](https://github.com/lenneTech/ng-base/compare/v14.28.0...v14.28.1) (2023-01-23)
 
 ### Bug Fixes
