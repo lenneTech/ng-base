@@ -50,8 +50,6 @@ export class AuthService {
   get currentUser(): BasicUser {
     if (!localStorage) {
       return undefined;
-    } else if (!this._currentUser.value) {
-      this.loadFromStorage();
     }
 
     return this._currentUser.value;
@@ -63,10 +61,6 @@ export class AuthService {
   }
 
   get currentUserObservable(): Observable<BasicUser> {
-    if (!this._currentUser.value) {
-      this.loadFromStorage();
-    }
-
     return this._currentUser.asObservable();
   }
 
@@ -77,8 +71,6 @@ export class AuthService {
   get token(): string {
     if (!localStorage) {
       return undefined;
-    } else if (this._token.value) {
-      this.loadFromStorage();
     }
 
     return this._token.value;
