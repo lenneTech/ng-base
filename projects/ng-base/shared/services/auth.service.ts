@@ -24,8 +24,14 @@ export class AuthService {
     private storageService: StorageService,
     private wsService: WsService
   ) {
-    this.token = this.storageService.load('token') as string;
-    this.currentUser = this.storageService.load('currentUser') as BasicUser;
+    this.loadFromStorage();
+  }
+
+  loadFromStorage() {
+    if (localStorage) {
+      this.token = this.storageService.load('token') as string;
+      this.currentUser = this.storageService.load('currentUser') as BasicUser;
+    }
   }
 
   /**
@@ -44,6 +50,8 @@ export class AuthService {
   get currentUser(): BasicUser {
     if (!localStorage) {
       return undefined;
+    } else if (!this._currentUser.value) {
+      this.loadFromStorage();
     }
 
     return this._currentUser.value;
@@ -55,6 +63,10 @@ export class AuthService {
   }
 
   get currentUserObservable(): Observable<BasicUser> {
+    if (!this._currentUser.value) {
+      this.loadFromStorage();
+    }
+
     return this._currentUser.asObservable();
   }
 
@@ -65,6 +77,8 @@ export class AuthService {
   get token(): string {
     if (!localStorage) {
       return undefined;
+    } else if (this._token.value) {
+      this.loadFromStorage();
     }
 
     return this._token.value;
@@ -77,6 +91,10 @@ export class AuthService {
   }
 
   get tokenObservable(): Observable<string> {
+    if (!this._token.value) {
+      this.loadFromStorage();
+    }
+
     return this._token.asObservable();
   }
 }
