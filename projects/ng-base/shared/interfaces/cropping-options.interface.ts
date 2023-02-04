@@ -5,6 +5,8 @@ export interface CroppingOptions {
   onlyScaleDown?: boolean;
   aspectRatio?: number;
   imageQuality?: number;
+  resizeToWidth?: number;
+  resizeToHeight?: number;
   autoCrop?: boolean;
   alignImage?: 'left' | 'center';
   format?: OutputFormat;

@@ -48,6 +48,8 @@
         [maintainAspectRatio]="cOptions.maintainAspectRatio"
         [aspectRatio]="cOptions.aspectRatio"
         [alignImage]="cOptions.alignImage"
+        [resizeToWidth]="cOptions.resizeToWidth"
+        [resizeToHeight]="cOptions.resizeToHeight"
         [autoCrop]="cOptions.autoCrop"
         [imageQuality]="cOptions.imageQuality"
         [onlyScaleDown]="cOptions.onlyScaleDown"
@@ -55,7 +57,7 @@
         (imageCropped)="imageCropped($event, fileEvent)"
         (loadImageFailed)="loadImageFailed()"
       ></image-cropper>
-      <button class="btn btn-primary" type="button" (click)="finishedCropping()" baseStopPropagation>
+      <button class="btn btn-primary mt-2" type="button" (click)="finishedCropping()" baseStopPropagation>
         Zuschneiden
       </button>
     </ng-container>
