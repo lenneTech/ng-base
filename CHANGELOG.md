@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.30.0](https://github.com/lenneTech/ng-base/compare/v14.29.1...v14.30.0) (2023-02-04)
+
+### Features
+
+- Add more cropping options ([f094ffb](https://github.com/lenneTech/ng-base/commit/f094ffb5093a041cc10744158d27c609d954053a))
+
 ### [14.29.1](https://github.com/lenneTech/ng-base/compare/v14.29.0...v14.29.1) (2023-01-26)
 
 ### Bug Fixes
