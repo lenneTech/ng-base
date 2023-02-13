@@ -1,16 +1,20 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { GraphQLRequestType, GraphQLService, SortOrderEnum } from '@lenne.tech/ng-base/shared';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { Tooltip } from 'bootstrap';
 
 @Component({
   selector: 'base-refence-input',
   templateUrl: './refence-input.component.html',
   styleUrls: ['./refence-input.component.scss'],
 })
-export class RefenceInputComponent implements OnInit, OnDestroy {
+export class RefenceInputComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('tooltip') toolTipElement: ElementRef;
+
   @Input() id: string;
   @Input() name: string;
+  @Input() infoText: string;
   @Input() label?: string;
   @Input() isList = false;
   @Input() search = true;
@@ -45,6 +49,12 @@ export class RefenceInputComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  ngAfterViewInit() {
+    if (this.toolTipElement && this.infoText) {
+      new Tooltip(this.toolTipElement.nativeElement);
+    }
   }
 
   ngOnDestroy() {

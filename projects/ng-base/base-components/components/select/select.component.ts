@@ -1,4 +1,5 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Tooltip } from 'bootstrap';
 
 interface Option {
   text: string;
@@ -10,11 +11,13 @@ interface Option {
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
 })
-export class SelectComponent implements OnInit {
+export class SelectComponent implements OnInit, AfterViewInit {
   @ViewChild('select') select: ElementRef;
+  @ViewChild('tooltip') toolTipElement: ElementRef;
 
   @Input() id: string;
   @Input() name: string;
+  @Input() infoText: string;
   @Input() label?: string;
   @Input() placeholder?: string = '';
   @Input() objectPath = '';
@@ -28,6 +31,12 @@ export class SelectComponent implements OnInit {
   ngOnInit() {
     if (this.multiple) {
       this.select.nativeElement.setAttribute('multiple', true);
+    }
+  }
+
+  ngAfterViewInit() {
+    if (this.toolTipElement && this.infoText) {
+      new Tooltip(this.toolTipElement.nativeElement);
     }
   }
 }

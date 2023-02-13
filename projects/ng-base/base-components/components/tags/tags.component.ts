@@ -1,14 +1,18 @@
-import { Component, Input } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { FormControl, ValidatorFn } from '@angular/forms';
+import { Tooltip } from 'bootstrap';
 
 @Component({
   selector: 'base-tags',
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss'],
 })
-export class TagsComponent {
+export class TagsComponent implements AfterViewInit {
+  @ViewChild('tooltip') toolTipElement: ElementRef;
+
   @Input() id: string;
   @Input() name: string;
+  @Input() infoText: string;
   @Input() label?: string = '';
   @Input() placeholder?: string = '';
   @Input() autocomplete?: string;
@@ -22,6 +26,12 @@ export class TagsComponent {
   @Input() validators: ValidatorFn[] = [];
   inputValue = '';
   selectedElement: HTMLElement;
+
+  ngAfterViewInit() {
+    if (this.toolTipElement && this.infoText) {
+      new Tooltip(this.toolTipElement.nativeElement);
+    }
+  }
 
   /**
    * Convert id into text field

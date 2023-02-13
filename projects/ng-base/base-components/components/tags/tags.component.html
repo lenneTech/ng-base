@@ -1,5 +1,15 @@
 <div class="form-group position-relative" *ngIf="control">
-  <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
+  <div class="d-flex justify-content-between align-items-center">
+    <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
+    <i
+      class="bi bi-info-circle"
+      #tooltip
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      [attr.title]="infoText"
+      *ngIf="infoText"
+    ></i>
+  </div>
 
   <div class="tag-wrapper" *ngIf="control?.value">
     <div class="tag" *ngFor="let tag of control?.value">

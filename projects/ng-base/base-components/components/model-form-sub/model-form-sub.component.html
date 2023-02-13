@@ -24,6 +24,7 @@
       <base-select
         [id]="key"
         [name]="key"
+        [infoText]="config[key]?.infoText ? config[key].infoText : null"
         [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
         [placeholder]="config[key]?.placeholder || 'Bitte einen Wert auswählen'"
         [options]="prepareEnumForSelect(fields[key]?.validEnums, config[key]?.enumValues)"
@@ -40,6 +41,7 @@
             <base-tags
               [id]="key"
               [name]="key"
+              [infoText]="config[key]?.infoText ? config[key].infoText : null"
               [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
               [placeholder]="config[key]?.placeholder || ''"
               [control]="transformToControl(form?.get(key))"
@@ -55,6 +57,7 @@
             <base-input
               [id]="key"
               [name]="key"
+              [infoText]="config[key]?.infoText ? config[key].infoText : null"
               [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
               [placeholder]="config[key]?.placeholder || ''"
               [type]="'text'"
@@ -71,6 +74,7 @@
           <base-upload-image
             [id]="key"
             [name]="key"
+            [infoText]="config[key]?.infoText ? config[key].infoText : null"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [control]="transformToControl(form?.get(key))"
             [url]="config[key]?.url"
@@ -103,6 +107,7 @@
           <base-upload-image
             [id]="key"
             [name]="key"
+            [infoText]="config[key]?.infoText ? config[key].infoText : null"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [control]="transformToControl(form?.get(key))"
             [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
@@ -125,6 +130,7 @@
           <base-refence-input
             [id]="key"
             [name]="key"
+            [infoText]="config[key]?.infoText ? config[key].infoText : null"
             [isList]="fields[key]?.isList"
             [useParamAsArg]="config[key]?.useParamAsArg ?? false"
             [param]="id"
@@ -161,6 +167,7 @@
           <base-textarea
             [id]="key"
             [name]="key"
+            [infoText]="config[key]?.infoText ? config[key].infoText : null"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [control]="transformToControl(form?.get(key))"
             [required]="
@@ -174,6 +181,7 @@
           <base-input
             [id]="key"
             [name]="key"
+            [infoText]="config[key]?.infoText ? config[key].infoText : null"
             [type]="'number'"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [placeholder]="config[key]?.placeholder || ''"
@@ -189,6 +197,7 @@
           <base-input
             [id]="key"
             [name]="key"
+            [infoText]="config[key]?.infoText ? config[key].infoText : null"
             [type]="'password'"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [placeholder]="config[key]?.placeholder || ''"
@@ -204,6 +213,7 @@
           <base-input
             [id]="key"
             [name]="key"
+            [infoText]="config[key]?.infoText ? config[key].infoText : null"
             [type]="'color'"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [placeholder]="config[key]?.placeholder || ''"
@@ -219,6 +229,7 @@
           <base-input
             [id]="key"
             [name]="key"
+            [infoText]="config[key]?.infoText ? config[key].infoText : null"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [placeholder]="config[key]?.placeholder || ''"
             [type]="'url'"
@@ -234,6 +245,7 @@
           <base-input
             [id]="key"
             [name]="key"
+            [infoText]="config[key]?.infoText ? config[key].infoText : null"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [placeholder]="config[key]?.placeholder || ''"
             [type]="'email'"
@@ -249,6 +261,7 @@
           <base-input
             [id]="key"
             [name]="key"
+            [infoText]="config[key]?.infoText ? config[key].infoText : null"
             [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
             [placeholder]="config[key]?.placeholder || ''"
             [type]="'datetime-local'"

@@ -5,6 +5,7 @@ import { CroppingOptions } from './cropping-options.interface';
 
 export interface CMSFieldConfig {
   label: string;
+  infoText?: string;
   required?: boolean;
   exclude?: boolean;
   restricted?: boolean;
