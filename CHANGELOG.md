@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.31.0](https://github.com/lenneTech/ng-base/compare/v14.30.0...v14.31.0) (2023-02-13)
+
+### Features
+
+- Add infoText to inputs and cms config ([e21de72](https://github.com/lenneTech/ng-base/commit/e21de72706996a31e3c40f0a0269deea90d93a0b))
+
 ## [14.30.0](https://github.com/lenneTech/ng-base/compare/v14.29.1...v14.30.0) (2023-02-04)
 
 ### Features
