@@ -5,10 +5,12 @@
   </div>
 
   <textarea
+    #textarea
     class="form-control"
     [id]="objectPath ? objectPath + '.' + id : id"
     [name]="name"
     [rows]="rows"
+    (input)="adjustHeight($event)"
     [placeholder]="placeholder"
     [formControl]="control"
     [tabIndex]="tabIndex ?? null"
