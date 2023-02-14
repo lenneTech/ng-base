@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.32.0](https://github.com/lenneTech/ng-base/compare/v14.31.0...v14.32.0) (2023-02-14)
+
+### Features
+
+- Change tooltips to ng-bootstrap tooltips ([ac5d8d9](https://github.com/lenneTech/ng-base/commit/ac5d8d915e59c126f9b78cbad4a3ff9a44848692))
+
 ## [14.31.0](https://github.com/lenneTech/ng-base/compare/v14.30.0...v14.31.0) (2023-02-13)
 
 ### Features
