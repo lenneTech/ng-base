@@ -1,14 +1,7 @@
 <div class="form-group mb-3">
   <div class="d-flex justify-content-between align-items-center">
     <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
-    <i
-      class="bi bi-info-circle"
-      #tooltip
-      data-bs-toggle="tooltip"
-      data-bs-placement="top"
-      [attr.title]="infoText"
-      *ngIf="infoText"
-    ></i>
+    <i class="bi bi-info-circle" [ngbTooltip]="infoText" placement="start" *ngIf="infoText"></i>
   </div>
   <div class="input-group">
     <input

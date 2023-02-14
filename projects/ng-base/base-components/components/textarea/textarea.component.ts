@@ -1,14 +1,11 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { Tooltip } from 'bootstrap';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'base-textarea',
   templateUrl: './textarea.component.html',
   styleUrls: ['./textarea.component.scss'],
 })
-export class TextareaComponent implements AfterViewInit {
-  @ViewChild('tooltip') toolTipElement: ElementRef;
-
+export class TextareaComponent {
   @Input() id: string;
   @Input() name: string;
   @Input() infoText: string;
@@ -19,10 +16,4 @@ export class TextareaComponent implements AfterViewInit {
   @Input() required = false;
   @Input() tabIndex?: number;
   @Input() objectPath = '';
-
-  ngAfterViewInit() {
-    if (this.toolTipElement && this.infoText) {
-      new Tooltip(this.toolTipElement.nativeElement);
-    }
-  }
 }

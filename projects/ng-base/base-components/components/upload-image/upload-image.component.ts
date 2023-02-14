@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   AuthService,
@@ -9,16 +9,14 @@ import {
   ToastType,
 } from '@lenne.tech/ng-base/shared';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
-import { Tooltip } from 'bootstrap';
 
 @Component({
   selector: 'base-upload-image',
   templateUrl: './upload-image.component.html',
   styleUrls: ['./upload-image.component.scss'],
 })
-export class UploadImageComponent implements OnInit, AfterViewInit {
+export class UploadImageComponent implements OnInit {
   @ViewChild('fileInput') fileInput: ElementRef;
-  @ViewChild('tooltip') toolTipElement: ElementRef;
 
   @Input() id: string;
   @Input() name: string;
@@ -77,12 +75,6 @@ export class UploadImageComponent implements OnInit, AfterViewInit {
       format: 'jpeg',
       ...this.croppingOptions,
     };
-  }
-
-  ngAfterViewInit() {
-    if (this.toolTipElement && this.infoText) {
-      new Tooltip(this.toolTipElement.nativeElement);
-    }
   }
 
   /**

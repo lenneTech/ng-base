@@ -1,14 +1,11 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { Tooltip } from 'bootstrap';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'base-input',
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
 })
-export class InputComponent implements AfterViewInit {
-  @ViewChild('tooltip') toolTipElement: ElementRef;
-
+export class InputComponent {
   @Input() id: string;
   @Input() name: string;
   @Input() infoText: string;
@@ -23,12 +20,6 @@ export class InputComponent implements AfterViewInit {
   @Input() objectPath = '';
 
   @Output() enter = new EventEmitter();
-
-  ngAfterViewInit() {
-    if (this.toolTipElement && this.infoText) {
-      new Tooltip(this.toolTipElement.nativeElement);
-    }
-  }
 
   /**
    * If the control has a value, emit the enter event
