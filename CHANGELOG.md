@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.33.0](https://github.com/lenneTech/ng-base/compare/v14.32.0...v14.33.0) (2023-02-14)
+
+### Features
+
+- Add auto height option to textarea component ([4ac3921](https://github.com/lenneTech/ng-base/commit/4ac39212d54eb4188845eccec266920a7bf4138d))
+
 ## [14.32.0](https://github.com/lenneTech/ng-base/compare/v14.31.0...v14.32.0) (2023-02-14)
 
 ### Features
