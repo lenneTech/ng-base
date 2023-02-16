@@ -30,8 +30,8 @@
     "js-sha256": "*",
     "rxjs": "7.*.*",
     "ngx-image-cropper": "6.3.2",
-    "@apollo/client": "3.7.7",
-    "apollo-angular": "4.2.0",
+    "@apollo/client": "3.7.8",
+    "apollo-angular": "4.2.1",
     "graphql": "16.6.0",
     "graphql-ws": "5.11.3"
   },
