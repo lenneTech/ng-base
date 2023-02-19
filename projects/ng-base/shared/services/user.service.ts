@@ -31,17 +31,18 @@ export class UserService extends GraphQLPlusService {
    */
   login(input: { email: string; password: string }) {
     return this.graphQl('signIn', {
-      arguments: { input },
-      fields: ['token', { user: ['id', 'firstName', 'lastName', 'email', 'roles', 'avatar'] }],
-      type: GraphQLRequestType.QUERY,
+      arguments: { input: { ...input, deviceDescription: navigator?.userAgent } },
+      fields: ['refreshToken', 'token', { user: ['id', 'firstName', 'lastName', 'email', 'roles', 'avatar'] }],
       loading: true,
     }).pipe(
       map((response: Auth) => {
         this.authService.token = response.token;
+        this.authService.refreshToken = response.refreshToken;
         this.authService.currentUser = response.user;
 
         return Auth.map({
           token: response.token,
+          refreshToken: response.refreshToken,
           user: BasicUser.map(response.user),
         });
       })
@@ -55,17 +56,18 @@ export class UserService extends GraphQLPlusService {
    */
   register(input: { firstName: string; lastName: string; email: string; password: string }) {
     return this.graphQl('signUp', {
-      arguments: { input },
-      fields: ['token', { user: ['id', 'firstName', 'lastName', 'email', 'roles', 'avatar'] }],
-      type: GraphQLRequestType.MUTATION,
+      arguments: { input: { ...input, deviceDescription: navigator?.userAgent } },
+      fields: ['refreshToken', 'token', { user: ['id', 'firstName', 'lastName', 'email', 'roles', 'avatar'] }],
       loading: true,
     }).pipe(
       map((response: Auth) => {
         this.authService.token = response.token;
+        this.authService.refreshToken = response.refreshToken;
         this.authService.currentUser = response.user;
 
         return Auth.map({
           token: response.token,
+          refreshToken: response.refreshToken,
           user: BasicUser.map(response.user),
         });
       })

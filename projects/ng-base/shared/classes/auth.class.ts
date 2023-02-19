@@ -3,6 +3,7 @@ import { Helper } from './helper.class';
 import { Standard } from './standard.class';
 
 export class Auth extends Standard {
+  refreshToken: string = undefined;
   token: string = undefined;
   user: BasicUser = undefined;
 

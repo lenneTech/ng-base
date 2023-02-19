@@ -66,6 +66,10 @@ export class ProfileComponent implements OnInit {
    * It gets the current user from the database and updates the current user in the session
    */
   updateSessionUser() {
+    if (!this.authService.currentUser) {
+      return;
+    }
+
     this.userService.get(this.authService.currentUser.id).subscribe((user) => {
       if (user) {
         this.authService.currentUser = user;

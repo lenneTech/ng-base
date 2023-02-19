@@ -1,5 +1,5 @@
 import { HttpLink } from 'apollo-angular/http';
-import { ApolloLink, concat, split } from '@apollo/client/core';
+import { ApolloLink, concat, fromPromise, split } from '@apollo/client/core';
 import { InMemoryCache } from '@apollo/client/cache';
 import { getMainDefinition } from '@apollo/client/utilities';
 import {
@@ -11,6 +11,8 @@ import {
 } from '@lenne.tech/ng-base/shared';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import extractFiles from '../functions/extract-files.function';
+import { firstValueFrom } from 'rxjs';
+import { onError } from '@apollo/client/link/error';
 
 /**
  * Factory for apollo-angular options
@@ -30,14 +32,59 @@ export function apolloOptionsFactory(
 
   const authMiddleware = new ApolloLink((operation, forward) => {
     const headers: any = {};
+    const operationName = (operation.query.definitions[0] as any)?.selectionSet?.selections[0]?.name?.value;
+
     if (localStorage) {
-      const token = authService.token || null;
+      let token: string;
+
+      if (operationName === 'refreshToken') {
+        token = authService.refreshToken || null;
+      } else {
+        token = authService.token || null;
+      }
+
       if (token) {
         headers.Authorization = 'Bearer ' + token;
       }
+
       operation.setContext(() => ({ headers }));
     }
     return forward(operation);
+  });
+
+  const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+    if (graphQLErrors) {
+      for (const err of graphQLErrors) {
+        switch (err.extensions.code) {
+          case 'UNAUTHENTICATED': {
+            if (err.message !== 'Expired refresh token' && err.message !== 'Expired token') {
+              return;
+            }
+
+            if (err.message === 'Expired refresh token') {
+              authService.clearSession();
+              return;
+            }
+
+            return fromPromise(firstValueFrom(authService.requestNewToken()))
+              .filter((value) => Boolean(value))
+              .flatMap((response) => {
+                const oldHeaders = operation.getContext().headers;
+                // modify the operation context with a new token
+                operation.setContext({
+                  headers: {
+                    ...oldHeaders,
+                    Authorization: `Bearer ${response.token}`,
+                  },
+                });
+
+                // retry the request, returning the new observable
+                return forward(operation);
+              });
+          }
+        }
+      }
+    }
   });
 
   if (baseModuleConfig.logging) {
@@ -70,11 +117,12 @@ export function apolloOptionsFactory(
           return kind === 'OperationDefinition' && operation === 'subscription';
         },
         wsLink,
-        concat(authMiddleware, http)
+        concat(concat(authMiddleware, errorLink), http)
       )
     );
   } else {
     links.push(authMiddleware);
+    links.push(errorLink);
     links.push(http);
   }
 
