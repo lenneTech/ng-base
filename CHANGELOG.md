@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [14.35.0](https://github.com/lenneTech/ng-base/compare/v14.34.0...v14.35.0) (2023-02-19)
+
+### Features
+
+- Add changes for new token handling from nest-server ([10c99f9](https://github.com/lenneTech/ng-base/commit/10c99f97d0638b4913cfea8d04a2df80b605eecb))
+
 ## [14.34.0](https://github.com/lenneTech/ng-base/compare/v14.33.0...v14.34.0) (2023-02-16)
 
 ### Features
