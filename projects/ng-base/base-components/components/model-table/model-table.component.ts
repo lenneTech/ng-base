@@ -5,6 +5,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
@@ -22,17 +23,19 @@ import {
   GraphQLService,
   GraphQLType,
   ScrollService,
-  SortOrderEnum,
+  StorageService,
   ToastService,
   ToastType,
 } from '@lenne.tech/ng-base/shared';
+import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'base-model-table',
   templateUrl: './model-table.component.html',
   styleUrls: ['./model-table.component.scss'],
 })
-export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
+export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   @Input() modelName: string;
   @Input() objectId: string;
   @Input() createMode = false;
@@ -74,13 +77,38 @@ export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
   totalCount: number;
   selectedPageIndex = 0;
   pages = [];
+  pageItemsLimitControl = new FormControl(25);
+  pageOptions = [
+    {
+      text: '25',
+      value: 25,
+    },
+    {
+      text: '50',
+      value: 50,
+    },
+    {
+      text: '75',
+      value: 75,
+    },
+    {
+      text: '100',
+      value: 100,
+    },
+    {
+      text: '200',
+      value: 200,
+    },
+  ];
+  subscription = new Subscription();
 
   constructor(
     private graphQLMetaService: GraphQLMetaService,
     private graphQLService: GraphQLService,
     private cmsService: CmsService,
     private toastService: ToastService,
-    private scrollService: ScrollService
+    private scrollService: ScrollService,
+    private storageService: StorageService
   ) {}
 
   ngAfterViewInit() {
@@ -91,6 +119,9 @@ export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const pageItemsLimit = this.storageService.load('pageItemsLimit');
+    this.pageItemsLimitControl.setValue(pageItemsLimit ? pageItemsLimit : 25, { onlySelf: true, emitEvent: false });
+
     this.graphQLMetaService.getMeta().subscribe((meta) => {
       this.meta = meta;
 
@@ -125,6 +156,10 @@ export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     this.setChangesInComponentRef();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   /**
@@ -176,8 +211,22 @@ export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
       console.log('ModelTableComponent::init->availableFields', this.availableFields);
     }
 
-    this.selectedPageIndex = 0;
-    this.objects = await this.loadObjects(this.availableFields, 0, 25);
+    this.selectedPageIndex = this.storageService.load('pageIndex') ? this.storageService.load('pageIndex') : 0;
+    this.objects = await this.loadObjects(this.availableFields, 0, this.pageItemsLimitControl.value);
+    this.subscribeToPageItems();
+  }
+
+  subscribeToPageItems() {
+    this.subscription.add(
+      this.pageItemsLimitControl.valueChanges.subscribe({
+        next: async (value) => {
+          this.selectedPageIndex = 0;
+          this.storageService.save('pageIndex', this.selectedPageIndex);
+          this.objects = await this.loadObjects(this.availableFields, 0, value);
+          this.storageService.save('pageItemsLimit', value);
+        },
+      })
+    );
   }
 
   integrateCustomFormComponent() {
@@ -244,7 +293,6 @@ export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
       this.graphQLService
         .graphQl(this.queryName, {
           arguments: {
-            sort: [{ field: 'createdAt', order: SortOrderEnum.ASC }],
             limit: isFindAndCount ? limit : null,
             skip: isFindAndCount ? skip : null,
           },
@@ -267,10 +315,18 @@ export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
               while (numbers < this.totalCount) {
                 this.pages.push({
                   skip: numbers,
-                  limit: 25,
+                  limit: this.pageItemsLimitControl.value,
                 });
 
-                numbers = numbers + 25;
+                numbers = numbers + this.pageItemsLimitControl.value;
+              }
+
+              const loadedIndex = this.storageService.load('pageIndex');
+              if (loadedIndex) {
+                if (loadedIndex > this.pages.length) {
+                  this.selectedPageIndex = 0;
+                  this.storageService.save('pageIndex');
+                }
               }
             } else {
               items = value;
@@ -302,13 +358,17 @@ export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
+  openNewTab(object: any) {
+    window.open(location.href + '/' + object['id'], '_blank');
+  }
+
   /**
    * It calls the duplicateObject function in the cmsService, passing in the id of the object to be duplicated and the
    * modelName of the object
    */
   async duplicateObject(id: string) {
     await this.cmsService.duplicateObject(id, this.camelModelName);
-    this.selectedPageIndex = 0;
+    this.selectedPageIndex = this.storageService.load('pageIndex') ? this.storageService.load('pageIndex') : 0;
     this.objects = await this.loadObjects(
       this.availableFields,
       this.pages[this.selectedPageIndex].skip,
@@ -322,7 +382,7 @@ export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
    */
   async deleteObject(id: string) {
     await this.cmsService.deleteObject(id, this.camelModelName);
-    this.selectedPageIndex = 0;
+    this.selectedPageIndex = this.storageService.load('pageIndex') ? this.storageService.load('pageIndex') : 0;
     this.objects = await this.loadObjects(
       this.availableFields,
       this.pages[this.selectedPageIndex].skip,
@@ -377,7 +437,9 @@ export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
                 });
 
                 if (i === jsonResult.length - 1) {
-                  this.selectedPageIndex = 0;
+                  this.selectedPageIndex = this.storageService.load('pageIndex')
+                    ? this.storageService.load('pageIndex')
+                    : 0;
                   this.objects = await this.loadObjects(
                     this.availableFields,
                     this.pages[this.selectedPageIndex].skip,
@@ -445,8 +507,13 @@ export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   async selectPage(i: number) {
+    if (!this.pages[i]) {
+      return;
+    }
+
     this.selectedPageIndex = i;
     await this.scrollService.scrollTo('model-table-top');
+    this.storageService.save('pageIndex', this.selectedPageIndex);
     this.objects = await this.loadObjects(
       this.availableFields,
       this.pages[this.selectedPageIndex].skip,
