@@ -57,11 +57,15 @@ export function apolloOptionsFactory(
       for (const err of graphQLErrors) {
         switch (err.extensions.code) {
           case 'UNAUTHENTICATED': {
-            if (err.message !== 'Expired refresh token' && err.message !== 'Expired token') {
+            if (
+              err.message !== 'Expired refresh token' &&
+              err.message !== 'Expired token' &&
+              err.message !== 'Invalid token'
+            ) {
               return;
             }
 
-            if (err.message === 'Expired refresh token') {
+            if (err.message === 'Expired refresh token' || err.message === 'Invalid token') {
               authService.clearSession();
               return;
             }
