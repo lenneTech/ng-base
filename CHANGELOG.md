@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.36.1](https://github.com/lenneTech/ng-base/compare/v14.36.0...v14.36.1) (2023-03-22)
+
+### Bug Fixes
+
+- Add logout on invalid token ([bad19ba](https://github.com/lenneTech/ng-base/commit/bad19ba8ec14d72bcbcb8264c9df1f149b049095))
+
 ## [14.36.0](https://github.com/lenneTech/ng-base/compare/v14.35.0...v14.36.0) (2023-03-18)
 
 ### Features
