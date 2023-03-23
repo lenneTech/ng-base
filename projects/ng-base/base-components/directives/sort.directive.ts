@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Inject, Input, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Inject, Input, Output, Renderer2 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Sort } from '@lenne.tech/ng-base/shared';
 
@@ -7,6 +7,7 @@ import { Sort } from '@lenne.tech/ng-base/shared';
 })
 export class SortDirective {
   @Input() baseSort: Array<any>;
+  @Output() baseSorted = new EventEmitter<Array<any>>();
   constructor(private renderer: Renderer2, private targetElem: ElementRef, @Inject(DOCUMENT) document: Document) {}
 
   /**
@@ -29,14 +30,13 @@ export class SortDirective {
     const type = elem.getAttribute('data-type');
 
     const property = elem.getAttribute('data-name');
-
     if (order === 'desc') {
-      this.baseSort.sort(sort.startSort(property, order, type));
+      this.baseSorted.emit([...this.baseSort].sort(sort.startSort(property, order, type)));
       elem.setAttribute('data-order', 'asc');
       elem.classList.remove('desc');
       elem.classList.add('asc');
     } else {
-      this.baseSort.sort(sort.startSort(property, order, type));
+      this.baseSorted.emit([...this.baseSort].sort(sort.startSort(property, order, type)));
       elem.setAttribute('data-order', 'desc');
       elem.classList.remove('asc');
       elem.classList.add('desc');

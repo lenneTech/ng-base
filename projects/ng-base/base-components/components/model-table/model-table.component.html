@@ -29,6 +29,41 @@
     </div>
   </div>
 
+  <div class="container-fluid" *ngIf="totalCount >= 0 && pages.length > 1">
+    <nav class="d-flex row">
+      <div class="col-12 col-md-2"></div>
+      <ul class="pagination justify-content-center col-12 col-md-8">
+        <li class="page-item">
+          <a
+            class="page-link"
+            (click)="selectPage(selectedPageIndex - 1)"
+            aria-label="Previous"
+            [ngClass]="{ disabled: selectedPageIndex - 1 > 0 }"
+          >
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item" *ngFor="let page of pages; let i = index">
+          <a class="page-link" [ngClass]="{ active: selectedPageIndex === i }" (click)="selectPage(i)">{{ i + 1 }}</a>
+        </li>
+        <li class="page-item">
+          <a
+            class="page-link"
+            (click)="selectPage(selectedPageIndex + 1)"
+            aria-label="Next"
+            [ngClass]="{ disabled: pages[selectedPageIndex + 1] }"
+          >
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="col-12 col-md-2">
+        <base-select [options]="pageOptions" [control]="pageItemsLimitControl"></base-select>
+      </div>
+    </nav>
+  </div>
+
   <div
     class="table-responsive"
     [ltContextMenu]="contextMenu"
@@ -42,6 +77,7 @@
             scope="col"
             *ngFor="let field of availableFields"
             [baseSort]="objects"
+            (baseSorted)="objects = $event"
             data-order="desc"
             [attr.data-name]="field"
           >
