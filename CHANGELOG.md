@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.36.2](https://github.com/lenneTech/ng-base/compare/v14.36.1...v14.36.2) (2023-03-23)
+
+### Bug Fixes
+
+- Fix sort directive ([dc0f942](https://github.com/lenneTech/ng-base/commit/dc0f9424ea5d06302e82f3c1d0f11237332735e5))
+
 ### [14.36.1](https://github.com/lenneTech/ng-base/compare/v14.36.0...v14.36.1) (2023-03-22)
 
 ### Bug Fixes
