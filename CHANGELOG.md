@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [14.36.3](https://github.com/lenneTech/ng-base/compare/v14.36.2...v14.36.3) (2023-04-06)
+
+### Bug Fixes
+
+- Show pagination ([61e3125](https://github.com/lenneTech/ng-base/commit/61e312556c77f76565be5366384ae420cd241313))
+
 ### [14.36.2](https://github.com/lenneTech/ng-base/compare/v14.36.1...v14.36.2) (2023-03-23)
 
 ### Bug Fixes
