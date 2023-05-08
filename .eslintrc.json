@@ -1,19 +1,11 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "node_modules/**/*"
-  ],
+  "ignorePatterns": ["node_modules/**/*"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
+      "files": ["*.ts"],
       "parserOptions": {
-        "project": [
-          "tsconfig.json",
-          "projects/ng-base/tsconfig.lib.json",
-          "projects/ng-base/tsconfig.lib.prod.json"
-        ],
+        "project": ["tsconfig.json", "projects/ng-base/tsconfig.lib.json", "projects/ng-base/tsconfig.lib.prod.json"],
         "createDefaultProgram": true
       },
       "extends": [
@@ -22,16 +14,13 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        "no-underscore-dangle": "off"
+        "no-underscore-dangle": "off",
+        "jsdoc/newline-after-description": 0
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
-      "extends": [
-        "plugin:@angular-eslint/template/recommended"
-      ],
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
       "rules": {}
     }
   ]
