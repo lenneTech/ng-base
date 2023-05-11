@@ -8,11 +8,7 @@
         "project": ["tsconfig.json", "projects/ng-base/tsconfig.lib.json", "projects/ng-base/tsconfig.lib.prod.json"],
         "createDefaultProgram": true
       },
-      "extends": [
-        "plugin:@angular-eslint/ng-cli-compat",
-        "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
-        "plugin:@angular-eslint/template/process-inline-templates"
-      ],
+      "extends": ["plugin:@angular-eslint/template/process-inline-templates"],
       "rules": {
         "no-underscore-dangle": "off",
         "jsdoc/newline-after-description": 0

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService, BASE_MODULE_CONFIG, BaseModuleConfig } from '@lenne.tech/ng-base/shared';
 
@@ -7,7 +7,7 @@ import { AuthService, BASE_MODULE_CONFIG, BaseModuleConfig } from '@lenne.tech/n
  * Authentication guard
  */
 @Injectable()
-export class AuthGuard implements CanActivate, CanActivateChild {
+export class AuthGuard {
   /**
    * Imports
    */

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '@lenne.tech/ng-base/shared';
 
@@ -7,7 +7,7 @@ import { AuthService } from '@lenne.tech/ng-base/shared';
  * Logout guard
  */
 @Injectable()
-export class LogoutGuard implements CanActivate, CanActivateChild {
+export class LogoutGuard {
   constructor(private router: Router, private authService: AuthService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
