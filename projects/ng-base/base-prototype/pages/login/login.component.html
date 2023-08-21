@@ -25,7 +25,7 @@
           [control]="form.get('password')"
         ></base-input>
         <div class="d-grid gap-2 text-center">
-          <button class="btn btn-primary" (click)="submit()" *ngIf="!loading">Einloggen</button>
+          <button class="btn btn-primary" (click)="submit()" data-cy="login-submit" *ngIf="!loading">Einloggen</button>
           <button class="btn btn-primary" type="button" disabled *ngIf="loading">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Loading...

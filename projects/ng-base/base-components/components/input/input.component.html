@@ -17,6 +17,7 @@
       [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
       (keyup.enter)="enterEvent()"
       [attr.aria-describedby]="id + 'eye-button'"
+      [attr.data-cy]="name"
     />
     <button
       class="btn btn-outline-primary"
