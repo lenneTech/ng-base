@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [16.1.0](https://github.com/lenneTech/ng-base/compare/v16.0.0...v16.1.0) (2023-08-22)
+
+### Features
+
+- added cypress attribute data to base components and added isPlatformBrowser to authguard ([cfeb2a8](https://github.com/lenneTech/ng-base/commit/cfeb2a8fe63b99e6b16f658cd64f8126d2ec181e))
+
 ### [14.36.3](https://github.com/lenneTech/ng-base/compare/v14.36.2...v14.36.3) (2023-04-06)
 
 ### Bug Fixes
