@@ -9,7 +9,7 @@ import { ScrollService } from './scroll.service';
 export class FormsService {
   constructor(@Inject(DOCUMENT) private document: Document, private scrollService: ScrollService) {}
 
-  public validateAllFormFields(formGroup: UntypedFormGroup) {
+  public validateAllFormFields(formGroup: any) {
     Object.keys(formGroup.controls).forEach((field) => {
       const control = formGroup.get(field);
       if (control instanceof UntypedFormControl) {
@@ -44,7 +44,7 @@ export class FormsService {
     return result;
   }
 
-  public scrollToInvalidControl(form: UntypedFormGroup) {
+  public scrollToInvalidControl(form: any) {
     const invalidForm: string = this.findInvalidControls(form)[0];
     this.scrollService.scrollTo(invalidForm);
   }

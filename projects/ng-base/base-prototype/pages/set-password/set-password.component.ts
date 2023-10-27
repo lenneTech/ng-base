@@ -50,7 +50,7 @@ export class SetPasswordComponent implements OnInit {
         password: new FormControl<string>('', [Validators.required, securePasswordValidator()]),
         passwordConfirm: new FormControl<string>('', [Validators.required, securePasswordValidator()]),
       },
-      { validators: Validation.match('password', 'passwordConfirm') }
+      Validation.match('password', 'passwordConfirm') as any
     );
   }
 

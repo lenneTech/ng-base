@@ -1,6 +1,6 @@
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
 
-export function fullEmail(): ValidatorFn {
+export function fullEmail(): any {
   return (control: AbstractControl) => {
     const EMAIL_REGEXP =
       /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;

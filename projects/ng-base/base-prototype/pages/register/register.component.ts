@@ -55,9 +55,7 @@ export class RegisterComponent implements OnInit {
         passwordConfirm: new UntypedFormControl('', [Validators.required, securePasswordValidator()]),
         privacy: new UntypedFormControl(false, Validators.requiredTrue),
       },
-      {
-        validators: [Validation.match('password', 'passwordConfirm')],
-      }
+      Validation.match('password', 'passwordConfirm') as any
     );
   }
 

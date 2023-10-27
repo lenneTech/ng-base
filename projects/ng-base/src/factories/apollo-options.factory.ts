@@ -104,8 +104,8 @@ export function apolloOptionsFactory(
             Authorization: authService.token ? 'Bearer ' + authService.token : undefined,
           };
         },
-      })
-    );
+      }) as any
+    ) as any;
 
     // Set client for reconnection on logout/login
     wsService.client = wsLink.client as RestartableClient;
