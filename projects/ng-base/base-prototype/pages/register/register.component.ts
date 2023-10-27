@@ -1,6 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { FormsService, fullEmail, securePasswordValidator, UserService, Validation } from '@lenne.tech/ng-base/shared';
+import {
+  FormsService,
+  fullEmail,
+  securePasswordValidator,
+  UserService,
+  Validation,
+  RegisterConfig,
+} from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -10,6 +17,8 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent implements OnInit {
+  @Input() config: RegisterConfig = {};
+
   form: UntypedFormGroup;
   error: string;
   loading: boolean;
@@ -25,7 +34,7 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.createForm();
-
+    this.redirectUrl = this.config?.redirectUrl || '';
     this.subscription.add(
       this.route.queryParams.subscribe((params) => {
         this.redirectUrl = params.redirectUrl;

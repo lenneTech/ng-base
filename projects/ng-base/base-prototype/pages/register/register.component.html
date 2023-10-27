@@ -58,7 +58,9 @@
             Loading...
           </button>
           <hr />
-          <a routerLink="../login" [queryParams]="{redirectUrl}">Bereits ein Konto? Dann logge Dich hier ein!</a>
+          <a routerLink="../login" [queryParams]="{redirectUrl}" *ngif="!config?.hideLoginLink"
+            >Bereits ein Konto? Dann logge Dich hier ein!</a
+          >
         </div>
       </form>
     </div>
