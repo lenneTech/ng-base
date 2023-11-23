@@ -10,7 +10,7 @@
     "angular-library",
     "angular13+"
   ],
-  "version": "16.2.0",
+  "version": "17.0.0",
   "author": "lenne.Tech <info@lenne.tech> (https://lenne.tech)",
   "homepage": "https://github.com/lenneTech/ng-base",
   "license": "MIT",
@@ -30,7 +30,7 @@
     "rxjs": "7.*.*",
     "ngx-image-cropper": "6.3.*",
     "@apollo/client": "3.7.*",
-    "apollo-angular": "5.0.*",
+    "apollo-angular": "6.0.*",
     "graphql": "16.6.*",
     "graphql-ws": "5.*.*"
   },

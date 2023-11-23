@@ -1,6 +1,6 @@
 {
   "name": "@lenne.tech/ng-base",
-  "version": "16.2.0",
+  "version": "17.0.0",
   "author": "lenne.Tech <info@lenne.tech> (https://lenne.tech)",
   "homepage": "https://lennetech.github.io/ng-base/",
   "license": "MIT",
@@ -42,7 +42,7 @@
     "@apollo/client": "3.7.14",
     "@popperjs/core": "2.11.7",
     "@storybook/theming": "7.0.9",
-    "apollo-angular": "5.0.0",
+    "apollo-angular": "6.0.0",
     "bootstrap": "5.2.3",
     "compressorjs": "1.2.1",
     "graphql": "16.6.0",
