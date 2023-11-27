@@ -20,6 +20,7 @@
     "start": "ng serve",
     "test": "ng test",
     "release": "standard-version && git push --follow-tags origin main",
+    "release:17": "standard-version && git push --follow-tags origin angular-17",
     "release:minor": "standard-version --release-as minor && git push --follow-tags origin main",
     "release:major": "standard-version --release-as major && git push --follow-tags origin main",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
