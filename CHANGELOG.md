@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [17.0.1](https://github.com/lenneTech/ng-base/compare/v17.0.0...v17.0.1) (2023-11-28)
+
+### Bug Fixes
+
+- added isPlatformBrowser ([990ad58](https://github.com/lenneTech/ng-base/commit/990ad5871b5785e93f857b078d863b74efe1b4df))
+
 ## [16.2.0](https://github.com/lenneTech/ng-base/compare/v16.1.0...v16.2.0) (2023-10-27)
 
 ## [14.37.0](https://github.com/lenneTech/ng-base/compare/v14.36.4...v14.37.0) (2023-08-21)
