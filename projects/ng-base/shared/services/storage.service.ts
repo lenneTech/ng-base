@@ -1,5 +1,6 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BASE_MODULE_CONFIG, BaseModuleConfig } from '../interfaces/base-module-config.interface';
+import { isPlatformBrowser } from '@angular/common';
 
 /**
  * Storage service for local data storage
@@ -21,17 +22,21 @@ export class StorageService {
   /**
    * Initializations
    */
-  constructor(@Inject(BASE_MODULE_CONFIG) private moduleConfig: BaseModuleConfig) {
+  constructor(
+    @Inject(BASE_MODULE_CONFIG) private moduleConfig: BaseModuleConfig,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {
     // Set storage
     const type = moduleConfig.storageType ? moduleConfig.storageType : 'local';
-
-    if (type === 'session') {
-      this.storage = sessionStorage;
-    } else {
-      if (localStorage) {
-        this.storage = localStorage;
+    if (isPlatformBrowser(this.platformId)) {
+      if (type === 'session') {
+        this.storage = sessionStorage;
       } else {
-        this.storage = null;
+        if (localStorage) {
+          this.storage = localStorage;
+        } else {
+          this.storage = null;
+        }
       }
     }
 

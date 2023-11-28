@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { isPlatformBrowser } from '@angular/common';
 
 interface SEOData {
   title: string;
@@ -16,7 +17,11 @@ interface SEOData {
   providedIn: 'root',
 })
 export class SEOService {
-  constructor(private titleService: Title, private metaTagService: Meta) {}
+  constructor(
+    private titleService: Title,
+    private metaTagService: Meta,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {}
 
   public initPageForSEO(input: SEOData) {
     this.setGeneralData(input);
@@ -47,12 +52,14 @@ export class SEOService {
    * @private
    */
   private setTwitterData(data: SEOData) {
-    this.metaTagService.updateTag({ name: 'twitter:title', content: data.title });
-    this.metaTagService.updateTag({ name: 'twitter:description', content: data.description });
-    this.metaTagService.updateTag({
-      property: 'twitter:url',
-      content: data.url ? data.url : window?.location.href,
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      this.metaTagService.updateTag({ name: 'twitter:title', content: data.title });
+      this.metaTagService.updateTag({ name: 'twitter:description', content: data.description });
+      this.metaTagService.updateTag({
+        property: 'twitter:url',
+        content: data.url ? data.url : window?.location.href,
+      });
+    }
 
     if (data.image) {
       this.metaTagService.updateTag({
@@ -74,17 +81,18 @@ export class SEOService {
    * @private
    */
   private setFacebookData(data: SEOData) {
-    this.metaTagService.updateTag({ property: 'og:title', content: data.title });
-    this.metaTagService.updateTag({ property: 'og:description', content: data.description });
-    this.metaTagService.updateTag({
-      property: 'og:type',
-      content: 'website',
-    });
-    this.metaTagService.updateTag({
-      property: 'og:url',
-      content: data.url ? data.url : window?.location.href,
-    });
-
+    if (isPlatformBrowser(this.platformId)) {
+      this.metaTagService.updateTag({ property: 'og:title', content: data.title });
+      this.metaTagService.updateTag({ property: 'og:description', content: data.description });
+      this.metaTagService.updateTag({
+        property: 'og:type',
+        content: 'website',
+      });
+      this.metaTagService.updateTag({
+        property: 'og:url',
+        content: data.url ? data.url : window?.location.href,
+      });
+    }
     if (data.image) {
       this.metaTagService.updateTag({
         property: 'og:image',
