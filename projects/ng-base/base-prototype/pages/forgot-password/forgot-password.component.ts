@@ -1,6 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { FormsService, fullEmail, ToastService, ToastType, UserService } from '@lenne.tech/ng-base/shared';
+import {
+  FormsService,
+  fullEmail,
+  ToastService,
+  ToastType,
+  UserService,
+  ForgotPasswordConfig,
+} from '@lenne.tech/ng-base/shared';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,9 +16,15 @@ import { Router } from '@angular/router';
   styleUrls: ['./forgot-password.component.scss'],
 })
 export class ForgotPasswordComponent implements OnInit {
+  @Input() config: ForgotPasswordConfig = {};
   form: UntypedFormGroup;
   error: string;
   loading: boolean;
+
+  forgotPasswordConfig: ForgotPasswordConfig = {
+    showRegister: true,
+    showLogin: true,
+  };
 
   constructor(
     private formsService: FormsService,
@@ -21,6 +34,8 @@ export class ForgotPasswordComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.forgotPasswordConfig = { ...this.forgotPasswordConfig, ...this.config };
+
     this.createForm();
   }
 
