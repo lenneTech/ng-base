@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [16.3.0](https://github.com/lenneTech/ng-base/compare/v16.2.0...v16.3.0) (2024-02-22)
+
+### Features
+
+- added forgot-password config ([8929fee](https://github.com/lenneTech/ng-base/commit/8929fee0f6660b13abdf87be4cf52e44d8c61dfe))
+
 ## [16.2.0](https://github.com/lenneTech/ng-base/compare/v16.1.0...v16.2.0) (2023-10-27)
 
 ## [14.37.0](https://github.com/lenneTech/ng-base/compare/v14.36.4...v14.37.0) (2023-08-21)
