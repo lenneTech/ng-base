@@ -4,6 +4,7 @@ import { Sort } from '@lenne.tech/ng-base/shared';
 
 @Directive({
   selector: '[baseSort]',
+  standalone: true,
 })
 export class SortDirective {
   @Input() baseSort: Array<any>;

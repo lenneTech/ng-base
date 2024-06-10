@@ -3,6 +3,7 @@ import { NavigationService } from '@lenne.tech/ng-base/shared';
 
 @Directive({
   selector: '[baseBackButton]',
+  standalone: true,
 })
 export class BackButtonDirective {
   constructor(private navigation: NavigationService) {}

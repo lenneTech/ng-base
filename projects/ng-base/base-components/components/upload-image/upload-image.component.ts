@@ -6,14 +6,22 @@ import {
   CroppingOptions,
   FileService,
   ToastService,
-  ToastType,
+  ToastType
 } from '@lenne.tech/ng-base/shared';
-import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
+import { NgClass } from '@angular/common';
+import { StopPropagationDirective } from '../../directives/stop-propagation.directive';
 
 @Component({
   selector: 'base-upload-image',
   templateUrl: './upload-image.component.html',
   styleUrls: ['./upload-image.component.scss'],
+  standalone: true,
+  imports: [
+    NgClass,
+    ImageCropperComponent,
+    StopPropagationDirective
+  ]
 })
 export class UploadImageComponent implements OnInit {
   @ViewChild('fileInput') fileInput: ElementRef;

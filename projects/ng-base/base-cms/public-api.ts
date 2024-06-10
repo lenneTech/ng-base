@@ -2,9 +2,6 @@
  * Exports for public API
  */
 
-// Module
-export * from './base-cms.module';
-
 // Pages
 export * from './pages/base-cms/base-cms.component';
 

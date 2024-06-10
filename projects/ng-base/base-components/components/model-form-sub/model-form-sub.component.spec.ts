@@ -8,8 +8,8 @@ describe('ModelFormSubComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ModelFormSubComponent],
-    }).compileComponents();
+    declarations: [ModelFormSubComponent],
+}).compileComponents();
   });
 
   beforeEach(() => {

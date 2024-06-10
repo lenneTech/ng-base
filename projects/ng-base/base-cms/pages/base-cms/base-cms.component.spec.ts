@@ -8,8 +8,8 @@ describe('BaseCmsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [BaseCmsComponent],
-    }).compileComponents();
+    imports: [BaseCmsComponent],
+}).compileComponents();
   });
 
   beforeEach(() => {

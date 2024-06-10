@@ -2,9 +2,11 @@
   <div class="d-flex flex-column register-container">
     <div class="container">
       <form [formGroup]="form">
-        <div id="register-error" class="alert alert-danger" role="alert" *ngIf="error">
-          {{ error }}
-        </div>
+        @if (error) {
+          <div id="register-error" class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+        }
         <base-input
           [id]="'firstName'"
           [name]="'firstName'"
@@ -48,21 +50,25 @@
           [control]="form.get('passwordConfirm')"
         ></base-input>
         <base-checkbox [id]="'privacy'" [control]="form.get('privacy')">
-          Hiermit bestätige ich, dass ich die <a routerLink="/datenschutz">Datenschutzerklärung</a> gelesen habe und
-          akzeptiere.
-        </base-checkbox>
-        <div class="d-grid gap-2 text-center">
-          <button class="btn btn-primary" (click)="submit()" *ngIf="!loading">Registrieren</button>
-          <button class="btn btn-primary" type="button" disabled *ngIf="loading">
+        Hiermit bestätige ich, dass ich die <a routerLink="/datenschutz">Datenschutzerklärung</a> gelesen habe und
+        akzeptiere.
+      </base-checkbox>
+      <div class="d-grid gap-2 text-center">
+        @if (!loading) {
+          <button class="btn btn-primary" (click)="submit()">Registrieren</button>
+        }
+        @if (loading) {
+          <button class="btn btn-primary" type="button" disabled>
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Loading...
           </button>
-          <hr />
-          <a routerLink="../login" [queryParams]="{redirectUrl}" *ngif="!config?.hideLoginLink"
-            >Bereits ein Konto? Dann logge Dich hier ein!</a
+        }
+        <hr />
+        <a routerLink="../login" [queryParams]="{redirectUrl}" *ngif="!config?.hideLoginLink"
+          >Bereits ein Konto? Dann logge Dich hier ein!</a
           >
-        </div>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
+</div>
 </div>

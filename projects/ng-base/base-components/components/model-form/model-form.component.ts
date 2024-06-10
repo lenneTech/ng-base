@@ -14,11 +14,13 @@ import {
   GraphQLType,
   IGraphQLTypeCollection,
   ToastService,
-  ToastType,
+  ToastType
 } from '@lenne.tech/ng-base/shared';
-import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Button } from '../fab-button/fab-button.component';
+import { AbstractControl, ReactiveFormsModule, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Button, FabButtonComponent } from '../fab-button/fab-button.component';
+import { ModelFormSubComponent } from '../model-form-sub/model-form-sub.component';
+import { NgClass } from '@angular/common';
 
 /**
  * ModelFormComponent
@@ -30,6 +32,14 @@ import { Button } from '../fab-button/fab-button.component';
   selector: 'base-model-form',
   templateUrl: './model-form.component.html',
   styleUrls: ['./model-form.component.scss'],
+  standalone: true,
+  imports: [
+    RouterLink,
+    ReactiveFormsModule,
+    ModelFormSubComponent,
+    NgClass,
+    FabButtonComponent
+  ]
 })
 export class ModelFormComponent implements OnInit, OnChanges {
   @Input() modelName: string;

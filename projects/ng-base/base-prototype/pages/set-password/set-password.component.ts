@@ -1,19 +1,25 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
 import {
   FormsService,
   securePasswordValidator,
   ToastService,
   ToastType,
   UserService,
-  Validation,
+  Validation
 } from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute, Router } from '@angular/router';
+import { InputComponent } from '@lenne.tech/ng-base/base-components';
 
 @Component({
   selector: 'base-set-password',
   templateUrl: './set-password.component.html',
   styleUrls: ['./set-password.component.scss'],
+  standalone: true,
+  imports: [
+    InputComponent,
+    ReactiveFormsModule
+  ]
 })
 export class SetPasswordComponent implements OnInit {
   @Input() redirectUrl = '/';

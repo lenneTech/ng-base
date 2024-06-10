@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { animate, query, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { Toast, ToastService, ToastType } from '@lenne.tech/ng-base/shared';
+import { NgClass } from '@angular/common';
 
 const toastAnimation = trigger('toastAnimation', [
   transition('* <=> *', [
@@ -19,6 +20,10 @@ const toastAnimation = trigger('toastAnimation', [
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
   animations: [toastAnimation],
+  standalone: true,
+  imports: [
+    NgClass
+  ]
 })
 export class ToastComponent implements OnInit, OnDestroy {
   toasts: Toast[] = [];

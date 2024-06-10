@@ -1,9 +1,16 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'base-input',
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    NgClass
+  ]
 })
 export class InputComponent {
   @Input() id: string;

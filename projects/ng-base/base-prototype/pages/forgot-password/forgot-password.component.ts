@@ -1,12 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { FormsService, fullEmail, ToastService, ToastType, UserService } from '@lenne.tech/ng-base/shared';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { InputComponent } from '@lenne.tech/ng-base/base-components';
 
 @Component({
   selector: 'base-forgot-password',
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss'],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    InputComponent,
+    RouterLink
+  ]
 })
 export class ForgotPasswordComponent implements OnInit {
   form: UntypedFormGroup;

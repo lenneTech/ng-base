@@ -1,4 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 interface Option {
   text: string;
@@ -9,6 +11,11 @@ interface Option {
   selector: 'base-select',
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
+  standalone: true,
+  imports: [
+    NgClass,
+    ReactiveFormsModule,
+  ]
 })
 export class SelectComponent implements OnInit {
   @ViewChild('select') select: ElementRef;

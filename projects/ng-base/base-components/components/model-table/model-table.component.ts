@@ -10,7 +10,7 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
-  ViewContainerRef,
+  ViewContainerRef
 } from '@angular/core';
 import {
   CMSFieldConfig,
@@ -25,15 +25,33 @@ import {
   ScrollService,
   StorageService,
   ToastService,
-  ToastType,
+  ToastType
 } from '@lenne.tech/ng-base/shared';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { DatePipe, NgClass } from '@angular/common';
+import { SelectComponent } from '../select/select.component';
+import { ContextMenuDirective } from '../../directives/context-menu.directive';
+import { SortDirective } from '../../directives/sort.directive';
+import { EllipsesPipe } from '../../pipes/ellipses.pipe';
+import { ModelFormComponent } from '../model-form/model-form.component';
+import { FabButtonComponent } from '../fab-button/fab-button.component';
 
 @Component({
   selector: 'base-model-table',
   templateUrl: './model-table.component.html',
   styleUrls: ['./model-table.component.scss'],
+  standalone: true,
+  imports: [
+    NgClass,
+    SelectComponent,
+    ContextMenuDirective,
+    SortDirective,
+    DatePipe,
+    EllipsesPipe,
+    ModelFormComponent,
+    FabButtonComponent,
+  ]
 })
 export class ModelTableComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   @Input() modelName: string;

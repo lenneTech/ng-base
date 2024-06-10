@@ -5,16 +5,25 @@ import {
   CmsService,
   GraphqlCrudType,
   GraphQLMeta,
-  GraphQLMetaService,
+  GraphQLMetaService
 } from '@lenne.tech/ng-base/shared';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BASE_CMS_MODULE_CONFIG, BaseCMSModuleConfig } from '../../interfaces/base-cms-module-config.interface';
 import { Subscription } from 'rxjs';
+import { NgClass, NgStyle } from '@angular/common';
+import { ModelTableComponent } from '@lenne.tech/ng-base/base-components';
 
 @Component({
   selector: 'app-base-cms',
   templateUrl: './base-cms.component.html',
   styleUrls: ['./base-cms.component.scss'],
+  standalone: true,
+  imports: [
+    NgStyle,
+    RouterLink,
+    NgClass,
+    ModelTableComponent
+  ]
 })
 export class BaseCmsComponent implements OnInit, OnDestroy {
   meta: GraphQLMeta;

@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
  */
 @Component({
   template: '',
+  standalone: true,
 })
 export abstract class ModelFormBaseComponent implements OnInit {
   @Input() modelName: string;

@@ -1,7 +1,11 @@
 <div class="form-group mb-3">
   <div class="d-flex justify-content-between align-items-center">
-    <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
-    <i class="bi bi-info-circle" [ngbTooltip]="infoText" placement="start" *ngIf="infoText"></i>
+    @if (label) {
+      <label [for]="id" class="form-label" [ngClass]="{ required: required }">{{ label }}</label>
+    }
+    @if (infoText) {
+      <i class="bi bi-info-circle" [ngbTooltip]="infoText" placement="start"></i>
+    }
   </div>
 
   <textarea
@@ -17,15 +21,23 @@
     [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
   ></textarea>
 
-  <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">
-    <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
-    <div *ngIf="control?.errors?.['minlength']">
-      Die Mindestlänge für dieses Feld beträgt
-      {{control?.errors?.['minlength']?.requiredLength}} Zeichen.
+  @if (control?.invalid && (control?.dirty || control?.touched)) {
+    <div class="invalid-feedback m-2">
+      @if (control?.errors?.['required']) {
+        <div>Dieses Feld ist ein Pflichtfeld.</div>
+      }
+      @if (control?.errors?.['minlength']) {
+        <div>
+          Die Mindestlänge für dieses Feld beträgt
+          {{control?.errors?.['minlength']?.requiredLength}} Zeichen.
+        </div>
+      }
+      @if (control?.errors?.['maxlength']) {
+        <div>
+          Die maximale Länge für dieses Feld beträgt
+          {{control?.errors?.['maxlength']?.requiredLength}} Zeichen.
+        </div>
+      }
     </div>
-    <div *ngIf="control?.errors?.['maxlength']">
-      Die maximale Länge für dieses Feld beträgt
-      {{control?.errors?.['maxlength']?.requiredLength}} Zeichen.
-    </div>
-  </div>
+  }
 </div>

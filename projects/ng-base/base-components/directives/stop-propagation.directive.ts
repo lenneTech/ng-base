@@ -6,6 +6,7 @@ import { Directive, HostListener } from '@angular/core';
  */
 @Directive({
   selector: '[baseStopPropagation]',
+  standalone: true,
 })
 export class StopPropagationDirective {
   @HostListener('click', ['$event'])

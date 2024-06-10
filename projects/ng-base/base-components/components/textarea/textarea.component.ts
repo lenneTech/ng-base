@@ -1,9 +1,16 @@
 import { Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'base-textarea',
   templateUrl: './textarea.component.html',
   styleUrls: ['./textarea.component.scss'],
+  standalone: true,
+  imports: [
+    NgClass,
+    ReactiveFormsModule
+  ]
 })
 export class TextareaComponent implements OnChanges {
   @ViewChild('textarea') textarea: ElementRef;

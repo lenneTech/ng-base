@@ -7,6 +7,7 @@ import { Directive, ElementRef, Input, OnInit, Output } from '@angular/core';
 @Directive({
   selector: '[ltContextMenu]',
   exportAs: 'contextMenuData',
+  standalone: true,
 })
 export class ContextMenuDirective implements OnInit {
   @Input() contextMenuData?: any;

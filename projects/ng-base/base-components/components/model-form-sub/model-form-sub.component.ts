@@ -1,11 +1,28 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, UntypedFormControl } from '@angular/forms';
 import { AuthService, BasicUser, CMSFieldConfig, GraphQLType } from '@lenne.tech/ng-base/shared';
+import { InputComponent } from '../input/input.component';
+import { SelectComponent } from '../select/select.component';
+import { TagsComponent } from '../tags/tags.component';
+import { UploadImageComponent } from '../upload-image/upload-image.component';
+import { RefenceInputComponent } from '../refence-input/refence-input.component';
+import { CheckboxComponent } from '../checkbox/checkbox.component';
+import { TextareaComponent } from '../textarea/textarea.component';
 
 @Component({
   selector: 'base-model-form-sub',
   templateUrl: './model-form-sub.component.html',
   styleUrls: ['./model-form-sub.component.scss'],
+  standalone: true,
+  imports: [
+    InputComponent,
+    SelectComponent,
+    TagsComponent,
+    UploadImageComponent,
+    RefenceInputComponent,
+    CheckboxComponent,
+    TextareaComponent
+  ]
 })
 export class ModelFormSubComponent implements OnInit {
   @Input() id: string;

@@ -5,6 +5,7 @@ import { AfterViewInit, Directive, ElementRef, HostBinding, Input } from '@angul
  */
 @Directive({
   selector: 'img[ltLazyLoad]',
+  standalone: true
 })
 export class LazyLoadDirective implements AfterViewInit {
   @HostBinding('attr.src') srcAttr = null;

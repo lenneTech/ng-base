@@ -1,10 +1,15 @@
 import { Component, Input } from '@angular/core';
 import { SkeletonType } from '@lenne.tech/ng-base/shared';
+import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'base-skeleton-loader',
   templateUrl: './skeleton-loader.component.html',
   styleUrls: ['./skeleton-loader.component.scss'],
+  standalone: true,
+  imports: [
+    NgStyle
+  ]
 })
 export class SkeletonLoaderComponent {
   @Input() type!: SkeletonType;

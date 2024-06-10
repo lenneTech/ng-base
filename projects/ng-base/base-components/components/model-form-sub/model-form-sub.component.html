@@ -1,278 +1,262 @@
-<div class="mt-3" *ngFor="let key of keys">
-  <ng-container
-    *ngIf="checkFieldHasFields(fields[key]) && (config[key]?.roles ? user?.hasAllRoles(config[key]?.roles) : true)"
-  >
-    <fieldset class="border rounded-3 p-3 mt-3">
-      <legend class="float-none w-auto px-3">
-        {{ config[key]?.label ? config[key].label : capitalizeFirstLetter(key) }}
-      </legend>
-      <base-model-form-sub
-        [parentKey]="key"
-        [fields]="fields[key].fields"
-        [config]="config[key]?.fields || {}"
-        [form]="form.get(key)"
-        (imageChanged)="imageChanged.emit($event)"
-        (fileChanged)="fileChanged.emit($event)"
-      ></base-model-form-sub>
-    </fieldset>
-  </ng-container>
-
-  <ng-container
-    *ngIf="!checkFieldHasFields(fields[key]) && (config[key]?.roles ? user?.hasAllRoles(config[key]?.roles) : true)"
-  >
-    <ng-container *ngIf="fields[key]?.isEnum && !config[key]?.exclude">
-      <base-select
-        [id]="key"
-        [name]="key"
-        [infoText]="config[key]?.infoText ? config[key].infoText : null"
-        [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-        [placeholder]="config[key]?.placeholder || 'Bitte einen Wert auswählen'"
-        [options]="prepareEnumForSelect(fields[key]?.validEnums, config[key]?.enumValues)"
-        [control]="transformToControl(form?.get(key))"
-        [required]="config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired"
-        [objectPath]="objectPath"
-      ></base-select>
-    </ng-container>
-
-    <ng-container *ngIf="!fields[key]?.isEnum && !config[key]?.exclude">
-      <ng-container [ngSwitch]="config[key]?.type ? config[key]?.type : fields[key]?.type">
-        <ng-container *ngSwitchCase="'String'">
-          <ng-container *ngIf="fields[key]?.isList && !config[key]?.exclude">
-            <base-tags
+@for (key of keys; track key) {
+  <div class="mt-3">
+    @if (checkFieldHasFields(fields[key]) && (config[key]?.roles ? user?.hasAllRoles(config[key]?.roles) : true)) {
+      <fieldset class="border rounded-3 p-3 mt-3">
+        <legend class="float-none w-auto px-3">
+          {{ config[key]?.label ? config[key].label : capitalizeFirstLetter(key) }}
+        </legend>
+        <base-model-form-sub
+          [parentKey]="key"
+          [fields]="fields[key].fields"
+          [config]="config[key]?.fields || {}"
+          [form]="form.get(key)"
+          (imageChanged)="imageChanged.emit($event)"
+          (fileChanged)="fileChanged.emit($event)"
+        ></base-model-form-sub>
+      </fieldset>
+    }
+    @if (!checkFieldHasFields(fields[key]) && (config[key]?.roles ? user?.hasAllRoles(config[key]?.roles) : true)) {
+      @if (fields[key]?.isEnum && !config[key]?.exclude) {
+        <base-select
+          [id]="key"
+          [name]="key"
+          [infoText]="config[key]?.infoText ? config[key].infoText : null"
+          [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+          [placeholder]="config[key]?.placeholder || 'Bitte einen Wert auswählen'"
+          [options]="prepareEnumForSelect(fields[key]?.validEnums, config[key]?.enumValues)"
+          [control]="transformToControl(form?.get(key))"
+          [required]="config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired"
+          [objectPath]="objectPath"
+        ></base-select>
+      }
+      @if (!fields[key]?.isEnum && !config[key]?.exclude) {
+        @switch (config[key]?.type ? config[key]?.type : fields[key]?.type) {
+          @case ('String') {
+            @if (fields[key]?.isList && !config[key]?.exclude) {
+              <base-tags
+                [id]="key"
+                [name]="key"
+                [infoText]="config[key]?.infoText ? config[key].infoText : null"
+                [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+                [placeholder]="config[key]?.placeholder || ''"
+                [control]="transformToControl(form?.get(key))"
+              [required]="
+                config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+              "
+                [validators]="config[key]?.validators"
+                [objectPath]="objectPath"
+              ></base-tags>
+            }
+            @if (!fields[key]?.isList && !config[key]?.exclude) {
+              <base-input
+                [id]="key"
+                [name]="key"
+                [infoText]="config[key]?.infoText ? config[key].infoText : null"
+                [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+                [placeholder]="config[key]?.placeholder || ''"
+                [type]="'text'"
+                [control]="transformToControl(form?.get(key))"
+              [required]="
+                config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+              "
+                [objectPath]="objectPath"
+              ></base-input>
+            }
+          }
+          @case ('Image') {
+            <base-upload-image
               [id]="key"
               [name]="key"
               [infoText]="config[key]?.infoText ? config[key].infoText : null"
               [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [control]="transformToControl(form?.get(key))"
+              [url]="config[key]?.url"
+              [path]="config[key]?.path || '/files/'"
+              [uploadPath]="config[key]?.uploadPath || '/files/upload'"
+              [deletePath]="config[key]?.deletePath || '/files/'"
+              [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
+              [defaultDragText]="config[key]?.dragText || 'Drag & Drop'"
+              [defaultReleaseText]="config[key]?.releaseText || 'Loslassen zum hochladen'"
+              [preButtonText]="config[key]?.preButtonText || 'or'"
+              [buttonText]="config[key]?.buttonText || 'browse'"
+              [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+              [compressOptions]="config[key]?.compressOptions"
+              [croppingOptions]="config[key]?.croppingOptions"
+              [croppingImage]="config[key]?.croppingImage"
+              [maxSize]="config[key]?.maxSize"
+              [uploadDirectly]="false"
+              [objectPath]="objectPath"
+              [mode]="config[key]?.imageMode || 'base64'"
+              (fileChanged)="fileChanged.emit($event)"
+              (imageDeleted)="imageChanged.emit(key)"
+              (imageUploaded)="imageChanged.emit(key)"
+            ></base-upload-image>
+          }
+          @case ('Upload') {
+            <base-upload-image
+              [id]="key"
+              [name]="key"
+              [infoText]="config[key]?.infoText ? config[key].infoText : null"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [control]="transformToControl(form?.get(key))"
+              [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
+              [defaultDragText]="config[key]?.dragText || 'Drag & Drop'"
+              [defaultReleaseText]="config[key]?.releaseText || 'Loslassen zum hochladen'"
+              [preButtonText]="config[key]?.preButtonText || 'or'"
+              [buttonText]="config[key]?.buttonText || 'browse'"
+              [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+              [compressOptions]="config[key]?.compressOptions"
+              [maxSize]="config[key]?.maxSize"
+              [objectPath]="objectPath"
+              [mode]="'file'"
+            ></base-upload-image>
+          }
+          @case ('Reference') {
+            <base-refence-input
+              [id]="key"
+              [name]="key"
+              [infoText]="config[key]?.infoText ? config[key].infoText : null"
+              [isList]="fields[key]?.isList"
+              [useParamAsArg]="config[key]?.useParamAsArg ?? false"
+              [param]="id"
+              [search]="config[key]?.searchable ?? true"
+              [placeholder]="config[key]?.placeholder || 'Bitte einen Wert auswählen'"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [control]="transformToControl(form?.get(key))"
+              [method]="config[key]?.method || 'find'"
+              [fields]="config[key]?.requestFields || ['id', 'name']"
+              [valueField]="config[key]?.valueField || 'id'"
+              [nameField]="config[key]?.nameField || 'name'"
+              [creationLink]="config[key]?.creationLink || ''"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+              [objectPath]="objectPath"
+            ></base-refence-input>
+          }
+          @case ('Boolean') {
+            <base-checkbox
+              [id]="key"
+              [name]="key"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+              [objectPath]="objectPath"
+            ></base-checkbox>
+          }
+          @case ('LongText') {
+            <base-textarea
+              [id]="key"
+              [name]="key"
+              [infoText]="config[key]?.infoText ? config[key].infoText : null"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+              [objectPath]="objectPath"
+            ></base-textarea>
+          }
+          @case ('Float') {
+            <base-input
+              [id]="key"
+              [name]="key"
+              [infoText]="config[key]?.infoText ? config[key].infoText : null"
+              [type]="'number'"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
               [placeholder]="config[key]?.placeholder || ''"
               [control]="transformToControl(form?.get(key))"
-              [required]="
-                config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-              "
-              [validators]="config[key]?.validators"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
               [objectPath]="objectPath"
-            ></base-tags>
-          </ng-container>
-
-          <ng-container *ngIf="!fields[key]?.isList && !config[key]?.exclude">
+            ></base-input>
+          }
+          @case ('Password') {
+            <base-input
+              [id]="key"
+              [name]="key"
+              [infoText]="config[key]?.infoText ? config[key].infoText : null"
+              [type]="'password'"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [placeholder]="config[key]?.placeholder || ''"
+              [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+              [objectPath]="objectPath"
+            ></base-input>
+          }
+          @case ('Color') {
+            <base-input
+              [id]="key"
+              [name]="key"
+              [infoText]="config[key]?.infoText ? config[key].infoText : null"
+              [type]="'color'"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [placeholder]="config[key]?.placeholder || ''"
+              [control]="transformToControl(form?.get(key))"
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
+              [objectPath]="objectPath"
+            ></base-input>
+          }
+          @case ('URL') {
             <base-input
               [id]="key"
               [name]="key"
               [infoText]="config[key]?.infoText ? config[key].infoText : null"
               [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
               [placeholder]="config[key]?.placeholder || ''"
-              [type]="'text'"
+              [type]="'url'"
               [control]="transformToControl(form?.get(key))"
-              [required]="
-                config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-              "
+            [required]="
+              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
+            "
               [objectPath]="objectPath"
             ></base-input>
-          </ng-container>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'Image'">
-          <base-upload-image
-            [id]="key"
-            [name]="key"
-            [infoText]="config[key]?.infoText ? config[key].infoText : null"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [control]="transformToControl(form?.get(key))"
-            [url]="config[key]?.url"
-            [path]="config[key]?.path || '/files/'"
-            [uploadPath]="config[key]?.uploadPath || '/files/upload'"
-            [deletePath]="config[key]?.deletePath || '/files/'"
-            [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
-            [defaultDragText]="config[key]?.dragText || 'Drag & Drop'"
-            [defaultReleaseText]="config[key]?.releaseText || 'Loslassen zum hochladen'"
-            [preButtonText]="config[key]?.preButtonText || 'or'"
-            [buttonText]="config[key]?.buttonText || 'browse'"
-            [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']"
+          }
+          @case ('Email') {
+            <base-input
+              [id]="key"
+              [name]="key"
+              [infoText]="config[key]?.infoText ? config[key].infoText : null"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [placeholder]="config[key]?.placeholder || ''"
+              [type]="'email'"
+              [control]="transformToControl(form?.get(key))"
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
-            [compressOptions]="config[key]?.compressOptions"
-            [croppingOptions]="config[key]?.croppingOptions"
-            [croppingImage]="config[key]?.croppingImage"
-            [maxSize]="config[key]?.maxSize"
-            [uploadDirectly]="false"
-            [objectPath]="objectPath"
-            [mode]="config[key]?.imageMode || 'base64'"
-            (fileChanged)="fileChanged.emit($event)"
-            (imageDeleted)="imageChanged.emit(key)"
-            (imageUploaded)="imageChanged.emit(key)"
-          ></base-upload-image>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'Upload'">
-          <base-upload-image
-            [id]="key"
-            [name]="key"
-            [infoText]="config[key]?.infoText ? config[key].infoText : null"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [control]="transformToControl(form?.get(key))"
-            [supportText]="config[key]?.supportText || 'Unterstützte Formate: JPEG, JPG, PNG'"
-            [defaultDragText]="config[key]?.dragText || 'Drag & Drop'"
-            [defaultReleaseText]="config[key]?.releaseText || 'Loslassen zum hochladen'"
-            [preButtonText]="config[key]?.preButtonText || 'or'"
-            [buttonText]="config[key]?.buttonText || 'browse'"
-            [validExtensions]="config[key]?.validExtensions || ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']"
+              [objectPath]="objectPath"
+            ></base-input>
+          }
+          @case ('DateTime') {
+            <base-input
+              [id]="key"
+              [name]="key"
+              [infoText]="config[key]?.infoText ? config[key].infoText : null"
+              [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
+              [placeholder]="config[key]?.placeholder || ''"
+              [type]="'datetime-local'"
+              [control]="transformToControl(form?.get(key))"
             [required]="
               config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
             "
-            [compressOptions]="config[key]?.compressOptions"
-            [maxSize]="config[key]?.maxSize"
-            [objectPath]="objectPath"
-            [mode]="'file'"
-          ></base-upload-image>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'Reference'">
-          <base-refence-input
-            [id]="key"
-            [name]="key"
-            [infoText]="config[key]?.infoText ? config[key].infoText : null"
-            [isList]="fields[key]?.isList"
-            [useParamAsArg]="config[key]?.useParamAsArg ?? false"
-            [param]="id"
-            [search]="config[key]?.searchable ?? true"
-            [placeholder]="config[key]?.placeholder || 'Bitte einen Wert auswählen'"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [control]="transformToControl(form?.get(key))"
-            [method]="config[key]?.method || 'find'"
-            [fields]="config[key]?.requestFields || ['id', 'name']"
-            [valueField]="config[key]?.valueField || 'id'"
-            [nameField]="config[key]?.nameField || 'name'"
-            [creationLink]="config[key]?.creationLink || ''"
-            [required]="
-              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-            "
-            [objectPath]="objectPath"
-          ></base-refence-input>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'Boolean'">
-          <base-checkbox
-            [id]="key"
-            [name]="key"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [control]="transformToControl(form?.get(key))"
-            [required]="
-              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-            "
-            [objectPath]="objectPath"
-          ></base-checkbox>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'LongText'">
-          <base-textarea
-            [id]="key"
-            [name]="key"
-            [infoText]="config[key]?.infoText ? config[key].infoText : null"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [control]="transformToControl(form?.get(key))"
-            [required]="
-              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-            "
-            [objectPath]="objectPath"
-          ></base-textarea>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'Float'">
-          <base-input
-            [id]="key"
-            [name]="key"
-            [infoText]="config[key]?.infoText ? config[key].infoText : null"
-            [type]="'number'"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [placeholder]="config[key]?.placeholder || ''"
-            [control]="transformToControl(form?.get(key))"
-            [required]="
-              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-            "
-            [objectPath]="objectPath"
-          ></base-input>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'Password'">
-          <base-input
-            [id]="key"
-            [name]="key"
-            [infoText]="config[key]?.infoText ? config[key].infoText : null"
-            [type]="'password'"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [placeholder]="config[key]?.placeholder || ''"
-            [control]="transformToControl(form?.get(key))"
-            [required]="
-              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-            "
-            [objectPath]="objectPath"
-          ></base-input>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'Color'">
-          <base-input
-            [id]="key"
-            [name]="key"
-            [infoText]="config[key]?.infoText ? config[key].infoText : null"
-            [type]="'color'"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [placeholder]="config[key]?.placeholder || ''"
-            [control]="transformToControl(form?.get(key))"
-            [required]="
-              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-            "
-            [objectPath]="objectPath"
-          ></base-input>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'URL'">
-          <base-input
-            [id]="key"
-            [name]="key"
-            [infoText]="config[key]?.infoText ? config[key].infoText : null"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [placeholder]="config[key]?.placeholder || ''"
-            [type]="'url'"
-            [control]="transformToControl(form?.get(key))"
-            [required]="
-              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-            "
-            [objectPath]="objectPath"
-          ></base-input>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'Email'">
-          <base-input
-            [id]="key"
-            [name]="key"
-            [infoText]="config[key]?.infoText ? config[key].infoText : null"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [placeholder]="config[key]?.placeholder || ''"
-            [type]="'email'"
-            [control]="transformToControl(form?.get(key))"
-            [required]="
-              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-            "
-            [objectPath]="objectPath"
-          ></base-input>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'DateTime'">
-          <base-input
-            [id]="key"
-            [name]="key"
-            [infoText]="config[key]?.infoText ? config[key].infoText : null"
-            [label]="config[key]?.label ? config[key].label : capitalizeFirstLetter(key)"
-            [placeholder]="config[key]?.placeholder || ''"
-            [type]="'datetime-local'"
-            [control]="transformToControl(form?.get(key))"
-            [required]="
-              config[key] && config[key]?.required !== undefined ? config[key]?.required : fields[key].isRequired
-            "
-            [objectPath]="objectPath"
-          ></base-input>
-        </ng-container>
-      </ng-container>
-    </ng-container>
-  </ng-container>
-</div>
+              [objectPath]="objectPath"
+            ></base-input>
+          }
+        }
+      }
+    }
+  </div>
+}

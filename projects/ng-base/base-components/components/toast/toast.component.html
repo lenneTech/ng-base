@@ -2,29 +2,32 @@
   class="toast-container position-fixed"
   [ngClass]="position"
   [@toastAnimation]="{ value: toasts.length, params: { x: position.includes('left') ? '-100%' : '100%' } }"
->
-  <div
-    class="toast show"
-    role="alert"
-    aria-live="assertive"
-    aria-atomic="true"
-    *ngFor="let toast of toasts"
-    [ngClass]="toast.type"
   >
-    <div class="toast-header">
-      <strong class="me-auto">{{ toast?.title ?? getDefaultTitle(toast) }}</strong>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body">
-      {{ toast?.description ?? getDefaultDescription(toast) }}
-
-      <div class="mt-2" *ngIf="toast?.errorCode">
-        <code>ERROR: {{ toast.errorCode }}</code>
+  @for (toast of toasts; track toast) {
+    <div
+      class="toast show"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      [ngClass]="toast.type"
+      >
+      <div class="toast-header">
+        <strong class="me-auto">{{ toast?.title ?? getDefaultTitle(toast) }}</strong>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
-
-      <div class="mt-2" *ngIf="toast.type === ToastType.ERROR">
-        <a class="color-secondary" href="#" (click)="reload()">Seite neu laden</a>
+      <div class="toast-body">
+        {{ toast?.description ?? getDefaultDescription(toast) }}
+        @if (toast?.errorCode) {
+          <div class="mt-2">
+            <code>ERROR: {{ toast.errorCode }}</code>
+          </div>
+        }
+        @if (toast.type === ToastType.ERROR) {
+          <div class="mt-2">
+            <a class="color-secondary" href="#" (click)="reload()">Seite neu laden</a>
+          </div>
+        }
       </div>
     </div>
-  </div>
+  }
 </div>

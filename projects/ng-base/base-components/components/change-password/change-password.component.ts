@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
 import {
   AuthService,
   FormsService,
@@ -7,13 +7,19 @@ import {
   ToastService,
   ToastType,
   UserService,
-  Validation,
+  Validation
 } from '@lenne.tech/ng-base/shared';
+import { InputComponent } from '../input/input.component';
 
 @Component({
   selector: 'base-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss'],
+  standalone: true,
+  imports: [
+    InputComponent,
+    ReactiveFormsModule
+  ]
 })
 export class ChangePasswordComponent implements OnInit {
   form: FormGroup;

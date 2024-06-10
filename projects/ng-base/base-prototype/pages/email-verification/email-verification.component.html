@@ -3,20 +3,26 @@
     <div class="container text-center">
       <h2 class="mb-4">E-Mail bestätigen</h2>
 
-      <div class="alert alert-danger" role="alert" *ngIf="mode === 'ERROR'">
-        Etwas ist schiefgelaufen und wir konnten Deine E-Mail leider nicht verifizieren. Bitte probiere es später erneut
-        oder wende dich an den Support.
-      </div>
-
-      <div class="alert alert-success" role="alert" *ngIf="mode === 'SUCCESS'">
-        Deine E-Mail wurde erfolgreich verifiziert. Du wirst nun weitergeleitet.
-      </div>
-
-      <div class="d-flex justify-content-center align-items-center" *ngIf="loading">
-        <div class="spinner-border text-secondary" role="status">
-          <span class="visually-hidden">Loading...</span>
+      @if (mode === 'ERROR') {
+        <div class="alert alert-danger" role="alert">
+          Etwas ist schiefgelaufen und wir konnten Deine E-Mail leider nicht verifizieren. Bitte probiere es später erneut
+          oder wende dich an den Support.
         </div>
-      </div>
+      }
+
+      @if (mode === 'SUCCESS') {
+        <div class="alert alert-success" role="alert">
+          Deine E-Mail wurde erfolgreich verifiziert. Du wirst nun weitergeleitet.
+        </div>
+      }
+
+      @if (loading) {
+        <div class="d-flex justify-content-center align-items-center">
+          <div class="spinner-border text-secondary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      }
     </div>
   </div>
 </div>

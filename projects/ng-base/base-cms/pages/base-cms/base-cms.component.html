@@ -5,45 +5,50 @@
       'flex-basis': !responsiveToggle ? sideBarWidth : '100%',
       'min-width': !responsiveToggle ? sideBarWidth : ''
     }"
-  >
+    >
     <div class="d-none d-md-flex flex-column flex-shrink-0 p-3 h-100">
-      <ng-container *ngIf="moduleConfig.branding">
-        <a
-          href="/"
-          class="d-flex flex-column align-items-start mb-3 mt-3 me-md-auto link-dark text-decoration-none"
-          *ngIf="!moduleConfig?.logoUrl"
-        >
-          <span class="d-block fs-4"><b class="text-primary">Base</b>CMS</span>
-          <small class="fw-lighter">The auto generated GraphQL CMS</small>
-        </a>
-
-        <a
-          href="/"
-          class="d-flex flex-column align-items-start mb-3 mt-3 me-md-auto link-dark text-decoration-none w-100"
-          *ngIf="moduleConfig?.logoUrl"
-        >
-          <img [src]="moduleConfig.logoUrl" class="img-responsive w-100" alt="Logo" />
-        </a>
-        <hr />
-      </ng-container>
-      <ul class="nav nav-pills flex-column mb-auto" *ngIf="types">
-        <li class="nav-item" *ngFor="let type of types">
+      @if (moduleConfig.branding) {
+        @if (!moduleConfig?.logoUrl) {
           <a
-            class="nav-link"
-            aria-current="page"
-            [routerLink]="(id ? '../../' : '../') + toKebabCase(type?.name)"
-            [ngClass]="{ active: toKebabCase(type?.name) === toKebabCase(this.modelName) }"
-          >
-            {{
-              moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.plural
+            href="/"
+            class="d-flex flex-column align-items-start mb-3 mt-3 me-md-auto link-dark text-decoration-none"
+            >
+            <span class="d-block fs-4"><b class="text-primary">Base</b>CMS</span>
+            <small class="fw-lighter">The auto generated GraphQL CMS</small>
+          </a>
+        }
+        @if (moduleConfig?.logoUrl) {
+          <a
+            href="/"
+            class="d-flex flex-column align-items-start mb-3 mt-3 me-md-auto link-dark text-decoration-none w-100"
+            >
+            <img [src]="moduleConfig.logoUrl" class="img-responsive w-100" alt="Logo" />
+          </a>
+        }
+        <hr />
+      }
+      @if (types) {
+        <ul class="nav nav-pills flex-column mb-auto">
+          @for (type of types; track type) {
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                aria-current="page"
+                [routerLink]="(id ? '../../' : '../') + toKebabCase(type?.name)"
+                [ngClass]="{ active: toKebabCase(type?.name) === toKebabCase(this.modelName) }"
+                >
+                {{
+                moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.plural
                 ? moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.plural
                 : moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.label
                 ? moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.label
                 : type.name + 's'
-            }}
-          </a>
-        </li>
-      </ul>
+                }}
+              </a>
+            </li>
+          }
+        </ul>
+      }
     </div>
     <div class="d-flex flex-column d-md-none p-3 h-100">
       <div class="d-flex justify-content-end">
@@ -53,28 +58,31 @@
           (click)="responsiveToggle = !responsiveToggle"
         ></i>
       </div>
-      <ul
-        class="nav nav-pills responsive-pills flex-column mb-auto"
-        [ngClass]="{ 'w-100-transition': responsiveToggle }"
-        *ngIf="types"
-      >
-        <li class="nav-item" *ngFor="let type of types" (click)="responsiveToggle = !responsiveToggle">
-          <a
-            class="nav-link"
-            aria-current="page"
-            [routerLink]="(id ? '../../' : '../') + toKebabCase(type?.name)"
-            [ngClass]="{ active: toKebabCase(type?.name) === toKebabCase(this.modelName) }"
+      @if (types) {
+        <ul
+          class="nav nav-pills responsive-pills flex-column mb-auto"
+          [ngClass]="{ 'w-100-transition': responsiveToggle }"
           >
-            {{
-              moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.plural
+          @for (type of types; track type) {
+            <li class="nav-item" (click)="responsiveToggle = !responsiveToggle">
+              <a
+                class="nav-link"
+                aria-current="page"
+                [routerLink]="(id ? '../../' : '../') + toKebabCase(type?.name)"
+                [ngClass]="{ active: toKebabCase(type?.name) === toKebabCase(this.modelName) }"
+                >
+                {{
+                moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.plural
                 ? moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.plural
                 : moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.label
                 ? moduleConfig?.modelConfig[lowerCaseFirstLetter(type?.name)]?.label
                 : type.name + 's'
-            }}
-          </a>
-        </li>
-      </ul>
+                }}
+              </a>
+            </li>
+          }
+        </ul>
+      }
     </div>
   </div>
 

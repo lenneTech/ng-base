@@ -1,80 +1,108 @@
-<ng-container *ngIf="!isList">
+@if (!isList) {
   <div class="form-group mb-3">
     <div class="d-flex justify-content-between align-items-center">
-      <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
-      <i class="bi bi-info-circle" [ngbTooltip]="infoText" placement="start" *ngIf="infoText"></i>
+      @if (label) {
+        <label [for]="id" class="form-label" [ngClass]="{ required: required }">{{ label }}</label>
+      }
+      @if (infoText) {
+        <i class="bi bi-info-circle" [ngbTooltip]="infoText" placement="start"></i>
+      }
     </div>
-
-    <div class="position-relative" *ngIf="search">
-      <div class="d-flex flex-row">
-        <input [formControl]="control" hidden />
-        <input
-          [id]="objectPath ? objectPath + '.' + id : id"
-          [name]="name"
-          class="form-control"
-          [(ngModel)]="currentValue"
-          [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
-          (focus)="onFocus($event)"
-          (blur)="onFocus()"
-          [required]="required"
-          [placeholder]="placeholder"
-          [autocomplete]="autocomplete ?? null"
-          [tabIndex]="tabIndex ?? null"
-          (keyup)="enterKey($event)"
-        />
-        <button class="btn btn-primary" (click)="openLink()" *ngIf="creationLink">Erstellen</button>
+    @if (search) {
+      <div class="position-relative">
+        <div class="d-flex flex-row">
+          <input [formControl]="control" hidden />
+          <input
+            [id]="objectPath ? objectPath + '.' + id : id"
+            [name]="name"
+            class="form-control"
+            [(ngModel)]="currentValue"
+            [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+            (focus)="onFocus($event)"
+            (blur)="onFocus()"
+            [required]="required"
+            [placeholder]="placeholder"
+            [autocomplete]="autocomplete ?? null"
+            [tabIndex]="tabIndex ?? null"
+            (keyup)="enterKey($event)"
+            />
+          @if (creationLink) {
+            <button class="btn btn-primary" (click)="openLink()">Erstellen</button>
+          }
+        </div>
+        @if (objects && selectedElement) {
+          <div class="options">
+            @for (object of filterOptions(); track object) {
+              <div class="option-item" (click)="set(object[valueField])">
+                {{ prepareNameField(object) }}
+              </div>
+            }
+          </div>
+        }
       </div>
-      <div class="options" *ngIf="objects && selectedElement">
-        <div class="option-item" *ngFor="let object of filterOptions()" (click)="set(object[valueField])">
-          {{ prepareNameField(object) }}
+    }
+    @if (!search) {
+      <div>
+        <div class="d-flex flex-row">
+          <select
+            [id]="objectPath ? objectPath + '.' + id : id"
+            [name]="name"
+            class="form-select"
+            [attr.aria-label]="placeholder"
+            [formControl]="control"
+            [required]="required"
+            [tabIndex]="tabIndex ?? null"
+            [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+            >
+            <option [ngValue]="null" selected>{{ placeholder }}</option>
+            @for (object of objects; track object) {
+              <option [ngValue]="object[valueField]">
+                {{ prepareNameField(object) }}
+              </option>
+            }
+          </select>
+          @if (creationLink) {
+            <button class="btn btn-primary" (click)="openLink()">Erstellen</button>
+          }
         </div>
       </div>
-    </div>
-
-    <div *ngIf="!search">
-      <div class="d-flex flex-row">
-        <select
-          [id]="objectPath ? objectPath + '.' + id : id"
-          [name]="name"
-          class="form-select"
-          [attr.aria-label]="placeholder"
-          [formControl]="control"
-          [required]="required"
-          [tabIndex]="tabIndex ?? null"
-          [ngClass]="{ 'is-invalid': control?.invalid && control?.touched }"
+    }
+    @if (control?.invalid && (control?.dirty || control?.touched) && !selectedElement) {
+      <div
+        class="d-block invalid-feedback m-2"
         >
-          <option [ngValue]="null" selected>{{ placeholder }}</option>
-          <option *ngFor="let object of objects" [ngValue]="object[valueField]">
-            {{ prepareNameField(object) }}
-          </option>
-        </select>
-        <button class="btn btn-primary" (click)="openLink()" *ngIf="creationLink">Erstellen</button>
+        @if (control?.errors?.['required']) {
+          <div>Dieses Feld ist ein Pflichtfeld.</div>
+        }
+        @if (control?.errors?.['invalidReference'] && currentValue) {
+          <div>
+            {{ currentValue }} ist kein gültiger Wert für {{ label }}.
+          </div>
+        }
+        @if (control?.errors?.['minlength']) {
+          <div>
+            Die Mindestlänge für dieses Feld beträgt
+            {{control.errors?.['minlength']?.requiredLength}} Zeichen.
+          </div>
+        }
+        @if (control?.errors?.['maxlength']) {
+          <div>
+            Die maximale Länge für dieses Feld beträgt
+            {{control.errors?.['maxlength']?.requiredLength}} Zeichen.
+          </div>
+        }
+        @if (control?.errors?.['email']) {
+          <div>Bitte eine gültige E-Mail Adresse angeben.</div>
+        }
+        @if (control?.errors?.['matching']) {
+          <div>Die Passwörter müssen überein stimmen.</div>
+        }
       </div>
-    </div>
-
-    <div
-      class="d-block invalid-feedback m-2"
-      *ngIf="control?.invalid && (control?.dirty || control?.touched) && !selectedElement"
-    >
-      <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
-      <div *ngIf="control?.errors?.['invalidReference'] && currentValue">
-        {{ currentValue }} ist kein gültiger Wert für {{ label }}.
-      </div>
-      <div *ngIf="control?.errors?.['minlength']">
-        Die Mindestlänge für dieses Feld beträgt
-        {{control.errors?.['minlength']?.requiredLength}} Zeichen.
-      </div>
-      <div *ngIf="control?.errors?.['maxlength']">
-        Die maximale Länge für dieses Feld beträgt
-        {{control.errors?.['maxlength']?.requiredLength}} Zeichen.
-      </div>
-      <div *ngIf="control?.errors?.['email']">Bitte eine gültige E-Mail Adresse angeben.</div>
-      <div *ngIf="control?.errors?.['matching']">Die Passwörter müssen überein stimmen.</div>
-    </div>
+    }
   </div>
-</ng-container>
+}
 
-<ng-container *ngIf="isList">
+@if (isList) {
   <base-tags
     [id]="id"
     [label]="label"
@@ -85,4 +113,4 @@
     [custom]="false"
     [options]="optionsForTagInput"
   ></base-tags>
-</ng-container>
+}

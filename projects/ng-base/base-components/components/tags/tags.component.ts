@@ -1,10 +1,17 @@
 import { Component, Input } from '@angular/core';
-import { FormControl, ValidatorFn } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'base-tags',
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss'],
+  standalone: true,
+  imports: [
+    NgClass,
+    ReactiveFormsModule,
+    FormsModule
+  ]
 })
 export class TagsComponent {
   @Input() id: string;

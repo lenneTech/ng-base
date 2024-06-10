@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
   selector: 'base-delete-account',
   templateUrl: './delete-account.component.html',
   styleUrls: ['./delete-account.component.scss'],
+  standalone: true,
 })
 export class DeleteAccountComponent {
   @Input() description =

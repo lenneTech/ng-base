@@ -1,7 +1,11 @@
 <div class="form-group mb-3">
   <div class="d-flex justify-content-between align-items-center">
-    <label [for]="id" class="form-label" [ngClass]="{ required: required }" *ngIf="label">{{ label }}</label>
-    <i class="bi bi-info-circle" [ngbTooltip]="infoText" placement="start" *ngIf="infoText"></i>
+    @if (label) {
+      <label [for]="id" class="form-label" [ngClass]="{ required: required }">{{ label }}</label>
+    }
+    @if (infoText) {
+      <i class="bi bi-info-circle" [ngbTooltip]="infoText" placement="start"></i>
+    }
   </div>
   <div class="input-group">
     <input
@@ -18,36 +22,59 @@
       (keyup.enter)="enterEvent()"
       [attr.aria-describedby]="id + 'eye-button'"
       [attr.data-cy]="name"
-    />
-    <button
-      class="btn btn-outline-primary"
-      type="button"
-      [id]="id + 'eye-button'"
-      (click)="togglePasswordType()"
-      *ngIf="eyeButton"
-    >
-      <i class="bi bi-eye" *ngIf="type === 'password'"></i>
-      <i class="bi bi-eye-slash" *ngIf="type === 'text'"></i>
-    </button>
+      />
+    @if (eyeButton) {
+      <button
+        class="btn btn-outline-primary"
+        type="button"
+        [id]="id + 'eye-button'"
+        (click)="togglePasswordType()"
+        >
+        @if (type === 'password') {
+          <i class="bi bi-eye"></i>
+        }
+        @if (type === 'text') {
+          <i class="bi bi-eye-slash"></i>
+        }
+      </button>
+    }
 
-    <div class="invalid-feedback m-2" *ngIf="control?.invalid && (control?.dirty || control?.touched)">
-      <div *ngIf="control?.errors?.['required']">Dieses Feld ist ein Pflichtfeld.</div>
-      <div *ngIf="control?.errors?.['minlength']">
-        Die Mindestlänge für dieses Feld beträgt
-        {{control.errors?.['minlength']?.requiredLength}} Zeichen.
+    @if (control?.invalid && (control?.dirty || control?.touched)) {
+      <div class="invalid-feedback m-2">
+        @if (control?.errors?.['required']) {
+          <div>Dieses Feld ist ein Pflichtfeld.</div>
+        }
+        @if (control?.errors?.['minlength']) {
+          <div>
+            Die Mindestlänge für dieses Feld beträgt
+            {{control.errors?.['minlength']?.requiredLength}} Zeichen.
+          </div>
+        }
+        @if (control?.errors?.['maxlength']) {
+          <div>
+            Die maximale Länge für dieses Feld beträgt
+            {{control.errors?.['maxlength']?.requiredLength}} Zeichen.
+          </div>
+        }
+        @if (control?.errors?.['email']) {
+          <div>Bitte eine gültige E-Mail Adresse angeben.</div>
+        }
+        @if (control?.errors?.['pattern'] && type === 'tel') {
+          <div>Bitte eine gültige Telefonnummer angeben.</div>
+        }
+        @if (control?.errors?.['invalidEmail']) {
+          <div>Bitte eine gültige E-Mail Adresse angeben.</div>
+        }
+        @if (control?.errors?.['matching']) {
+          <div>Die Passwörter müssen überein stimmen.</div>
+        }
+        @if (control?.errors?.['invalidSecurePassword']) {
+          <div>
+            Das Passwort ist zu unsicher. Es muss mind. 8 Zeichen lang sein, ein Großbustabe, ein Kleinbuchstabe, eine Zahl
+            und ein Sonderzeichen enthalten.
+          </div>
+        }
       </div>
-      <div *ngIf="control?.errors?.['maxlength']">
-        Die maximale Länge für dieses Feld beträgt
-        {{control.errors?.['maxlength']?.requiredLength}} Zeichen.
-      </div>
-      <div *ngIf="control?.errors?.['email']">Bitte eine gültige E-Mail Adresse angeben.</div>
-      <div *ngIf="control?.errors?.['pattern'] && type === 'tel'">Bitte eine gültige Telefonnummer angeben.</div>
-      <div *ngIf="control?.errors?.['invalidEmail']">Bitte eine gültige E-Mail Adresse angeben.</div>
-      <div *ngIf="control?.errors?.['matching']">Die Passwörter müssen überein stimmen.</div>
-      <div *ngIf="control?.errors?.['invalidSecurePassword']">
-        Das Passwort ist zu unsicher. Es muss mind. 8 Zeichen lang sein, ein Großbustabe, ein Kleinbuchstabe, eine Zahl
-        und ein Sonderzeichen enthalten.
-      </div>
-    </div>
+    }
   </div>
 </div>

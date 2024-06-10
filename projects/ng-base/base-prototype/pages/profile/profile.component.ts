@@ -1,11 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AuthService, BasicUser, CMSFieldConfig, UserService } from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute } from '@angular/router';
+import { ModelFormComponent } from '@lenne.tech/ng-base/base-components';
 
 @Component({
   selector: 'base-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
+  standalone: true,
+  imports: [
+    ModelFormComponent
+  ]
 })
 export class ProfileComponent implements OnInit {
   @Input() config: { [key: string]: CMSFieldConfig } = {};

@@ -1,10 +1,6 @@
 /**
  * Exports for public API
  */
-
-// Module
-export * from './base-components.module';
-
 // Directives
 export * from './directives/sort.directive';
 export * from './directives/back-button.directive';

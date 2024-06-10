@@ -5,6 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 @Pipe({
   name: 'baseEllipses',
+  standalone: true,
 })
 export class EllipsesPipe implements PipeTransform {
   transform(value: string, limit: number): string {

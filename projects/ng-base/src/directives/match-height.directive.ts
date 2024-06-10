@@ -7,6 +7,7 @@ import { isPlatformBrowser } from '@angular/common';
  */
 @Directive({
   selector: '[ltMatchHeight]',
+  standalone: true
 })
 export class MatchHeightDirective implements AfterViewInit {
   // class name to match height

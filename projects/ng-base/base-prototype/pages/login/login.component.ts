@@ -1,13 +1,20 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ReactiveFormsModule, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsService, fullEmail, LoginConfig, UserService } from '@lenne.tech/ng-base/shared';
 import { Subscription } from 'rxjs';
+import { InputComponent } from '@lenne.tech/ng-base/base-components';
 
 @Component({
   selector: 'base-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    InputComponent,
+    RouterLink
+  ]
 })
 export class LoginComponent implements OnInit, OnDestroy {
   @Input() config: LoginConfig = {};

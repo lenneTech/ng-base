@@ -1,20 +1,28 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {
   FormsService,
   fullEmail,
+  RegisterConfig,
   securePasswordValidator,
   UserService,
-  Validation,
-  RegisterConfig,
+  Validation
 } from '@lenne.tech/ng-base/shared';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { CheckboxComponent, InputComponent } from '@lenne.tech/ng-base/base-components';
 
 @Component({
   selector: 'base-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    InputComponent,
+    RouterLink,
+    CheckboxComponent,
+  ]
 })
 export class RegisterComponent implements OnInit {
   @Input() config: RegisterConfig = {};

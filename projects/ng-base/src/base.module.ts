@@ -3,34 +3,13 @@ import { HttpLink } from 'apollo-angular/http';
 import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 
 import { apolloOptionsFactory } from './factories/apollo-options.factory';
-import { LazyLoadDirective } from './directives/lazy-load.directive';
-import { MatchHeightDirective } from './directives/match-height.directive';
-import { ResizableDirective } from './directives/resizable.directive';
-import { SafeHtmlPipe } from './pipes/safe-html.pipe';
-import { DateAgoPipe } from './pipes/date-ago.pipe';
 import { AuthService, BASE_MODULE_CONFIG, BaseModuleConfig, WsService } from '@lenne.tech/ng-base/shared';
-import { HttpClientModule } from '@angular/common/http';
-
-// Imported and exported elements
-const elements = [
-  // Directives
-  LazyLoadDirective,
-  MatchHeightDirective,
-  ResizableDirective,
-
-  // Pipes
-  SafeHtmlPipe,
-  DateAgoPipe,
-];
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 /**
  * Base module
  */
-@NgModule({
-  imports: [ApolloModule, HttpClientModule],
-  declarations: elements,
-  exports: [...elements, ApolloModule, HttpClientModule],
-})
+@NgModule({ exports: [ApolloModule], imports: [ApolloModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class BaseModule {
   /**
    * Set configuration of base module in root module of the app

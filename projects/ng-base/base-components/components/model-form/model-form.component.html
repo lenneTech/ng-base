@@ -1,65 +1,76 @@
-<div class="w-100" *ngIf="form">
-  <div class="d-flex flex-row justify-content-between mt-3">
-    <div class="responsive-back d-flex d-lg-none">
-      <i class="bi bi-arrow-left" routerLink="../"></i>
-    </div>
-    <h2 class="mb-0">
-      {{ label ? label : capitalizeFirstLetter(modelName) }} {{ operation === 'update' ? 'bearbeiten' : 'erstellen' }}
-    </h2>
-
-    <div class="d-none d-lg-flex flex-row align-items-center justify-content-end">
-      <button class="btn btn-outline-primary me-2" *ngIf="id && duplicate && !_loading" (click)="duplicateObject()">
-        Duplizieren
-      </button>
-      <button
-        class="btn btn-primary"
-        type="button"
-        [disabled]="!form.touched && !form.dirty"
-        (click)="submit(false)"
-        *ngIf="!_loading"
-      >
-        {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}
-      </button>
-      <button class="btn btn-primary" type="button" disabled *ngIf="_loading">
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}...
-      </button>
-    </div>
-  </div>
-
-  <form [formGroup]="form">
-    <base-model-form-sub
-      [id]="id"
-      [fields]="fields"
-      [config]="config"
-      [form]="form"
-      (imageChanged)="imageChanged($event)"
-      (fileChanged)="processFileChanges($event)"
-    ></base-model-form-sub>
-
-    <div class="d-none d-lg-flex mt-4" [ngClass]="id && delete ? 'justify-content-between' : 'justify-content-end'">
-      <div *ngIf="id && delete">
-        <button class="btn btn-danger" type="button" (click)="deleteObject()">Löschen</button>
+@if (form) {
+  <div class="w-100">
+    <div class="d-flex flex-row justify-content-between mt-3">
+      <div class="responsive-back d-flex d-lg-none">
+        <i class="bi bi-arrow-left" routerLink="../"></i>
       </div>
-      <div>
-        <button
-          class="btn btn-primary"
-          type="button"
-          [disabled]="!form.touched && !form.dirty"
-          (click)="submit(false)"
-          *ngIf="!_loading"
-        >
-          {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}
-        </button>
-        <button class="btn btn-primary" type="button" disabled *ngIf="_loading">
-          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}...
-        </button>
+      <h2 class="mb-0">
+        {{ label ? label : capitalizeFirstLetter(modelName) }} {{ operation === 'update' ? 'bearbeiten' : 'erstellen' }}
+      </h2>
+      <div class="d-none d-lg-flex flex-row align-items-center justify-content-end">
+        @if (id && duplicate && !_loading) {
+          <button class="btn btn-outline-primary me-2" (click)="duplicateObject()">
+            Duplizieren
+          </button>
+        }
+        @if (!_loading) {
+          <button
+            class="btn btn-primary"
+            type="button"
+            [disabled]="!form.touched && !form.dirty"
+            (click)="submit(false)"
+            >
+            {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}
+          </button>
+        }
+        @if (_loading) {
+          <button class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}...
+          </button>
+        }
+      </div>
+    </div>
+    <form [formGroup]="form">
+      <base-model-form-sub
+        [id]="id"
+        [fields]="fields"
+        [config]="config"
+        [form]="form"
+        (imageChanged)="imageChanged($event)"
+        (fileChanged)="processFileChanges($event)"
+      ></base-model-form-sub>
+      <div class="d-none d-lg-flex mt-4" [ngClass]="id && delete ? 'justify-content-between' : 'justify-content-end'">
+        @if (id && delete) {
+          <div>
+            <button class="btn btn-danger" type="button" (click)="deleteObject()">Löschen</button>
+          </div>
+        }
+        <div>
+          @if (!_loading) {
+            <button
+              class="btn btn-primary"
+              type="button"
+              [disabled]="!form.touched && !form.dirty"
+              (click)="submit(false)"
+              >
+            {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}
+          </button>
+        }
+        @if (_loading) {
+          <button class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            {{ operation === 'create' ? 'Erstellen' : 'Speichern' }}...
+          </button>
+        }
       </div>
     </div>
   </form>
 </div>
+}
 
-<div class="d-block d-lg-none responsive-action-button" *ngIf="showFavButton">
-  <base-fab-button [buttons]="fabButtons"></base-fab-button>
-</div>
+@if (showFavButton) {
+  <div class="d-block d-lg-none responsive-action-button">
+    <base-fab-button [buttons]="fabButtons"></base-fab-button>
+  </div>
+}

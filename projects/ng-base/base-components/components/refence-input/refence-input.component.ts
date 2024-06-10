@@ -2,11 +2,21 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { GraphQLRequestType, GraphQLService, SortOrderEnum } from '@lenne.tech/ng-base/shared';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { NgClass } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TagsComponent } from '../tags/tags.component';
 
 @Component({
   selector: 'base-refence-input',
   templateUrl: './refence-input.component.html',
   styleUrls: ['./refence-input.component.scss'],
+  standalone: true,
+  imports: [
+    NgClass,
+    ReactiveFormsModule,
+    FormsModule,
+    TagsComponent
+  ]
 })
 export class RefenceInputComponent implements OnInit, OnDestroy {
   @Input() id: string;

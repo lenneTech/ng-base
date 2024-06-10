@@ -1,203 +1,233 @@
-<div *ngIf="!id && !createMode">
-  <div class="w-100 d-flex flex-row justify-content-between align-items-center mb-2 mb-lg-4">
-    <h2 id="model-table-top" class="mb-0" *ngIf="modelName">
-      {{
-        modelConfig?.plural
+@if (!id && !createMode) {
+  <div>
+    <div class="w-100 d-flex flex-row justify-content-between align-items-center mb-2 mb-lg-4">
+      @if (modelName) {
+        <h2 id="model-table-top" class="mb-0">
+          {{
+          modelConfig?.plural
           ? modelConfig?.plural
           : modelConfig?.label
           ? modelConfig?.label
           : capitalizeFirstLetter(camelModelName) + 's'
-      }}
-    </h2>
-    <div class="d-flex align-items-center d-none d-lg-block">
-      <input #importFile type="file" accept=".json" class="d-none" (change)="processImport($event)" />
-      <div class="btn-group me-4" *ngIf="import || export">
-        <i
-          class="bi bi-three-dots-vertical"
-          id="settingsDropdown"
-          type="button"
-          data-bs-toggle="dropdown"
-          data-bs-auto-close="true"
-          aria-expanded="false"
-        ></i>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
-          <li><a class="dropdown-item cursor-pointer" *ngIf="export" (click)="processExport()">Export</a></li>
-          <li><a class="dropdown-item cursor-pointer" *ngIf="import" (click)="importFile.click()"> Import </a></li>
-        </ul>
+          }}
+        </h2>
+      }
+      <div class="d-flex align-items-center d-none d-lg-block">
+        <input #importFile type="file" accept=".json" class="d-none" (change)="processImport($event)" />
+        @if (import || export) {
+          <div class="btn-group me-4">
+            <i
+              class="bi bi-three-dots-vertical"
+              id="settingsDropdown"
+              type="button"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="true"
+              aria-expanded="false"
+            ></i>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
+              <li>@if (export) {
+                <a class="dropdown-item cursor-pointer" (click)="processExport()">Export</a>
+              }</li>
+              <li>@if (import) {
+                <a class="dropdown-item cursor-pointer" (click)="importFile.click()"> Import </a>
+              }</li>
+            </ul>
+          </div>
+        }
+        @if (create) {
+          <button class="btn btn-primary" (click)="createNewObject()">Erstellen</button>
+        }
       </div>
-      <button class="btn btn-primary" (click)="createNewObject()" *ngIf="create">Erstellen</button>
     </div>
-  </div>
-
-  <div class="container-fluid" *ngIf="totalCount >= 0">
-    <nav class="d-flex row">
-      <div class="col-12 col-md-2"></div>
-      <ul class="pagination justify-content-center col-12 col-md-8">
-        <li class="page-item">
-          <a
-            class="page-link"
-            (click)="selectPage(selectedPageIndex - 1)"
-            aria-label="Previous"
-            [ngClass]="{ disabled: selectedPageIndex - 1 > 0 }"
-          >
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li class="page-item" *ngFor="let page of pages; let i = index">
-          <a class="page-link" [ngClass]="{ active: selectedPageIndex === i }" (click)="selectPage(i)">{{ i + 1 }}</a>
-        </li>
-        <li class="page-item">
-          <a
-            class="page-link"
-            (click)="selectPage(selectedPageIndex + 1)"
-            aria-label="Next"
-            [ngClass]="{ disabled: pages[selectedPageIndex + 1] }"
-          >
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-
-      <div class="col-12 col-md-2">
-        <base-select [options]="pageOptions" [control]="pageItemsLimitControl"></base-select>
+    @if (totalCount >= 0) {
+      <div class="container-fluid">
+        <nav class="d-flex row">
+          <div class="col-12 col-md-2"></div>
+          <ul class="pagination justify-content-center col-12 col-md-8">
+            <li class="page-item">
+              <a
+                class="page-link"
+                (click)="selectPage(selectedPageIndex - 1)"
+                aria-label="Previous"
+                [ngClass]="{ disabled: selectedPageIndex - 1 > 0 }"
+                >
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            @for (page of pages; track page; let i = $index) {
+              <li class="page-item">
+                <a class="page-link" [ngClass]="{ active: selectedPageIndex === i }" (click)="selectPage(i)">{{ i + 1 }}</a>
+              </li>
+            }
+            <li class="page-item">
+              <a
+                class="page-link"
+                (click)="selectPage(selectedPageIndex + 1)"
+                aria-label="Next"
+                [ngClass]="{ disabled: pages[selectedPageIndex + 1] }"
+                >
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+          <div class="col-12 col-md-2">
+            <base-select [options]="pageOptions" [control]="pageItemsLimitControl"></base-select>
+          </div>
+        </nav>
       </div>
-    </nav>
-  </div>
-
-  <div
-    class="table-responsive"
-    [ltContextMenu]="contextMenu"
-    [selectors]="'.object-col'"
-    #contextMenuData="contextMenuData"
-  >
-    <table class="table table-hover bg-white d-none d-lg-table">
-      <thead>
-        <tr>
-          <th
-            scope="col"
-            *ngFor="let field of availableFields"
-            [baseSort]="objects"
-            (baseSorted)="objects = $event"
-            data-order="desc"
-            [attr.data-name]="field"
-          >
-            {{ tableFields[field]?.label ? tableFields[field]?.label : capitalizeFirstLetter(field) }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="object-col" *ngFor="let object of objects" [id]="object[uniqueField]">
-          <td class="cursor-pointer" *ngFor="let field of availableFields" (click)="selectId(object)">
-            <ng-container *ngIf="tableFields[field]?.dateFormat">
-              {{ object[field] | date : tableFields[field]?.dateFormat }} Uhr
-            </ng-container>
-
-            <ng-container *ngIf="tableFields[field]?.enumValues">
-              {{ tableFields[field]?.enumValues[object[field]]?.text }}
-            </ng-container>
-
-            <ng-container *ngIf="!tableFields[field]?.dateFormat && !tableFields[field]?.enumValues">
-              {{ object[field] | baseEllipses : 60 }}
-            </ng-container>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="d-flex d-lg-none flex-column flex-grow-1">
-      <div class="table-card" *ngFor="let object of objects" [id]="object[uniqueField]">
-        <div class="table-card-entry" *ngFor="let field of availableFields; let i = index" (click)="selectId(object)">
-          <b *ngIf="i > 0"
-            >{{ tableFields[field]?.label ? tableFields[field]?.label : capitalizeFirstLetter(field) }}:</b
-          >
-          <p [ngClass]="{ 'table-card-entry-first': i === 0 }">
-            <ng-container *ngIf="tableFields[field]?.dateFormat">
-              {{ object[field] | date : tableFields[field]?.dateFormat }} Uhr
-            </ng-container>
-
-            <ng-container *ngIf="tableFields[field]?.enumValues">
-              {{ tableFields[field]?.enumValues[object[field]]?.text }}
-            </ng-container>
-
-            <ng-container *ngIf="!tableFields[field]?.dateFormat && !tableFields[field]?.enumValues">
-              {{ object[field] | baseEllipses : 60 }}
-            </ng-container>
-          </p>
+    }
+    <div
+      class="table-responsive"
+      [ltContextMenu]="contextMenu"
+      [selectors]="'.object-col'"
+      #contextMenuData="contextMenuData"
+      >
+      <table class="table table-hover bg-white d-none d-lg-table">
+        <thead>
+          <tr>
+            @for (field of availableFields; track field) {
+              <th
+                scope="col"
+                [baseSort]="objects"
+                (baseSorted)="objects = $event"
+                data-order="desc"
+                [attr.data-name]="field"
+                >
+                {{ tableFields[field]?.label ? tableFields[field]?.label : capitalizeFirstLetter(field) }}
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (object of objects; track object) {
+            <tr class="object-col" [id]="object[uniqueField]">
+              @for (field of availableFields; track field) {
+                <td class="cursor-pointer" (click)="selectId(object)">
+                  @if (tableFields[field]?.dateFormat) {
+                    {{ object[field] | date : tableFields[field]?.dateFormat }} Uhr
+                  }
+                  @if (tableFields[field]?.enumValues) {
+                    {{ tableFields[field]?.enumValues[object[field]]?.text }}
+                  }
+                  @if (!tableFields[field]?.dateFormat && !tableFields[field]?.enumValues) {
+                    {{ object[field] | baseEllipses : 60 }}
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+      <div class="d-flex d-lg-none flex-column flex-grow-1">
+        @for (object of objects; track object) {
+          <div class="table-card" [id]="object[uniqueField]">
+            @for (field of availableFields; track field; let i = $index) {
+              <div class="table-card-entry" (click)="selectId(object)">
+                @if (i > 0) {
+                  <b
+                    >{{ tableFields[field]?.label ? tableFields[field]?.label : capitalizeFirstLetter(field) }}:</b
+                    >
+                  }
+                  <p [ngClass]="{ 'table-card-entry-first': i === 0 }">
+                    @if (tableFields[field]?.dateFormat) {
+                      {{ object[field] | date : tableFields[field]?.dateFormat }} Uhr
+                    }
+                    @if (tableFields[field]?.enumValues) {
+                      {{ tableFields[field]?.enumValues[object[field]]?.text }}
+                    }
+                    @if (!tableFields[field]?.dateFormat && !tableFields[field]?.enumValues) {
+                      {{ object[field] | baseEllipses : 60 }}
+                    }
+                  </p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+        @if (totalCount >= 0) {
+          <div class="container-fluid">
+            <nav class="d-flex row">
+              <div class="col-12 col-md-2"></div>
+              <ul class="pagination justify-content-center col-12 col-md-8">
+                <li class="page-item">
+                  <a
+                    class="page-link"
+                    (click)="selectPage(selectedPageIndex - 1)"
+                    aria-label="Previous"
+                    [ngClass]="{ disabled: selectedPageIndex - 1 > 0 }"
+                    >
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                @for (page of pages; track page; let i = $index) {
+                  <li class="page-item">
+                    <a class="page-link" [ngClass]="{ active: selectedPageIndex === i }" (click)="selectPage(i)">{{ i + 1 }}</a>
+                  </li>
+                }
+                <li class="page-item">
+                  <a
+                    class="page-link"
+                    (click)="selectPage(selectedPageIndex + 1)"
+                    aria-label="Next"
+                    [ngClass]="{ disabled: pages[selectedPageIndex + 1] }"
+                    >
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+              <div class="col-12 col-md-2">
+                <base-select [options]="pageOptions" [control]="pageItemsLimitControl"></base-select>
+              </div>
+            </nav>
+          </div>
+        }
+        <div class="context-menu" #contextMenu>
+          <div class="context-menu-item" (click)="selectId({ id: contextMenuData.clickedElement?.id })">Bearbeiten</div>
+          <div class="context-menu-item" (click)="openNewTab({ id: contextMenuData.clickedElement?.id })">
+            In neuen Tab öffnen
+          </div>
+          @if (duplicate) {
+            <div class="context-menu-item" (click)="duplicateObject(contextMenuData.clickedElement?.id)">
+              Duplizieren
+            </div>
+          }
+          @if (delete) {
+            <div class="context-menu-item" (click)="deleteObject(contextMenuData.clickedElement?.id)">
+              Löschen
+            </div>
+          }
         </div>
       </div>
     </div>
+  }
 
-    <div class="container-fluid" *ngIf="totalCount >= 0">
-      <nav class="d-flex row">
-        <div class="col-12 col-md-2"></div>
-        <ul class="pagination justify-content-center col-12 col-md-8">
-          <li class="page-item">
-            <a
-              class="page-link"
-              (click)="selectPage(selectedPageIndex - 1)"
-              aria-label="Previous"
-              [ngClass]="{ disabled: selectedPageIndex - 1 > 0 }"
-            >
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-          <li class="page-item" *ngFor="let page of pages; let i = index">
-            <a class="page-link" [ngClass]="{ active: selectedPageIndex === i }" (click)="selectPage(i)">{{ i + 1 }}</a>
-          </li>
-          <li class="page-item">
-            <a
-              class="page-link"
-              (click)="selectPage(selectedPageIndex + 1)"
-              aria-label="Next"
-              [ngClass]="{ disabled: pages[selectedPageIndex + 1] }"
-            >
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        </ul>
-
-        <div class="col-12 col-md-2">
-          <base-select [options]="pageOptions" [control]="pageItemsLimitControl"></base-select>
-        </div>
-      </nav>
+  @if (id || createMode) {
+    <div class="w-100">
+      <button class="d-none d-lg-block btn btn-outline-primary mb-3" (click)="selectId('')">Zurück</button>
+      @if (!modelConfig?.customTemplateComponent) {
+        <base-model-form
+          [modelName]="camelModelName"
+          [label]="modelConfig?.label"
+          [config]="config"
+          [logging]="logging"
+          [id]="id"
+          (finished)="selectId('')"
+          [delete]="delete"
+          [duplicate]="duplicate"
+          [showFavButton]="showFavButton"
+        ></base-model-form>
+      }
+      @if (modelConfig?.customTemplateComponent) {
+        <ng-template #customFormTemplate></ng-template>
+      }
     </div>
+  }
 
-    <div class="context-menu" #contextMenu>
-      <div class="context-menu-item" (click)="selectId({ id: contextMenuData.clickedElement?.id })">Bearbeiten</div>
-      <div class="context-menu-item" (click)="openNewTab({ id: contextMenuData.clickedElement?.id })">
-        In neuen Tab öffnen
-      </div>
-      <div class="context-menu-item" *ngIf="duplicate" (click)="duplicateObject(contextMenuData.clickedElement?.id)">
-        Duplizieren
-      </div>
-      <div class="context-menu-item" *ngIf="delete" (click)="deleteObject(contextMenuData.clickedElement?.id)">
-        Löschen
-      </div>
-    </div>
+  <div class="responsive-action-button d-block d-lg-none">
+    @if (!(id || createMode) && showFavButton) {
+      <base-fab-button
+        [fabIcon]="'bi-plus'"
+        (click)="createNewObject()"
+      ></base-fab-button>
+    }
   </div>
-</div>
-
-<div class="w-100" *ngIf="id || createMode">
-  <button class="d-none d-lg-block btn btn-outline-primary mb-3" (click)="selectId('')">Zurück</button>
-  <base-model-form
-    *ngIf="!modelConfig?.customTemplateComponent"
-    [modelName]="camelModelName"
-    [label]="modelConfig?.label"
-    [config]="config"
-    [logging]="logging"
-    [id]="id"
-    (finished)="selectId('')"
-    [delete]="delete"
-    [duplicate]="duplicate"
-    [showFavButton]="showFavButton"
-  ></base-model-form>
-  <ng-template *ngIf="modelConfig?.customTemplateComponent" #customFormTemplate></ng-template>
-</div>
-
-<div class="responsive-action-button d-block d-lg-none">
-  <base-fab-button
-    [fabIcon]="'bi-plus'"
-    (click)="createNewObject()"
-    *ngIf="!(id || createMode) && showFavButton"
-  ></base-fab-button>
-</div>

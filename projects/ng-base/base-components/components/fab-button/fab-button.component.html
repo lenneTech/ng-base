@@ -1,18 +1,23 @@
 <div class="fab-container" [ngClass]="{ 'fab-container-active': toggle }">
   <div class="fab shadow">
     <div class="fab-content" (click)="toggle = !toggle">
-      <i class="bi bi-x-lg" *ngIf="toggle"></i>
-      <i class="bi" *ngIf="!toggle" [ngClass]="fabIcon"></i>
+      @if (toggle) {
+        <i class="bi bi-x-lg"></i>
+      }
+      @if (!toggle) {
+        <i class="bi" [ngClass]="fabIcon"></i>
+      }
     </div>
   </div>
-  <div
-    class="sub-button shadow"
-    *ngFor="let button of buttons"
-    (click)="button.event.emit(true); toggle = !toggle"
-    [ngStyle]="{ backgroundColor: button.color }"
-  >
-    <a [routerLink]="button.routerLink">
-      <i class="bi" [ngClass]="button.icon"></i>
-    </a>
-  </div>
+  @for (button of buttons; track button) {
+    <div
+      class="sub-button shadow"
+      (click)="button.event.emit(true); toggle = !toggle"
+      [ngStyle]="{ backgroundColor: button.color }"
+      >
+      <a [routerLink]="button.routerLink">
+        <i class="bi" [ngClass]="button.icon"></i>
+      </a>
+    </div>
+  }
 </div>

@@ -6,6 +6,7 @@ import { ToastService, ToastType, UserService } from '@lenne.tech/ng-base/shared
   selector: 'base-email-verification',
   templateUrl: './email-verification.component.html',
   styleUrls: ['./email-verification.component.scss'],
+  standalone: true,
 })
 export class EmailVerificationComponent implements OnInit {
   token: string;

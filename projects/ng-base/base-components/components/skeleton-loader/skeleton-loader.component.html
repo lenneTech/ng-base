@@ -1,15 +1,23 @@
-<ng-container *ngIf="type" [ngSwitch]="type">
-  <div *ngSwitchCase="'LINE'">
-    <div class="line-loader-wrapper">
-      <div class="line-loader" *ngFor="let key of convertToArray(count)"></div>
-    </div>
-  </div>
-
-  <div *ngSwitchCase="'RECTANGLE'">
-    <div class="line-rectangle" [ngStyle]="{ height: size + 'px' }"></div>
-  </div>
-
-  <div *ngSwitchCase="'AVATAR'">
-    <div class="line-avatar" [ngStyle]="{ height: size + 'px', width: size + 'px' }"></div>
-  </div>
-</ng-container>
+@if (type) {
+  @switch (type) {
+    @case ('LINE') {
+      <div>
+        <div class="line-loader-wrapper">
+          @for (key of convertToArray(count); track key) {
+            <div class="line-loader"></div>
+          }
+        </div>
+      </div>
+    }
+    @case ('RECTANGLE') {
+      <div>
+        <div class="line-rectangle" [ngStyle]="{ height: size + 'px' }"></div>
+      </div>
+    }
+    @case ('AVATAR') {
+      <div>
+        <div class="line-avatar" [ngStyle]="{ height: size + 'px', width: size + 'px' }"></div>
+      </div>
+    }
+  }
+}
