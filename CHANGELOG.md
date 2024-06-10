@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [17.0.1](https://github.com/lenneTech/ng-base/compare/v17.0.0...v17.0.1) (2023-11-28)
+
+### Bug Fixes
+
+- added isPlatformBrowser ([990ad58](https://github.com/lenneTech/ng-base/commit/990ad5871b5785e93f857b078d863b74efe1b4df))
+
+## [16.2.0](https://github.com/lenneTech/ng-base/compare/v16.1.0...v16.2.0) (2023-10-27)
+
+## [14.37.0](https://github.com/lenneTech/ng-base/compare/v14.36.4...v14.37.0) (2023-08-21)
+
+### Features
+
+- added cypress attribute data to base components ([e4d3e0e](https://github.com/lenneTech/ng-base/commit/e4d3e0e2d925675a41469fad1bdba6715f2bf119))
+
+### Bug Fixes
+
+- added isPlatformBrowser to authguard to fix issues when reloading a guarded route ([23b2385](https://github.com/lenneTech/ng-base/commit/23b238580a05bf84e9edb6293c3c9d164544762b))
+
+### [14.36.4](https://github.com/lenneTech/ng-base/compare/v16.0.0...v14.36.4) (2023-07-09)
+
+## [16.1.0](https://github.com/lenneTech/ng-base/compare/v16.0.0...v16.1.0) (2023-08-22)
+
+### Features
+
+- added cypress attribute data to base components and added isPlatformBrowser to authguard ([cfeb2a8](https://github.com/lenneTech/ng-base/commit/cfeb2a8fe63b99e6b16f658cd64f8126d2ec181e))
+
 ## [14.37.0](https://github.com/lenneTech/ng-base/compare/v14.36.4...v14.37.0) (2023-08-21)
 
 ### Features

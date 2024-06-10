@@ -1,6 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { FormsService, fullEmail, securePasswordValidator, UserService, Validation, RegisterConfig } from '@lenne.tech/ng-base/shared';
+import {
+  FormsService,
+  fullEmail,
+  securePasswordValidator,
+  UserService,
+  Validation,
+  RegisterConfig,
+} from '@lenne.tech/ng-base/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -48,9 +55,7 @@ export class RegisterComponent implements OnInit {
         passwordConfirm: new UntypedFormControl('', [Validators.required, securePasswordValidator()]),
         privacy: new UntypedFormControl(false, Validators.requiredTrue),
       },
-      {
-        validators: [Validation.match('password', 'passwordConfirm')],
-      }
+      Validation.match('password', 'passwordConfirm') as any
     );
   }
 

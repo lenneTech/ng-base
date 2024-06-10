@@ -1,5 +1,5 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService, BASE_MODULE_CONFIG, BaseModuleConfig } from '@lenne.tech/ng-base/shared';
 import { isPlatformBrowser } from '@angular/common';
@@ -8,7 +8,7 @@ import { isPlatformBrowser } from '@angular/common';
  * Authentication guard
  */
 @Injectable()
-export class AuthGuard implements CanActivate, CanActivateChild {
+export class AuthGuard {
   /**
    * Imports
    */
