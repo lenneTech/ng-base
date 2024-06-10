@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [18.1.0](https://github.com/lenneTech/ng-base/compare/v17.0.1...v18.1.0) (2024-06-10)
+
+### Features
+
+- deactivate storybook ([3489c5a](https://github.com/lenneTech/ng-base/commit/3489c5ae1ccfa007bf80a2c3781f7681ea2d4e01))
+- remove stories ([9518fa8](https://github.com/lenneTech/ng-base/commit/9518fa84b5ed2df6fb608e2807b134facb7eb059))
+- update to angular 18 ([bf96e38](https://github.com/lenneTech/ng-base/commit/bf96e3830227b833fc1125abe0f65d8d3157e505))
+
 ### [17.0.1](https://github.com/lenneTech/ng-base/compare/v17.0.0...v17.0.1) (2023-11-28)
 
 ### Bug Fixes
