@@ -1,28 +1,28 @@
-name: Storybook
-on:
-  push:
-    branches:
-      - main # if any push happens on branch `main`, run this workflow. You could also add `paths` to detect changes in specific folder
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
-    steps:
-      - uses: actions/checkout@v1
-      - name: Use Node.js 18
-        uses: actions/setup-node@v1
-        with:
-          node-version: 18
-      - name: Install and Build
-        run: |
-          npm install
-          npm run build
-          npm run build-storybook
-
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@3.6.2
-        with:
-          GITHUB_TOKEN: ${{ secrets.GHPAGES_TOKEN }}
-          branch: Documentation
-          folder: docs
+#name: Storybook
+#on:
+#  push:
+#    branches:
+#      - main # if any push happens on branch `main`, run this workflow. You could also add `paths` to detect changes in specific folder
+#
+#jobs:
+#  build-and-deploy:
+#    runs-on: ubuntu-latest
+#    if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Use Node.js 18
+#        uses: actions/setup-node@v1
+#        with:
+#          node-version: 18
+#      - name: Install and Build
+#        run: |
+#          npm install
+#          npm run build
+#          npm run build-storybook
+#
+#      - name: Deploy
+#        uses: JamesIves/github-pages-deploy-action@3.6.2
+#        with:
+#          GITHUB_TOKEN: ${{ secrets.GHPAGES_TOKEN }}
+#          branch: Documentation
+#          folder: docs
