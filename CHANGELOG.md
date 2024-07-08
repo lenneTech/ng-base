@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [18.1.2](https://github.com/lenneTech/ng-base/compare/v18.1.1...v18.1.2) (2024-07-08)
+
+### Bug Fixes
+
+- remove BrowserAnimationsModule ([6bb9396](https://github.com/lenneTech/ng-base/commit/6bb93963714d2ebe613520fc5ecafbbe76ae3296))
+
 ### [18.1.1](https://github.com/lenneTech/ng-base/compare/v18.1.0...v18.1.1) (2024-07-08)
 
 ### Bug Fixes
