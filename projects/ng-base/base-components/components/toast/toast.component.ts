@@ -3,13 +3,14 @@ import { animate, query, style, transition, trigger } from '@angular/animations'
 import { Subscription } from 'rxjs';
 import { Toast, ToastService, ToastType } from '@lenne.tech/ng-base/shared';
 import { NgClass } from '@angular/common';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const toastAnimation = trigger('toastAnimation', [
   transition('* <=> *', [
     query(
       ':enter',
       [style({ transform: 'translateX({{ x }})' }), animate('200ms ease-in', style({ transform: 'translateX(0%)' }))],
-      { optional: true }
+      { optional: true },
     ),
     query(':leave', animate('200ms ease-in', style({ transform: 'translateX({{ x }})' })), { optional: true }),
   ]),
@@ -21,9 +22,7 @@ const toastAnimation = trigger('toastAnimation', [
   styleUrls: ['./toast.component.scss'],
   animations: [toastAnimation],
   standalone: true,
-  imports: [
-    NgClass
-  ]
+  imports: [NgClass, BrowserAnimationsModule],
 })
 export class ToastComponent implements OnInit, OnDestroy {
   toasts: Toast[] = [];
@@ -39,7 +38,7 @@ export class ToastComponent implements OnInit, OnDestroy {
         next: (value) => {
           this.toasts = value;
         },
-      })
+      }),
     );
   }
 
