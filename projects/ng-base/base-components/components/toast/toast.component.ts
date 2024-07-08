@@ -22,7 +22,7 @@ const toastAnimation = trigger('toastAnimation', [
   styleUrls: ['./toast.component.scss'],
   animations: [toastAnimation],
   standalone: true,
-  imports: [NgClass, BrowserAnimationsModule],
+  imports: [NgClass],
 })
 export class ToastComponent implements OnInit, OnDestroy {
   toasts: Toast[] = [];
