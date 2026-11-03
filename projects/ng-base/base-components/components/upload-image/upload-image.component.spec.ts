@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideBaseTesting } from '@lenne.tech/ng-base/testing/base-testing.providers';
 
 import { UploadImageComponent } from './upload-image.component';
 
@@ -8,8 +9,9 @@ describe('UploadImageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [UploadImageComponent],
-}).compileComponents();
+      imports: [UploadImageComponent],
+      providers: [provideBaseTesting()],
+    }).compileComponents();
   });
 
   beforeEach(() => {

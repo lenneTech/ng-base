@@ -1,6 +1,6 @@
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { isPlatformBrowser } from '@angular/common';
 
 interface SEOData {
   title: string;
@@ -12,6 +12,10 @@ interface SEOData {
 
 /**
  * SEO service for setting HTML meta data
+ *
+ * Sets the same tags in the browser and during server-side rendering: crawlers for link previews read the HTML of
+ * the server and run no JavaScript. The page URL is taken from the document, which also exists on the server
+ * (window does not); pass `url` to set a canonical URL instead, e.g. when the server sits behind a proxy.
  */
 @Injectable({
   providedIn: 'root',
@@ -20,12 +24,11 @@ export class SEOService {
   constructor(
     private titleService: Title,
     private metaTagService: Meta,
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   public initPageForSEO(input: SEOData) {
     this.setGeneralData(input);
-    this.setTwitterData(input);
     this.setTwitterData(input);
     this.setFacebookData(input);
 
@@ -52,13 +55,11 @@ export class SEOService {
    * @private
    */
   private setTwitterData(data: SEOData) {
-    if (isPlatformBrowser(this.platformId)) {
-      this.metaTagService.updateTag({ name: 'twitter:title', content: data.title });
-      this.metaTagService.updateTag({ name: 'twitter:description', content: data.description });
-      this.metaTagService.updateTag({
-        property: 'twitter:url',
-        content: data.url ? data.url : window?.location.href,
-      });
+    this.metaTagService.updateTag({ name: 'twitter:title', content: data.title });
+    this.metaTagService.updateTag({ name: 'twitter:description', content: data.description });
+    const url = this.getUrl(data);
+    if (url) {
+      this.metaTagService.updateTag({ property: 'twitter:url', content: url });
     }
 
     if (data.image) {
@@ -81,24 +82,33 @@ export class SEOService {
    * @private
    */
   private setFacebookData(data: SEOData) {
-    if (isPlatformBrowser(this.platformId)) {
-      this.metaTagService.updateTag({ property: 'og:title', content: data.title });
-      this.metaTagService.updateTag({ property: 'og:description', content: data.description });
-      this.metaTagService.updateTag({
-        property: 'og:type',
-        content: 'website',
-      });
-      this.metaTagService.updateTag({
-        property: 'og:url',
-        content: data.url ? data.url : window?.location.href,
-      });
+    this.metaTagService.updateTag({ property: 'og:title', content: data.title });
+    this.metaTagService.updateTag({ property: 'og:description', content: data.description });
+    this.metaTagService.updateTag({
+      property: 'og:type',
+      content: 'website',
+    });
+    const url = this.getUrl(data);
+    if (url) {
+      this.metaTagService.updateTag({ property: 'og:url', content: url });
     }
+
     if (data.image) {
       this.metaTagService.updateTag({
         property: 'og:image',
         content: data.image,
       });
     }
+  }
+
+  /**
+   * URL of the page: the given one, otherwise the one of the document (none if neither exists)
+   *
+   * @param data
+   * @private
+   */
+  private getUrl(data: SEOData): string | undefined {
+    return data.url || this.document?.location?.href || undefined;
   }
 
   /**
