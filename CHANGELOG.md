@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [18.1.3](https://github.com/lenneTech/ng-base/compare/v18.1.2...v18.1.3) (2026-11-03)
+
+### Bug Fixes
+
+- **register:** show the link to the login page ([60e8a8a](https://github.com/lenneTech/ng-base/commit/60e8a8a4ab0f828bfc980ee79627fd9fb76ddaa3))
+- **seo:** set the meta tags during server-side rendering ([2df7b9a](https://github.com/lenneTech/ng-base/commit/2df7b9a5fb24996926dd56805b8a0b16cddda787))
+
 ### [18.1.2](https://github.com/lenneTech/ng-base/compare/v18.1.1...v18.1.2) (2024-07-08)
 
 ### Bug Fixes
