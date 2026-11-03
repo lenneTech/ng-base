@@ -1,17 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideBaseTesting } from '@lenne.tech/ng-base/testing/base-testing.providers';
 
-import { ResetPassword } from './set-password.component';
+import { SetPasswordComponent } from './set-password.component';
 
-describe('SetNewPasswordComponent', () => {
-  let component: ResetPassword;
-  let fixture: ComponentFixture<ResetPassword>;
+describe('SetPasswordComponent', () => {
+  let component: SetPasswordComponent;
+  let fixture: ComponentFixture<SetPasswordComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [ResetPassword],
-}).compileComponents();
+      imports: [SetPasswordComponent],
+      providers: [provideBaseTesting()],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(ResetPassword);
+    fixture = TestBed.createComponent(SetPasswordComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

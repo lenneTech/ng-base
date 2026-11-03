@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideBaseTesting } from '@lenne.tech/ng-base/testing/base-testing.providers';
 
 import { SkeletonLoaderComponent } from './skeleton-loader.component';
 
@@ -8,8 +9,9 @@ describe('SkeletonLoaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [SkeletonLoaderComponent],
-}).compileComponents();
+      imports: [SkeletonLoaderComponent],
+      providers: [provideBaseTesting()],
+    }).compileComponents();
   });
 
   beforeEach(() => {

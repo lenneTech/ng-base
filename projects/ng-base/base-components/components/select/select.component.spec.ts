@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl } from '@angular/forms';
+import { provideBaseTesting } from '@lenne.tech/ng-base/testing/base-testing.providers';
 
 import { SelectComponent } from './select.component';
 
@@ -8,13 +10,15 @@ describe('SelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [SelectComponent],
-}).compileComponents();
+      imports: [SelectComponent],
+      providers: [provideBaseTesting()],
+    }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SelectComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('control', new FormControl(''));
     fixture.detectChanges();
   });
 

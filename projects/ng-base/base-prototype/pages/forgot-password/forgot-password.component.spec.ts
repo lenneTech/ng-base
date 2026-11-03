@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideBaseTesting } from '@lenne.tech/ng-base/testing/base-testing.providers';
 
 import { ForgotPasswordComponent } from './forgot-password.component';
 
@@ -8,8 +9,9 @@ describe('ForgotPasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [ForgotPasswordComponent],
-}).compileComponents();
+      imports: [ForgotPasswordComponent],
+      providers: [provideBaseTesting()],
+    }).compileComponents();
   });
 
   beforeEach(() => {

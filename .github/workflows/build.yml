@@ -21,6 +21,8 @@ jobs:
         run: npm install
       - name: Lint
         run: npm run lint
+      - name: Test
+        run: npm run test:ci
       - name: Build
         run: npm run build
       - name: Save build

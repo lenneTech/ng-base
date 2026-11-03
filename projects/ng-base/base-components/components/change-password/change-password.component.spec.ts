@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideBaseTesting } from '@lenne.tech/ng-base/testing/base-testing.providers';
 
 import { ChangePasswordComponent } from './change-password.component';
 
@@ -8,8 +9,9 @@ describe('ChangePasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [ChangePasswordComponent],
-}).compileComponents();
+      imports: [ChangePasswordComponent],
+      providers: [provideBaseTesting()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ChangePasswordComponent);
     component = fixture.componentInstance;

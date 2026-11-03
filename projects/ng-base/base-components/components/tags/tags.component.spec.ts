@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideBaseTesting } from '@lenne.tech/ng-base/testing/base-testing.providers';
 
 import { TagsComponent } from './tags.component';
 
@@ -8,8 +9,9 @@ describe('TagsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [TagsComponent],
-}).compileComponents();
+      imports: [TagsComponent],
+      providers: [provideBaseTesting()],
+    }).compileComponents();
   });
 
   beforeEach(() => {
