@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
     steps:
-      - uses: actions/checkout@v1
-      - name: Use Node.js 18
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: Install dependencies
         run: npm install
       - name: Lint
@@ -26,7 +26,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Save build
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: ./dist/ng-base
