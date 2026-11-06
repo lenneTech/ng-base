@@ -511,10 +511,17 @@ export interface LtAiUsageState {
  * prompts ("Vorlagen") and use the visible ones (own private + tenant public)
  * in a chat.
  */
+/** Options of `LtAiPromptsService.load()`. */
+export interface LtAiPromptsLoadOptions {
+  /** Also the disabled prompts (management pages; nest-server 12.7.0, ignored by older servers). Default `false`. */
+  includeDisabled?: boolean;
+}
+
 export interface LtAiPromptsState {
   create: (input: LtAiPromptInput) => Promise<LtAiPrompt>;
+  enabledPrompts: Signal<LtAiPrompt[]>;
   error: Signal<null | string>;
-  load: () => Promise<void>;
+  load: (options?: LtAiPromptsLoadOptions) => Promise<void>;
   loading: Signal<boolean>;
   prompts: Signal<LtAiPrompt[]>;
   remove: (id: string) => Promise<LtAiPrompt>;

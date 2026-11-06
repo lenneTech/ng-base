@@ -43,6 +43,7 @@ __screenshots__/
 /playwright-report
 /projects/playground/test-results
 /projects/playground/playwright-report
+/projects/playground/.e2e-logs
 
 # Environment
 .env

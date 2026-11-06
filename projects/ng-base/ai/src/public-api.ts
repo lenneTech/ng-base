@@ -51,6 +51,7 @@ export type {
   LtAiStatusState,
   LtAiSettingsState,
   LtAiUsageState,
+  LtAiPromptsLoadOptions,
   LtAiPromptsState,
   LtAiAdminState,
   LtAiPlaceholdersState,

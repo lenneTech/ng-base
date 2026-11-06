@@ -1,13 +1,16 @@
-import { inject, Service, signal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
 
 import { LtAiCallState } from './ai-call-state';
 import { LtAiHttpService } from './ai-http';
-import type { LtAiPrompt, LtAiPromptInput, LtAiPromptsState } from './ai-types';
+import type { LtAiPrompt, LtAiPromptInput, LtAiPromptsLoadOptions, LtAiPromptsState } from './ai-types';
 
 /**
  * Saved prompts ("Vorlagen") of the user and the tenant (`GET/POST /ai/prompts`, `PUT/DELETE /ai/prompts/:id`), the
- * counterpart of `useLtAiPrompts()`. `load()` returns what the user may see (own + tenant), filtered by the server.
- * The list reloads after each mutation; ids are `encodeURIComponent`-ed.
+ * counterpart of `useLtAiPrompts()`. `load()` returns what the user may see (own + tenant), filtered by the server;
+ * `load({ includeDisabled: true })` adds the disabled ones for the management page (`GET /ai/prompts?includeDisabled=true`,
+ * nest-server 12.7.0; older servers ignore the parameter). The list reloads after each mutation in the mode of the last
+ * load; ids are `encodeURIComponent`-ed. The service is a root singleton, so a chat picker should read
+ * {@link enabledPrompts}, which stays correct while a management page holds the list with disabled prompts.
  */
 @Service()
 export class LtAiPromptsService implements LtAiPromptsState {
@@ -15,16 +18,24 @@ export class LtAiPromptsService implements LtAiPromptsState {
   private readonly calls = new LtAiCallState();
   private readonly list = signal<LtAiPrompt[]>([]);
   private loadSequence = 0;
+  private includeDisabled = false;
 
   readonly error = this.calls.error;
   readonly loading = this.calls.loading;
   readonly prompts = this.list.asReadonly();
+  /** The prompts a chat may offer: `prompts` without the disabled ones (`enabled: false`). */
+  readonly enabledPrompts = computed(() => this.list().filter((prompt) => prompt.enabled !== false));
 
-  /** Load the visible prompts; a failure sets `error`, empties the list and does not throw. Only the latest load is applied. */
-  async load(): Promise<void> {
+  /**
+   * Load the visible prompts (with `includeDisabled` also the disabled ones); a failure sets `error`, empties the list
+   * and does not throw. Only the latest load is applied.
+   */
+  async load(options: LtAiPromptsLoadOptions = {}): Promise<void> {
     const sequence = ++this.loadSequence;
+    this.includeDisabled = options.includeDisabled === true;
+    const path = this.includeDisabled ? '/prompts?includeDisabled=true' : '/prompts';
     try {
-      const prompts = await this.calls.run(() => this.http.request<LtAiPrompt[]>('GET', '/prompts'));
+      const prompts = await this.calls.run(() => this.http.request<LtAiPrompt[]>('GET', path));
       if (sequence === this.loadSequence) {
         this.list.set(prompts ?? []);
       }
@@ -53,7 +64,7 @@ export class LtAiPromptsService implements LtAiPromptsState {
   private async mutate(call: () => Promise<LtAiPrompt>): Promise<LtAiPrompt> {
     return this.calls.run(async () => {
       const result = await call();
-      await this.load();
+      await this.load({ includeDisabled: this.includeDisabled });
       return result;
     });
   }

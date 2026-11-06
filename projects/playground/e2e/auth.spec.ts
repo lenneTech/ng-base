@@ -41,6 +41,28 @@ test('register: the password leaves the browser hashed and the user is signed in
   }
 });
 
+test('the JWT cookie alone authenticates against the API: it holds the raw JWT nest-server reads', async ({ page, context, request, playwright }) => {
+  const user = await createUser(request, 'jwt-cookie');
+  await login(page, user);
+  // Cookie runs prefetch the JWT in the background; JWT runs store it with the sign-in answer.
+  await expect.poll(() => readJwtCookie(context), { timeout: 5000 }).toMatch(JWT_SHAPE);
+  const cookie = (await context.cookies(SITE_URL)).find((entry) => entry.name === 'lt-jwt-token');
+  expect(cookie?.value, 'raw JWT, not JSON-quoted (%22…%22)').toMatch(JWT_SHAPE);
+  const userId = (await readAuthState(context))?.user?.id ?? '';
+  expect(userId).toBeTruthy();
+
+  // A fresh client without session cookie and without Authorization header: only lt-jwt-token.
+  const api = await playwright.request.newContext();
+  try {
+    expect((await api.get(`${API_URL}/users/${userId}`)).status()).toBeGreaterThanOrEqual(401);
+    const viaCookie = await api.get(`${API_URL}/users/${userId}`, { headers: { cookie: `lt-jwt-token=${cookie?.value ?? ''}` } });
+    expect(viaCookie.status()).toBe(200);
+    expect(((await viaCookie.json()) as { email?: string }).email).toBe(user.email);
+  } finally {
+    await api.dispose();
+  }
+});
+
 test('register: an answer that requires e-mail verification does not sign in', async ({ page, context }) => {
   const user = generateTestUser('verify');
   // nest-server's answer with `betterAuth.emailVerification` on (session revoked, no cookie); stubbed because the run

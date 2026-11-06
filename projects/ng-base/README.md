@@ -193,9 +193,9 @@ Screenshots need the optional peer `modern-screenshot`; without it the screensho
 Off in production, decided at runtime per stage: the browser reads `NG_PUBLIC_APP_ENV` from the runtime config, the
 endpoint from the environment. Without `NG_PUBLIC_APP_ENV` both fail closed (browser part only in dev mode, endpoint
 `404`; set `NG_PUBLIC_APP_ENV=local` locally). `enabled` overrides on both sides; while off no capture hook is installed.
-Per stage without a rebuild: `NG_PUBLIC_LT_BUG_ENABLED`, `NG_PUBLIC_LT_BUG_AUTO_SHOW`, `NG_PUBLIC_LT_BUG_AUTO_OPEN_ON_ERROR`,
-`NG_PUBLIC_LT_BUG_ENABLE_SCREENSHOT`, `NG_PUBLIC_LT_BUG_POSITION`, `NG_PUBLIC_LT_BUG_BUTTON_COLOR`, `NG_PUBLIC_LT_BUG_BUTTON_TEXT`
-(browser part; the endpoint keeps its own `enabled` option).
+Per stage without a rebuild: `NG_PUBLIC_LT_BUG_ENABLED` switches both sides (browser part and endpoint, before the
+`enabled` option); `NG_PUBLIC_LT_BUG_AUTO_SHOW`, `NG_PUBLIC_LT_BUG_AUTO_OPEN_ON_ERROR`, `NG_PUBLIC_LT_BUG_ENABLE_SCREENSHOT`,
+`NG_PUBLIC_LT_BUG_POSITION`, `NG_PUBLIC_LT_BUG_BUTTON_COLOR` and `NG_PUBLIC_LT_BUG_BUTTON_TEXT` are browser-only.
 
 Redaction before sending (and again on the server before Linear): `Authorization`, `Cookie`, `Set-Cookie`,
 `X-System-Setup-Token` and similar headers become `[redacted]`; bodies of `/iam/`, `/system-setup/` and other auth

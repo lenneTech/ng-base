@@ -1,9 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { API_URL, AUTH_MODE, BUILD_IDENTITY, E2E_DB_URI, SERVER_API_URL, SITE_URL } from './e2e/support/env';
+import { API_LOG, API_URL, AUTH_MODE, BUILD_IDENTITY, E2E_DB_URI, SERVER_API_URL, SITE_URL } from './e2e/support/env';
 
 /**
  * Library E2E: the playground (built, SSR, :3001) against a real nest-server-starter (:3000) with its own database.
@@ -32,6 +32,7 @@ if (!existsSync(apiEntry)) {
   throw new Error(`[e2e] ${apiEntry} is missing. Point NG_BASE_E2E_API_DIR to an installed and built nest-server-starter.`);
 }
 const prebuilt = process.env['NG_BASE_E2E_PREBUILT'] === 'true';
+mkdirSync(dirname(API_LOG), { recursive: true });
 
 export default defineConfig({
   testDir: './e2e',
@@ -57,17 +58,22 @@ export default defineConfig({
     // The first admin must exist before anything else: while none exists, every route redirects to /auth/setup.
     { name: 'setup', testMatch: /system-setup\.spec\.ts/ },
     { name: 'chromium', dependencies: ['setup'], testIgnore: /system-setup\.spec\.ts/ },
+    // After every spec: the API log of the whole run must not contain a JWKS error.
+    { name: 'api-log', dependencies: ['chromium'], testMatch: /api-log\.check\.ts/ },
   ],
   webServer: [
     {
       name: 'API',
-      command: `node "${join(here, 'e2e/support/reset-test-db.mjs')}" && node dist/src/main.js`,
+      // `exec` hands the shutdown signal to the API; its output goes to API_LOG (checked by api-log.check.ts).
+      command: `node "${join(here, 'e2e/support/reset-test-db.mjs')}" && exec node dist/src/main.js > "${API_LOG}" 2>&1`,
       cwd: apiDir,
       env: {
         NODE_ENV: 'e2e',
         NSC__BETTER_AUTH__EMAIL_VERIFICATION: 'false',
         NSC__EXEC_AFTER_INIT: 'false',
         NSC__MONGOOSE__URI: E2E_DB_URI,
+        // `JWKS verification error` is a debug line: fixed here, so a NEST_LOG_LEVEL in the shell cannot mute api-log.check.ts.
+        NEST_LOG_LEVEL: 'debug',
         ...(AUTH_MODE === 'jwt' ? { NSC__COOKIES: 'false' } : {}),
       },
       url: `${API_URL}/iam/features`,

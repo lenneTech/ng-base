@@ -87,7 +87,8 @@ export class LtAuthStateService {
 
   /**
    * First JWT of the token cookie(s), or `null`. Browser only. A value that is not JWT-shaped (e.g. an opaque Better Auth
-   * session token an older version stored) is never returned and is deleted.
+   * session token an older version stored) is never returned and is deleted. A JSON-quoted JWT (`"eyJ…"`, written by
+   * 22.0.0) is returned and rewritten raw, the form nest-server reads from the cookie.
    */
   getJwtToken(): string | null {
     if (this.isServer) {
@@ -97,6 +98,10 @@ export class LtAuthStateService {
     for (const raw of this.cookies.getAll(this.cookieNames.token)) {
       const token = parseToken(raw);
       if (isLtJwtShaped(token)) {
+        if (raw !== token) {
+          this.deleteEverywhere(this.cookieNames.token);
+          this.cookies.set(this.cookieNames.token, token, { maxAge: LT_AUTH_COOKIE_MAX_AGE });
+        }
         return token;
       }
       invalid ||= !!token;
@@ -125,7 +130,9 @@ export class LtAuthStateService {
       console.warn('[@lenne.tech/ng-base] Refused to store a token that is not a JWT as JWT.');
       return false;
     }
-    this.cookies.set(this.cookieNames.token, JSON.stringify(token), { maxAge: LT_AUTH_COOKIE_MAX_AGE });
+    // Raw, not JSON-quoted: nest-server reads the cookie as the JWT itself (`lt-jwt-token`, JWT cookie strategy), as
+    // nuxt-extensions writes it.
+    this.cookies.set(this.cookieNames.token, token, { maxAge: LT_AUTH_COOKIE_MAX_AGE });
     return true;
   }
 

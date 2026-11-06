@@ -1,0 +1,5 @@
+# actionlint 1.7.12 does not list GitHub's hosted `ubuntu-26.04` label yet (it is one, see the table in
+# actions/runner-images); without this entry it reports the label as unknown. Remove once actionlint knows it.
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04

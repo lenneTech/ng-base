@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 /**
  * Fixed endpoints of the E2E run. The ports are not configurable on purpose: nest-server's e2e environment trusts the
  * origin `http://localhost:3001` (Better Auth CSRF check, passkey origin, rpId `localhost`), other ports fail with
@@ -23,5 +25,11 @@ export const E2E_DB_NAME = 'ng-base-playground-e2e';
 export const E2E_DB_URI = `mongodb://127.0.0.1/${E2E_DB_NAME}`;
 /** Build identity the SSR server reports (`/api/build-identity`). */
 export const BUILD_IDENTITY = { commit: 'e2e-commit', version: '22.0.0-e2e' };
+/**
+ * API log of the run (`.e2e-logs/api-<mode>.log`, stdout and stderr of nest-server-starter, every log level in its e2e
+ * env). `api-log.check.ts` runs after all specs and fails on a JWKS error, i.e. on a JWT the app sent that the API
+ * could not read.
+ */
+export const API_LOG = fileURLToPath(new URL(`../../.e2e-logs/api-${AUTH_MODE}.log`, import.meta.url));
 /** First administrator, created by `system-setup.spec.ts` (setup project, runs before every other spec). */
 export const ADMIN = { email: 'admin@playground.test', name: 'Playground Admin', password: 'Admin-Passwort-2026!' };

@@ -48,12 +48,13 @@ function cookieState(): { authMode?: string; user?: Record<string, unknown> | nu
   return raw ? JSON.parse(decodeURIComponent(raw)) : null;
 }
 
+/** The raw value of the JWT cookie: exactly the JWT (nest-server reads it as such), never JSON-quoted. */
 function cookieToken(): string | null {
   const raw = document.cookie
     .split(/;\s*/)
     .find((entry) => entry.startsWith('lt-jwt-token='))
     ?.slice('lt-jwt-token='.length);
-  return raw ? (JSON.parse(decodeURIComponent(raw)) as string) : null;
+  return raw ? decodeURIComponent(raw) : null;
 }
 
 /** Put a signed-in state into the browser cookies (before `setup()`, like a reload). */

@@ -188,6 +188,24 @@ describe('LtAiPromptsService', () => {
     expect(prompts.prompts()).toEqual([prompt]);
   });
 
+  it('loads the disabled prompts too for management pages, keeps that mode across mutations, and offers chats only the enabled ones', async () => {
+    const disabled = { ...prompt, enabled: false, id: 'p2', name: 'Old' };
+    const prompts = TestBed.inject(LtAiPromptsService);
+    fetchMock.mockResolvedValueOnce(answer(200, [prompt, disabled]));
+    await prompts.load({ includeDisabled: true });
+    expect(call(0)).toMatchObject({ method: 'GET', url: 'https://api.test/ai/prompts?includeDisabled=true' });
+    expect(prompts.prompts()).toEqual([prompt, disabled]);
+    expect(prompts.enabledPrompts()).toEqual([prompt]);
+
+    fetchMock.mockResolvedValueOnce(answer(201, prompt)).mockResolvedValueOnce(answer(200, [prompt, disabled]));
+    await prompts.create({ content: 'Summarise', name: 'Summary' });
+    expect(call(2)).toMatchObject({ method: 'GET', url: 'https://api.test/ai/prompts?includeDisabled=true' });
+
+    fetchMock.mockResolvedValueOnce(answer(200, [prompt]));
+    await prompts.load();
+    expect(call(3)).toMatchObject({ method: 'GET', url: 'https://api.test/ai/prompts' });
+  });
+
   it('reloads the list after create, update and remove; ids are encoded', async () => {
     const prompts = TestBed.inject(LtAiPromptsService);
     fetchMock.mockResolvedValueOnce(answer(201, prompt)).mockResolvedValueOnce(answer(200, [prompt]));

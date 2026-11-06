@@ -1,5 +1,5 @@
-import { Directive } from '@angular/core';
-import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
+import { computed, Directive, inject } from '@angular/core';
+import { BrnFieldControl, BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
 import { BrnTextarea } from '@spartan-ng/brain/textarea';
 import { classes } from '../../utils';
 
@@ -7,9 +7,23 @@ import { classes } from '../../utils';
 	selector: '[hlmTextarea]',
 	exportAs: 'hlmTextarea',
 	hostDirectives: [{ directive: BrnTextarea, inputs: ['id', 'forceInvalid'] }, BrnFieldControlDescribedBy],
-	host: { 'data-slot': 'textarea' },
+	host: {
+		'data-slot': 'textarea',
+		'[attr.aria-invalid]': '_ltAttr()',
+		'[attr.data-invalid]': '_ltAttr()',
+	},
 })
 export class HlmTextarea {
+	private readonly _ltBrn = inject(BrnTextarea);
+	private readonly _ltField = inject(BrnFieldControl, { optional: true });
+	/** lenne.Tech: invalid only in the error state (touched or submitted), like the red border. */
+	protected readonly _ltInvalid = computed(() => this._ltBrn.forceInvalid() || !!this._ltField?.spartanInvalid());
+	/** Changes with every raw-validity change, so this binding always writes after the host directive's (see generate-helm.mjs). */
+	protected readonly _ltAttr = computed(() => {
+		const raw = !!this._ltField?.invalid();
+		return this._ltInvalid() ? (raw ? 'true' : true) : raw ? null : undefined;
+	});
+
 	constructor() {
 		classes(
 			() =>

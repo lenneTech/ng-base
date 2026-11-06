@@ -58,6 +58,43 @@ const names = args.length ? args : Object.keys(supported).filter((name) => !EXCL
 const walk = (dir) => readdirSync(dir).flatMap((entry) => (statSync(join(dir, entry)).isDirectory() ? walk(join(dir, entry)) : [join(dir, entry)]));
 const toPosix = (path) => path.split(sep).join('/');
 
+/**
+ * lenne.Tech patches of generated files. `aria-invalid` / `data-invalid` of Spartan's `BrnInput` / `BrnTextarea` follow
+ * raw validity, so an untouched empty required field is announced as invalid before the user typed anything; the red
+ * border already waits for the error state (`spartanInvalid`: invalid and touched or submitted). The patch binds both
+ * attributes to that error state on the hlm directive as well. Angular writes an attribute binding only when its own
+ * value changes, so the hlm binding switches between equivalent values (`null`/`undefined` remove the attribute,
+ * `'true'`/`true` set it) whenever the raw validity changes: it then writes after Spartan's binding every time
+ * Spartan's does (typing and clearing a field without leaving it stays unannounced). Every replacement is asserted,
+ * so a changed template fails here instead of silently losing the patch.
+ */
+function invalidFollowsErrorState(brn) {
+  return (source) => {
+    const steps = [
+      ["import { Directive } from '@angular/core';", "import { computed, Directive, inject } from '@angular/core';"],
+      ["import { BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';", "import { BrnFieldControl, BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';"],
+      [/host: \{ ('data-slot': '[\w-]+') \},/, `host: {\n\t\t$1,\n\t\t'[attr.aria-invalid]': '_ltAttr()',\n\t\t'[attr.data-invalid]': '_ltAttr()',\n\t},`],
+      [
+        /(export class Hlm\w+ \{\n)/,
+        `$1\tprivate readonly _ltBrn = inject(${brn});\n\tprivate readonly _ltField = inject(BrnFieldControl, { optional: true });\n\t/** lenne.Tech: invalid only in the error state (touched or submitted), like the red border. */\n\tprotected readonly _ltInvalid = computed(() => this._ltBrn.forceInvalid() || !!this._ltField?.spartanInvalid());\n\t/** Changes with every raw-validity change, so this binding always writes after the host directive's (see generate-helm.mjs). */\n\tprotected readonly _ltAttr = computed(() => {\n\t\tconst raw = !!this._ltField?.invalid();\n\t\treturn this._ltInvalid() ? (raw ? 'true' : true) : raw ? null : undefined;\n\t});\n\n`,
+      ],
+    ];
+    for (const [pattern, replacement] of steps) {
+      const next = source.replace(pattern, replacement);
+      if (next === source) {
+        console.error(`generate-helm: patch for ${brn} no longer applies (${pattern})`);
+        process.exit(1);
+      }
+      source = next;
+    }
+    return source;
+  };
+}
+const PATCHES = {
+  'input/lib/hlm-input.ts': invalidFollowsErrorState('BrnInput'),
+  'textarea/lib/hlm-textarea.ts': invalidFollowsErrorState('BrnTextarea'),
+};
+
 let written = 0;
 for (const name of names) {
   const filesDir = join(libsDir, name, 'files');
@@ -85,6 +122,10 @@ for (const name of names) {
     }
     if (target.endsWith('.ts')) {
       source = await transformStyle(source, { styleMap });
+    }
+    const patch = PATCHES[toPosix(relative(helmDir, target))];
+    if (patch) {
+      source = patch(source);
     }
     for (const file of DROPPED_FILES[name] ?? []) {
       const symbol = `./${file.replace(/\.ts$/, '')}`;

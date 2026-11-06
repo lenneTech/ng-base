@@ -15,19 +15,22 @@ permissions:
 jobs:
   publish:
     name: Publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Git checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Use Node.js 24
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: 24.x
           cache: pnpm
+          # Writes the npm user config with a `${NODE_AUTH_TOKEN}` placeholder. setup-node v7 exports no dummy token any
+          # more: the install in `Check` reads the placeholder unresolved (pnpm warns, public reads answer 200), and only
+          # the publish step sets the token.
           registry-url: https://registry.npmjs.org
 
       - name: Tag matches version
@@ -58,6 +61,6 @@ jobs:
           [ -s RELEASE_NOTES.md ] || echo "See CHANGELOG.md" > RELEASE_NOTES.md
 
       - name: GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           body_path: RELEASE_NOTES.md

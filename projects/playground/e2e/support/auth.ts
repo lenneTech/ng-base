@@ -15,7 +15,7 @@ export const SHA256_HEX = /^[a-f\d]{64}$/;
 /** Content of the client-readable auth-state cookie. */
 export interface AuthStateCookie {
   authMode?: string;
-  user?: { email?: string; twoFactorEnabled?: boolean } | null;
+  user?: { email?: string; id?: string; twoFactorEnabled?: boolean } | null;
 }
 
 /** A user created through the API (sign-up with the terms flag the backend's `signUpChecks` require). */
@@ -40,10 +40,10 @@ export function isApiPost(request: Request, path: string): boolean {
   return request.method() === 'POST' && request.url().split('?')[0] === `${BROWSER_API_URL}${path}`;
 }
 
-/** The JWT in the script-readable `lt-jwt-token` cookie of the app origin, or `null`. */
+/** The value of the script-readable `lt-jwt-token` cookie of the app origin (the raw JWT), or `null`. */
 export async function readJwtCookie(context: BrowserContext): Promise<string | null> {
   const cookie = (await context.cookies(SITE_URL)).find((entry) => entry.name === 'lt-jwt-token');
-  return cookie ? (JSON.parse(decodeURIComponent(cookie.value)) as string) : null;
+  return cookie ? decodeURIComponent(cookie.value) : null;
 }
 
 /** JWT shape (`header.payload.signature`, base64url). */

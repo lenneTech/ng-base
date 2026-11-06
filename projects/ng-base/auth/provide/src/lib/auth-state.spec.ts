@@ -139,6 +139,20 @@ describe('LtAuthStateService — JWT guard (only JWT-shaped values, never an opa
     warn.mockRestore();
   });
 
+  it('stores the JWT raw, the form nest-server reads from the cookie (never JSON-quoted)', () => {
+    const state = setup();
+    expect(state.setJwtToken('eyJ0.payload.sig')).toBe(true);
+    expect(cookieValue('lt-jwt-token')).toBe('eyJ0.payload.sig');
+  });
+
+  it('reads a JSON-quoted JWT of 22.0.0 and rewrites it raw', () => {
+    document.cookie = `lt-jwt-token=${encodeURIComponent(JSON.stringify('eyJ0.legacy.sig'))}; path=/`;
+    const state = setup();
+    expect(cookieValue('lt-jwt-token')).toBe('%22eyJ0.legacy.sig%22');
+    expect(state.getJwtToken()).toBe('eyJ0.legacy.sig');
+    expect(cookieValue('lt-jwt-token')).toBe('eyJ0.legacy.sig');
+  });
+
   it('never returns a stored non-JWT value and deletes it', () => {
     document.cookie = `lt-jwt-token=${encodeURIComponent(JSON.stringify('opaque-session-token'))}; path=/`;
     const state = setup();
