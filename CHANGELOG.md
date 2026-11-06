@@ -6,6 +6,30 @@ All notable changes to `@lenne.tech/ng-base` are documented here. The format fol
 The history up to 18.x (Bootstrap, Apollo/GraphQL, legacy JWT auth) is reachable via the tag `v18.1.3` and the git
 history; that line is not maintained any more.
 
+## [22.0.1] - 2026-11-06
+
+### Added
+
+- `/ai`: `LtAiPromptsService.load({ includeDisabled: true })` loads the disabled prompts too, for management pages
+  (`GET /ai/prompts?includeDisabled=true`, nest-server 12.7.0; older servers ignore the parameter). Mutations reload in
+  the mode of the last load. `enabledPrompts` holds only the enabled ones, for chat pickers that share the service.
+
+### Fixed
+
+- `/auth/provide`: the JWT cookie (`lt-jwt-token`) holds the raw JWT, the form nest-server reads from the cookie.
+  22.0.0 wrote it JSON-quoted (`"eyJ…"`), so the cookie never authenticated and nest-server logged
+  `JWKS verification error` for every request that carried it (the header path kept the flows working). A quoted value
+  of 22.0.0 is still read and rewritten raw; no action needed.
+- `/ui`: `hlmInput` and `hlmTextarea` with Signal Forms announce `aria-invalid` (and set `data-invalid`) only in the
+  error state, once touched or submitted, like the red border; an untouched empty required field was announced as
+  invalid. Patched in `scripts/generate-helm.mjs`, so a regenerated helm layer keeps it.
+- `/bug`: the README now says what the code does: `NG_PUBLIC_LT_BUG_ENABLED` switches the browser part and the endpoint.
+
+### Changed
+
+- CI and publish workflows run on `actions/checkout@v7`, `actions/setup-node@v7`, `actions/upload-artifact@v7`,
+  `pnpm/action-setup@v6`, `softprops/action-gh-release@v3` (Node 24) and `ubuntu-26.04` (pinned instead of `ubuntu-latest`).
+
 ## [22.0.0] - 2026-11-06
 
 Complete rebuild for Angular 22 and nest-server 12.5, the Angular counterpart of `@lenne.tech/nuxt-extensions` 1.25.0.
