@@ -1,0 +1,36 @@
+<main>
+  <lt-page-card title="Registrieren" description="Lege ein Konto für den Playground an.">
+    @if (verifyEmail()) {
+      <lt-notice variant="info" title="Fast geschafft" data-testid="register-verify">
+        Dein Konto ist angelegt. Bitte bestätige deine E-Mail-Adresse über den Link in der Mail und melde dich danach an.
+      </lt-notice>
+    } @else {
+      <form class="grid gap-4" [formRoot]="registerForm">
+        <lt-text-field id="register-name" label="Name" autocomplete="name" [formField]="registerForm.name" />
+        <lt-text-field id="register-email" label="E-Mail" type="email" autocomplete="email" [formField]="registerForm.email" />
+        <lt-form-field for="register-password" label="Passwort" hint="Mindestens 8 Zeichen." [error]="fieldError(registerForm.password)">
+          <lt-password-input id="register-password" autocomplete="new-password" [formField]="registerForm.password" />
+        </lt-form-field>
+        @if (requireTerms()) {
+          <div class="grid gap-1">
+            <label class="flex items-start gap-2 text-sm" for="register-terms">
+              <input id="register-terms" type="checkbox" class="accent-primary mt-0.5 size-4" aria-describedby="register-terms-error" [formField]="registerForm.terms" />
+              <span>Ich akzeptiere die AGB und die Datenschutzerklärung.</span>
+            </label>
+            @if (fieldError(registerForm.terms); as message) {
+              <p id="register-terms-error" class="text-error text-sm" role="alert">{{ message }}</p>
+            }
+          </div>
+        }
+        @if (error(); as message) {
+          <lt-notice variant="error" title="Registrierung fehlgeschlagen" data-testid="register-error">{{ message }}</lt-notice>
+        }
+        <button hlmBtn type="submit" class="w-full" [disabled]="pending()">Konto anlegen</button>
+      </form>
+    }
+    <p ltPageCardFooter>
+      Schon registriert?
+      <a routerLink="/auth/login" class="text-primary font-medium underline-offset-4 hover:underline">Anmelden</a>
+    </p>
+  </lt-page-card>
+</main>

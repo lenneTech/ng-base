@@ -1,0 +1,131 @@
+/*
+ * Enter/leave transition classes of LT_TRANSITIONS (`@lenne.tech/ng-base/ui`) for Angular's native
+ * `animate.enter` / `animate.leave`:
+ *
+ *   @if (open()) { <div [animate.enter]="LT_TRANSITIONS.fade.enter" [animate.leave]="LT_TRANSITIONS.fade.leave">…</div> }
+ *
+ * Angular adds the class while the element enters (and removes it when the animation ends) or before it leaves (and
+ * removes the element when the animation ends). Durations: `--lt-enter-duration` / `--lt-leave-duration` on the element
+ * or any ancestor; defaults 100 ms for the fades, 500 ms for the slides. `prefers-reduced-motion: reduce` turns the
+ * slides and the scale into a short fade.
+ */
+
+@keyframes lt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes lt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes lt-fade-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes lt-fade-scale-out {
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes lt-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes lt-slide-out {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes lt-slide-bottom-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes lt-slide-bottom-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes lt-slide-revert-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes lt-slide-revert-out {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.lt-fade-enter {
+  animation: lt-fade-in var(--lt-enter-duration, 100ms) ease-out both;
+}
+
+.lt-fade-leave {
+  animation: lt-fade-out var(--lt-leave-duration, 100ms) ease-in both;
+}
+
+.lt-fade-scale-enter {
+  animation: lt-fade-scale-in var(--lt-enter-duration, 100ms) ease-out both;
+}
+
+.lt-fade-scale-leave {
+  animation: lt-fade-scale-out var(--lt-leave-duration, 100ms) ease-in both;
+}
+
+.lt-slide-enter {
+  animation: lt-slide-in var(--lt-enter-duration, 500ms) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.lt-slide-leave {
+  animation: lt-slide-out var(--lt-leave-duration, 500ms) cubic-bezier(0.64, 0, 0.78, 0) both;
+}
+
+.lt-slide-bottom-enter {
+  animation: lt-slide-bottom-in var(--lt-enter-duration, 500ms) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.lt-slide-bottom-leave {
+  animation: lt-slide-bottom-out var(--lt-leave-duration, 500ms) cubic-bezier(0.64, 0, 0.78, 0) both;
+}
+
+.lt-slide-revert-enter {
+  animation: lt-slide-revert-in var(--lt-enter-duration, 500ms) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.lt-slide-revert-leave {
+  animation: lt-slide-revert-out var(--lt-leave-duration, 500ms) cubic-bezier(0.64, 0, 0.78, 0) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lt-fade-enter,
+  .lt-fade-scale-enter,
+  .lt-slide-enter,
+  .lt-slide-bottom-enter,
+  .lt-slide-revert-enter {
+    animation: lt-fade-in 1ms linear both;
+  }
+
+  .lt-fade-leave,
+  .lt-fade-scale-leave,
+  .lt-slide-leave,
+  .lt-slide-bottom-leave,
+  .lt-slide-revert-leave {
+    animation: lt-fade-out 1ms linear both;
+  }
+}

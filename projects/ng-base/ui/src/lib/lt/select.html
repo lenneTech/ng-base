@@ -1,0 +1,34 @@
+@if (label()) {
+  <label class="sr-only" [for]="controlId()">{{ label() }}</label>
+}
+@if (searchable()) {
+  <hlm-combobox [value]="value()" [disabled]="disabled()" [itemToString]="itemToString()" [isItemEqualToValue]="isEqual()" (valueChange)="onValueChange($event)">
+    <hlm-combobox-input
+      class="w-full"
+      [inputId]="controlId()"
+      [placeholder]="searchPlaceholder()"
+      [forceInvalid]="showInvalid()"
+      [aria-invalid]="showInvalid()"
+      [triggerAriaLabel]="i18n.t('lt.ui.toggleOptions')"
+    />
+    <div *hlmComboboxPortal hlmComboboxContent>
+      <div hlmComboboxEmpty>{{ i18n.t('lt.ui.noResults') }}</div>
+      <div hlmComboboxList>
+        @for (option of options(); track $index) {
+          <hlm-combobox-item [value]="option.value" [disabled]="!!option.disabled">{{ option.label }}</hlm-combobox-item>
+        }
+      </div>
+    </div>
+  </hlm-combobox>
+} @else {
+  <hlm-select [value]="value()" [disabled]="disabled()" [itemToString]="itemToString()" [isItemEqualToValue]="isEqual()" (valueChange)="onValueChange($event)">
+    <hlm-select-trigger class="w-full" [buttonId]="controlId()" [forceInvalid]="showInvalid()" [aria-invalid]="showInvalid()">
+      <hlm-select-value [placeholder]="selectPlaceholder()" />
+    </hlm-select-trigger>
+    <hlm-select-content *hlmSelectPortal>
+      @for (option of options(); track $index) {
+        <hlm-select-item [value]="option.value" [disabled]="!!option.disabled">{{ option.label }}</hlm-select-item>
+      }
+    </hlm-select-content>
+  </hlm-select>
+}

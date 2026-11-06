@@ -1,0 +1,13 @@
+<main class="mx-auto grid w-full max-w-3xl gap-4 px-4 py-8">
+  <h1 class="text-2xl font-semibold">Toast und Dialog</h1>
+  <div class="flex flex-wrap gap-3">
+    <button hlmBtn type="button" (click)="showToast()">Toast anzeigen</button>
+    <button hlmBtn type="button" variant="outline" (click)="askConfirmation()">Bestätigung anfragen</button>
+  </div>
+  <p aria-live="polite" data-testid="confirm-answer">
+    @if (answer(); as value) {
+      Antwort: {{ value }}
+    }
+  </p>
+  <a routerLink="/" class="text-primary underline underline-offset-4">Zur Startseite</a>
+</main>

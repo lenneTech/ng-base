@@ -1,0 +1,137 @@
+/*
+ * lenne.Tech ng-base theme core (Tailwind CSS 4), without the component classes.
+ *
+ * Use it with the per-component source files to ship only the CSS of the components the app renders:
+ *
+ *   @import 'tailwindcss';
+ *   @import '@lenne.tech/ng-base/ui/styles/core.css';
+ *   @import '@lenne.tech/ng-base/ui/styles/components/button.css';
+ *   @import '@lenne.tech/ng-base/ui/styles/components/lt-text-field.css';   (pulls input, input-group, form field)
+ *
+ * `theme.css` = this file plus every component. Contains the Spartan preset, the lenne.Tech palette, the semantic
+ * tokens of the helm layer, the transition classes and the base layer.
+ */
+@import '@spartan-ng/brain/hlm-tailwind-preset.css';
+@import './palette.css';
+@import './transitions.css';
+
+@custom-variant light (&:is(.light *));
+
+:root {
+  color-scheme: light;
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --radius: 0.5rem;
+
+  --background: #ffffff;
+  --foreground: var(--color-neutral-900);
+  --card: #ffffff;
+  --card-foreground: var(--color-neutral-900);
+  --popover: #ffffff;
+  --popover-foreground: var(--color-neutral-900);
+
+  /* Semantic colors: the lightest step that passes WCAG AA as fill, as text on white and as text on its 10 % tint. */
+  --primary: var(--color-primary-800);
+  --primary-foreground: #ffffff;
+  --secondary: var(--color-secondary-600);
+  --secondary-foreground: #ffffff;
+  --success: var(--color-success-700);
+  --success-foreground: #ffffff;
+  --info: var(--color-info-700);
+  --info-foreground: #ffffff;
+  --warning: var(--color-warning-800);
+  --warning-foreground: #ffffff;
+  --error: var(--color-error-700);
+  --error-foreground: #ffffff;
+  --destructive: var(--error);
+  --destructive-foreground: var(--error-foreground);
+
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--color-neutral-600);
+  --accent: var(--color-neutral-100);
+  --accent-foreground: var(--color-neutral-900);
+  --border: var(--color-neutral-200);
+  --input: var(--color-neutral-300);
+  --ring: var(--color-primary-700);
+
+  --chart-1: var(--color-primary-600);
+  --chart-2: var(--color-secondary-500);
+  --chart-3: var(--color-info-500);
+  --chart-4: var(--color-warning-500);
+  --chart-5: var(--color-error-500);
+
+  --sidebar: var(--color-neutral-50);
+  --sidebar-foreground: var(--color-neutral-900);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--color-neutral-100);
+  --sidebar-accent-foreground: var(--color-neutral-900);
+  --sidebar-border: var(--color-neutral-200);
+  --sidebar-ring: var(--ring);
+}
+
+:root.dark {
+  color-scheme: dark;
+
+  --background: var(--color-neutral-900);
+  --foreground: var(--color-neutral-50);
+  --card: var(--color-neutral-900);
+  --card-foreground: var(--color-neutral-50);
+  --popover: var(--color-neutral-800);
+  --popover-foreground: var(--color-neutral-50);
+
+  --primary: var(--color-primary-400);
+  --primary-foreground: var(--color-neutral-950);
+  --secondary: var(--color-secondary-400);
+  --secondary-foreground: var(--color-neutral-950);
+  --success: var(--color-success-400);
+  --success-foreground: var(--color-neutral-950);
+  --info: var(--color-info-400);
+  --info-foreground: var(--color-neutral-950);
+  --warning: var(--color-warning-400);
+  --warning-foreground: var(--color-neutral-950);
+  --error: var(--color-error-400);
+  --error-foreground: var(--color-neutral-950);
+
+  --muted: var(--color-neutral-800);
+  --muted-foreground: var(--color-neutral-400);
+  --accent: var(--color-neutral-800);
+  --accent-foreground: var(--color-neutral-50);
+  --border: var(--color-neutral-800);
+  --input: var(--color-neutral-700);
+  --ring: var(--color-primary-400);
+
+  --sidebar: var(--color-neutral-950);
+  --sidebar-foreground: var(--color-neutral-50);
+  --sidebar-accent: var(--color-neutral-800);
+  --sidebar-accent-foreground: var(--color-neutral-50);
+  --sidebar-border: var(--color-neutral-800);
+}
+
+@theme inline {
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
+  --color-destructive-foreground: var(--destructive-foreground);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply scroll-pt-24;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

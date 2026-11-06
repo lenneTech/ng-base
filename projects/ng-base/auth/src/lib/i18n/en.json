@@ -1,0 +1,17 @@
+{
+  "lt": {
+    "auth": {
+      "loggingOut": "Logging out...",
+      "noPasskeySelected": "No passkey selected",
+      "passkeyAborted": "Passkey authentication was cancelled",
+      "passkeyAlreadyRegistered": "You already registered a passkey for this website. Delete it first or use another authenticator.",
+      "passkeyCreationAborted": "Passkey creation was cancelled",
+      "passkeyError": "Could not load passkey options",
+      "passkeyFailed": "Passkey login failed",
+      "passkeyRegisterFailed": "Passkey registration failed",
+      "passkeyUnsupported": "Passkeys are not supported in this browser",
+      "registerOptionsError": "Could not load registration options",
+      "sessionExpired": "Session expired"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<main>
+  <lt-page-card title="Ersteinrichtung" description="Es gibt noch keinen Administrator. Lege jetzt das erste Konto mit Administratorrechten an.">
+    @if (setup.httpInitEnabled() === false) {
+      <lt-notice variant="warning" title="Einrichtung gesperrt">
+        Die Einrichtung über die Oberfläche ist auf diesem Server abgeschaltet. Der erste Administrator wird über die Server-Konfiguration angelegt.
+      </lt-notice>
+    } @else {
+      <form class="grid gap-4" [formRoot]="setupForm">
+        <lt-text-field id="setup-name" label="Name" autocomplete="name" [formField]="setupForm.name" />
+        <lt-text-field id="setup-email" label="E-Mail" type="email" autocomplete="email" [formField]="setupForm.email" />
+        <lt-form-field for="setup-password" label="Passwort" hint="Mindestens 8 Zeichen." [error]="fieldError(setupForm.password)">
+          <lt-password-input id="setup-password" autocomplete="new-password" [formField]="setupForm.password" />
+        </lt-form-field>
+        @if (setup.httpInitTokenRequired()) {
+          <lt-text-field id="setup-token" label="Einrichtungs-Token" autocomplete="off" [formField]="setupForm.token" />
+        }
+        @if (error(); as message) {
+          <lt-notice variant="error" title="Einrichtung fehlgeschlagen" data-testid="setup-error">{{ message }}</lt-notice>
+        }
+        <button hlmBtn type="submit" class="w-full" [disabled]="pending()">Administrator anlegen</button>
+      </form>
+    }
+  </lt-page-card>
+</main>

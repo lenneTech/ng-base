@@ -1,0 +1,15 @@
+/* Automatic source detection only for the playground itself, as in a consuming app. The library CSS is opt-in per
+   component (core.css + components/<name>.css), which keeps the initial bundle within the CLI budget. */
+@import 'tailwindcss' source('.');
+@import '../../ng-base/ui/styles/core.css';
+@import '../../ng-base/ui/styles/components/sonner.css';
+@import '../../ng-base/ui/styles/components/button.css';
+@import '../../ng-base/ui/styles/components/lt-page-card.css';
+@import '../../ng-base/ui/styles/components/lt-form-field.css';
+@import '../../ng-base/ui/styles/components/lt-text-field.css';
+@import '../../ng-base/ui/styles/components/lt-password-input.css';
+@import '../../ng-base/ui/styles/components/lt-notice.css';
+@import '../../ng-base/ui/styles/components/lt-header.css';
+@import '../../ng-base/ui/styles/components/lt-confirm-dialog.css';
+@import '../../ng-base/ui/styles/components/lt-tus-upload-component.css';
+@import '../../ng-base/ui/styles/components/lt-bug-report.css';

@@ -1,0 +1,166 @@
+<div hlmDialogHeader>
+  <h2 hlmDialogTitle>{{ i18n.t('lt.bug.dialogTitle') }}</h2>
+  <p hlmDialogDescription>{{ i18n.t('lt.bug.dialogDescription') }}</p>
+</div>
+
+<form id="lt-bug-form" class="flex min-w-0 flex-col gap-4" novalidate data-slot="bug-report-form" (submit)="onSubmit($event)">
+  @if (bug.error(); as message) {
+    <lt-notice variant="error" data-slot="bug-report-error">
+      <div class="flex items-start justify-between gap-3">
+        <span>{{ message }}</span>
+        <button hlmBtn type="button" variant="ghost" size="icon-sm" class="-my-1 shrink-0" [attr.aria-label]="i18n.t('lt.bug.dismissError')" (click)="bug.error.set(null)">
+          <ng-icon name="lucideX" aria-hidden="true" />
+        </button>
+      </div>
+    </lt-notice>
+  }
+
+  <lt-text-field id="lt-bug-title" [label]="i18n.t('lt.bug.title')" [placeholder]="i18n.t('lt.bug.titlePlaceholder')" [formField]="reportForm.title" />
+
+  <lt-form-field for="lt-bug-type" [label]="i18n.t('lt.bug.type')" [required]="true" [error]="typeError()">
+    <lt-select id="lt-bug-type" [options]="typeOptions()" [placeholder]="i18n.t('lt.bug.typePlaceholder')" [formField]="reportForm.type" />
+  </lt-form-field>
+
+  <lt-form-field for="lt-bug-description" [label]="i18n.t('lt.bug.description')" [required]="true" [error]="descriptionError()">
+    <textarea
+      hlmTextarea
+      id="lt-bug-description"
+      rows="4"
+      class="max-h-64"
+      [placeholder]="i18n.t('lt.bug.descriptionPlaceholder')"
+      [forceInvalid]="!!descriptionError()"
+      [formField]="reportForm.description"
+    ></textarea>
+  </lt-form-field>
+
+  <lt-form-field for="lt-bug-expected" [label]="i18n.t('lt.bug.expectedBehavior')">
+    <textarea
+      hlmTextarea
+      id="lt-bug-expected"
+      rows="3"
+      class="max-h-48"
+      [placeholder]="i18n.t('lt.bug.expectedBehaviorPlaceholder')"
+      [formField]="reportForm.expectedBehavior"
+    ></textarea>
+  </lt-form-field>
+
+  <lt-form-field for="lt-bug-steps" [label]="i18n.t('lt.bug.stepsToReproduce')">
+    <textarea
+      hlmTextarea
+      id="lt-bug-steps"
+      rows="3"
+      class="max-h-48"
+      [placeholder]="i18n.t('lt.bug.stepsToReproducePlaceholder')"
+      [formField]="reportForm.stepsToReproduce"
+    ></textarea>
+  </lt-form-field>
+
+  <section class="flex flex-col gap-2" aria-labelledby="lt-bug-attachments-title" data-slot="bug-report-attachments">
+    <h3 id="lt-bug-attachments-title" class="text-sm font-medium">
+      {{ i18n.t('lt.bug.attachments') }}
+      @if (hasScreenshot()) {
+        <span class="text-muted-foreground ms-2 text-xs font-normal">{{ i18n.t('lt.bug.screenshotCaptured') }}</span>
+      }
+    </h3>
+    <lt-bug-attachments [attachments]="attachments()" [disabled]="bug.isSubmitting()" (added)="addAttachments($event)" (removed)="removeAttachment($event)" />
+  </section>
+
+  @if (options.enableBrowserInfo || options.enableConsoleLogs || options.enableNetworkRequests || journeyEnabled) {
+    <div hlmCollapsible class="border-border rounded-lg border" data-slot="bug-report-additional" [expanded]="showAdditional()" (expandedChange)="showAdditional.set($event)">
+      <button hlmCollapsibleTrigger type="button" class="hover:bg-muted flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-start text-sm font-medium">
+        <span>{{ i18n.t('lt.bug.additionalInfo') }}</span>
+        <ng-icon name="lucideChevronDown" class="transition-transform duration-200" aria-hidden="true" [class.rotate-180]="showAdditional()" />
+      </button>
+      <div hlmCollapsibleContent class="border-border flex flex-col gap-3 border-t p-3">
+        @if (options.enableBrowserInfo) {
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex min-w-0 flex-col">
+              <span id="lt-bug-include-browser-label" class="text-sm font-medium">{{ i18n.t('lt.bug.browserInfo') }}</span>
+              <span id="lt-bug-include-browser-hint" class="text-muted-foreground text-xs">{{ i18n.t('lt.bug.browserInfoHint') }}</span>
+            </div>
+            <hlm-switch
+              inputId="lt-bug-include-browser"
+              aria-labelledby="lt-bug-include-browser-label"
+              aria-describedby="lt-bug-include-browser-hint"
+              [checked]="includes().browserInfo"
+              [disabled]="bug.isSubmitting()"
+              (checkedChange)="setInclude('browserInfo', $event)"
+            />
+          </div>
+        }
+        @if (options.enableConsoleLogs) {
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex min-w-0 flex-col">
+              <span id="lt-bug-include-console-label" class="text-sm font-medium">{{ i18n.t('lt.bug.consoleLogs') }}</span>
+              <span id="lt-bug-include-console-hint" class="text-muted-foreground text-xs">{{ i18n.t('lt.bug.consoleLogsHint', { count: consoleCount }) }}</span>
+            </div>
+            <hlm-switch
+              inputId="lt-bug-include-console"
+              aria-labelledby="lt-bug-include-console-label"
+              aria-describedby="lt-bug-include-console-hint"
+              [checked]="includes().consoleLogs"
+              [disabled]="bug.isSubmitting()"
+              (checkedChange)="setInclude('consoleLogs', $event)"
+            />
+          </div>
+        }
+        @if (options.enableNetworkRequests) {
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex min-w-0 flex-col">
+              <span id="lt-bug-include-network-label" class="text-sm font-medium">{{ i18n.t('lt.bug.networkRequests') }}</span>
+              <span id="lt-bug-include-network-hint" class="text-muted-foreground text-xs">{{ i18n.t('lt.bug.networkRequestsHint', { count: networkCount }) }}</span>
+            </div>
+            <hlm-switch
+              inputId="lt-bug-include-network"
+              aria-labelledby="lt-bug-include-network-label"
+              aria-describedby="lt-bug-include-network-hint"
+              [checked]="includes().networkRequests"
+              [disabled]="bug.isSubmitting()"
+              (checkedChange)="setInclude('networkRequests', $event)"
+            />
+          </div>
+        }
+        @if (journeyEnabled) {
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex min-w-0 flex-col">
+              <span id="lt-bug-include-journey-label" class="text-sm font-medium">{{ i18n.t('lt.bug.userJourney') }}</span>
+              <span id="lt-bug-include-journey-hint" class="text-muted-foreground text-xs">{{ i18n.t('lt.bug.userJourneyHint', { count: journey.length }) }}</span>
+            </div>
+            <hlm-switch
+              inputId="lt-bug-include-journey"
+              aria-labelledby="lt-bug-include-journey-label"
+              aria-describedby="lt-bug-include-journey-hint"
+              [checked]="includes().userJourney"
+              [disabled]="bug.isSubmitting()"
+              (checkedChange)="setInclude('userJourney', $event)"
+            />
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (journeyEnabled && includes().userJourney && journey.length > 0) {
+    <div hlmCollapsible class="border-border rounded-lg border" data-slot="bug-report-journey" [expanded]="showJourney()" (expandedChange)="showJourney.set($event)">
+      <button hlmCollapsibleTrigger type="button" class="hover:bg-muted flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-start text-sm font-medium">
+        <span>{{ i18n.t('lt.bug.journeyPreview', { count: journey.length }) }}</span>
+        <ng-icon name="lucideChevronDown" class="transition-transform duration-200" aria-hidden="true" [class.rotate-180]="showJourney()" />
+      </button>
+      <div hlmCollapsibleContent class="border-border border-t p-3">
+        <lt-bug-journey-timeline [events]="journey" />
+      </div>
+    </div>
+  }
+</form>
+
+<div hlmDialogFooter>
+  <button hlmBtn type="button" variant="outline" data-action="cancel" [disabled]="bug.isSubmitting()" (click)="cancel()">{{ i18n.t('lt.bug.cancel') }}</button>
+  <button hlmBtn type="submit" form="lt-bug-form" data-action="submit" [attr.aria-busy]="bug.isSubmitting() || null" [attr.aria-disabled]="bug.isSubmitting() || null">
+    @if (bug.isSubmitting()) {
+      <hlm-spinner aria-hidden="true" />
+      {{ i18n.t('lt.bug.submitting') }}
+    } @else {
+      {{ i18n.t('lt.bug.submit') }}
+    }
+  </button>
+</div>

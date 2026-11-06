@@ -1,0 +1,17 @@
+import { Directive } from '@angular/core';
+import { BrnCommandSeparator } from '@spartan-ng/brain/command';
+import { classes } from '../../utils';
+
+@Directive({
+	selector: '[hlmCommandSeparator],hlm-command-separator',
+	exportAs: 'hlmCommandSeparator',
+	hostDirectives: [BrnCommandSeparator],
+	host: {
+		'data-slot': 'command-separator',
+	},
+})
+export class HlmCommandSeparator {
+	constructor() {
+		classes(() => 'bg-border -mx-1 h-px w-auto block data-hidden:hidden');
+	}
+}

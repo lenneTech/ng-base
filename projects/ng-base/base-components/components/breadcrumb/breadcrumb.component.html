@@ -1,7 +1,0 @@
-<ul class="pt-3">
-  @for (breadcrumb of breadcrumbs$ | async; track breadcrumb) {
-    <li>
-      <a [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
-    </li>
-  }
-</ul>

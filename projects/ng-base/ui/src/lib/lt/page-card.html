@@ -1,0 +1,27 @@
+<section hlmCard class="w-full max-w-md" [attr.aria-labelledby]="title() ? titleId : null">
+  @if (icon() || title() || description()) {
+    <div hlmCardHeader class="justify-items-center text-center">
+      @if (icon(); as icon) {
+        <div class="bg-primary/10 text-primary mb-2 flex size-12 items-center justify-center rounded-full">
+          <ng-icon class="text-2xl" [name]="icon" />
+        </div>
+      }
+      @if (title()) {
+        @if (level() === 1) {
+          <h1 hlmCardTitle class="text-xl font-semibold" [id]="titleId">{{ title() }}</h1>
+        } @else {
+          <h2 hlmCardTitle class="text-xl font-semibold" [id]="titleId">{{ title() }}</h2>
+        }
+      }
+      @if (description()) {
+        <p hlmCardDescription class="text-pretty">{{ description() }}</p>
+      }
+    </div>
+  }
+  <div hlmCardContent>
+    <ng-content />
+  </div>
+  <div hlmCardFooter class="text-muted-foreground flex-col justify-center gap-2 text-sm" [hidden]="!footer()">
+    <ng-content select="[ltPageCardFooter]" />
+  </div>
+</section>

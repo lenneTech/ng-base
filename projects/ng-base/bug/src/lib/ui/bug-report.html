@@ -1,0 +1,27 @@
+@if (visible()) {
+  <button
+    type="button"
+    class="fixed z-[9999] inline-flex cursor-pointer items-center justify-center gap-2 rounded-full font-medium text-white shadow-lg transition-shadow duration-200 outline-none hover:shadow-xl focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-offset-2 aria-disabled:cursor-wait print:hidden"
+    data-slot="bug-report-button"
+    aria-haspopup="dialog"
+    [class]="positionClass()"
+    [class.size-12]="!buttonText()"
+    [class.h-12]="!!buttonText()"
+    [class.px-5]="!!buttonText()"
+    [style.background-color]="buttonColor()"
+    [attr.aria-label]="buttonText() ? null : i18n.t('lt.bug.button')"
+    [attr.aria-busy]="bug.capturingScreenshot() || null"
+    [attr.aria-disabled]="bug.capturingScreenshot() || null"
+    (click)="openDialog()"
+  >
+    @if (bug.capturingScreenshot()) {
+      <ng-icon name="lucideLoaderCircle" class="animate-spin text-2xl" aria-hidden="true" />
+    } @else {
+      <ng-icon class="text-2xl" aria-hidden="true" [name]="buttonIcon()" />
+    }
+    @if (buttonText()) {
+      <span>{{ bug.capturingScreenshot() ? i18n.t('lt.bug.capturing') : buttonText() }}</span>
+    }
+  </button>
+}
+<p class="sr-only" aria-live="polite" aria-atomic="true" data-slot="bug-report-announcement">{{ announcement() }}</p>

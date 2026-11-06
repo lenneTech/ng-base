@@ -1,0 +1,14 @@
+/*
+ * lenne.Tech ng-base theme (Tailwind CSS 4): core plus the classes of every ng-base component.
+ *
+ * Import it in the app stylesheet right after Tailwind:
+ *
+ *   @import 'tailwindcss';
+ *   @import '@lenne.tech/ng-base/ui/styles/theme.css';   (npm mode)
+ *   @import './core/ui/styles/theme.css';                 (vendor mode, path relative to src/styles.css)
+ *
+ * Every component costs CSS (the full set is about 195 kB raw / 20 kB gzip). To ship less, import `core.css` and the
+ * files in `components/` of the components the app renders instead (see core.css).
+ */
+@import './core.css';
+@import './components/index.css';

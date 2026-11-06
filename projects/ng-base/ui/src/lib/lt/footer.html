@@ -1,0 +1,33 @@
+<footer class="text-muted-foreground mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-6 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+  <div class="min-w-0">
+    <ng-content />
+  </div>
+  @if (links().length) {
+    <nav [attr.aria-label]="navLabel()">
+      <ul class="flex flex-wrap gap-x-4 gap-y-2">
+        @for (link of links(); track link.link ?? link.href) {
+          <li>
+            @if (link.href) {
+              <a
+                class="hover:text-foreground focus-visible:ring-ring/50 rounded-sm underline-offset-4 outline-none hover:underline focus-visible:ring-3"
+                [href]="link.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                >{{ link.label }}<span class="sr-only"> ({{ newTabHint() }})</span></a
+              >
+            } @else {
+              <a
+                class="hover:text-foreground focus-visible:ring-ring/50 aria-[current=page]:text-foreground rounded-sm underline-offset-4 outline-none hover:underline focus-visible:ring-3"
+                [routerLink]="link.link"
+                routerLinkActive
+                [routerLinkActiveOptions]="{ exact: link.exact ?? false }"
+                ariaCurrentWhenActive="page"
+                >{{ link.label }}</a
+              >
+            }
+          </li>
+        }
+      </ul>
+    </nav>
+  }
+</footer>

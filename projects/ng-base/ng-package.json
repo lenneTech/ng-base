@@ -2,14 +2,54 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/ng-base",
   "lib": {
-    "entryFile": "public-api.ts",
-    "cssUrl": "inline"
+    "entryFile": "src/public-api.ts"
   },
-  "allowedNonPeerDependencies": [
-    "@apollo/client",
-    "apollo-angular",
-    "graphql",
-    "subscriptions-transport-ws",
-    "ngx-image-cropper"
+  "allowedNonPeerDependencies": ["class-variance-authority", "clsx", "tailwind-merge"],
+  "assets": [
+    {
+      "input": "src/lib/i18n",
+      "glob": "*.json",
+      "output": "i18n"
+    },
+    {
+      "input": "auth/src/lib/i18n",
+      "glob": "*.json",
+      "output": "i18n/auth"
+    },
+    {
+      "input": "files/ui/src/lib/i18n",
+      "glob": "*.json",
+      "output": "i18n/files"
+    },
+    {
+      "input": "share/src/lib/i18n",
+      "glob": "*.json",
+      "output": "i18n/share"
+    },
+    {
+      "input": "ui/src/lib/i18n",
+      "glob": "*.json",
+      "output": "i18n/ui"
+    },
+    {
+      "input": "bug/src/lib/i18n",
+      "glob": "*.json",
+      "output": "i18n/bug"
+    },
+    {
+      "input": "ui/styles",
+      "glob": "**/*.css",
+      "output": "ui/styles"
+    },
+    {
+      "input": ".",
+      "glob": "README.md",
+      "output": "."
+    },
+    {
+      "input": ".",
+      "glob": "CLAUDE.md",
+      "output": "."
+    }
   ]
 }

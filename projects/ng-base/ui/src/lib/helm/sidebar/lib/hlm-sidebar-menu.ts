@@ -1,0 +1,16 @@
+import { Directive } from '@angular/core';
+import { classes } from '../../utils';
+
+@Directive({
+	selector: 'ul[hlmSidebarMenu]',
+	exportAs: 'hlmSidebarMenu',
+	host: {
+		'data-slot': 'sidebar-menu',
+		'data-sidebar': 'menu',
+	},
+})
+export class HlmSidebarMenu {
+	constructor() {
+		classes(() => 'gap-1 flex w-full min-w-0 flex-col');
+	}
+}

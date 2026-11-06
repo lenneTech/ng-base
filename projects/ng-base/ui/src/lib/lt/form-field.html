@@ -1,0 +1,13 @@
+<label hlmLabel data-slot="field-label" class="w-fit leading-snug" [id]="labelId()" [for]="for()" [class.text-destructive]="!!error()">
+  {{ label() }}
+  @if (required()) {
+    <span class="text-destructive" aria-hidden="true">*</span>
+  }
+</label>
+<ng-content />
+@if (hint()) {
+  <p hlmFieldDescription [id]="hintId()">{{ hint() }}</p>
+}
+@if (error()) {
+  <hlm-field-error [id]="errorId()" forceShow>{{ error() }}</hlm-field-error>
+}

@@ -1,0 +1,30 @@
+<div class="flex flex-wrap items-start gap-2">
+  <lt-date-picker
+    class="min-w-44 flex-1"
+    [id]="dateId()"
+    [label]="label()"
+    [value]="datePart()"
+    [min]="minDay()"
+    [max]="maxDay()"
+    [disabled]="disabled()"
+    [invalid]="showInvalid()"
+    [required]="required()"
+    (valueChange)="onDateChange($event)"
+  />
+  <label class="sr-only" [for]="timeId()">{{ timeLabel() }}</label>
+  <input
+    #time
+    hlmInput
+    type="time"
+    class="w-32"
+    [id]="timeId()"
+    [step]="step() * 60"
+    [attr.min]="timeMin()"
+    [attr.max]="timeMax()"
+    [value]="timeText()"
+    [disabled]="disabled()"
+    [required]="required()"
+    [forceInvalid]="showInvalid()"
+    (change)="onTimeChange($event)"
+  />
+</div>

@@ -1,0 +1,23 @@
+@if (label()) {
+  <label class="sr-only" [for]="inputId()">{{ label() }}</label>
+}
+<hlm-date-picker
+  [date]="value() ?? undefined"
+  [minDate]="min()"
+  [maxDate]="max()"
+  [disabled]="disabled()"
+  [formatDate]="formatDate()"
+  [transformDate]="startOfDay"
+  [autoCloseOnSelect]="true"
+  (dateChange)="onDateChange($event)"
+>
+  <hlm-date-picker-input
+    [inputId]="inputId()"
+    [placeholder]="placeholderText()"
+    [parseDate]="parse()"
+    [formatInputDate]="formatDate()"
+    [forceInvalid]="showInvalid()"
+    [clearAriaLabel]="i18n.t('lt.ui.clearDate')"
+    [calendarAriaLabel]="i18n.t('lt.ui.openCalendar')"
+  />
+</hlm-date-picker>

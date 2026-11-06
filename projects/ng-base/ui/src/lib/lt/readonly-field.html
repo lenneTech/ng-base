@@ -1,0 +1,9 @@
+<dl class="flex flex-col gap-1">
+  <dt class="text-muted-foreground text-sm">{{ label() }}</dt>
+  <dd class="text-foreground text-sm font-medium break-words">
+    {{ display() }}
+    @if (unit() && hasValue()) {
+      <span class="text-muted-foreground font-normal">{{ unit() }}</span>
+    }
+  </dd>
+</dl>

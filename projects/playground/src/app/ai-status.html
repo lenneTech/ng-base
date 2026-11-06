@@ -1,0 +1,9 @@
+<p class="text-sm" data-testid="ai-status" [attr.data-state]="label()">
+  KI-Modul: <strong>{{ label() }}</strong>
+  @if (ai.enabled() && ai.mcp()) {
+    (mit MCP)
+  }
+  @if (ai.error(); as error) {
+    <span class="text-error" data-testid="ai-status-error">({{ error }})</span>
+  }
+</p>

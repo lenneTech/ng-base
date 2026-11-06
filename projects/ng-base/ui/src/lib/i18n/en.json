@@ -1,0 +1,38 @@
+{
+  "lt": {
+    "ui": {
+      "close": "Close",
+      "colorMode": "Color mode",
+      "colorModeDark": "Dark",
+      "colorModeLight": "Light",
+      "colorModeSystem": "System",
+      "hidePassword": "Hide password",
+      "showPassword": "Show password",
+      "breadcrumb": "Breadcrumb",
+      "toolbar": "Toolbar",
+      "tableView": "Table view",
+      "tileView": "Tile view",
+      "noData": "No entries",
+      "selectPlaceholder": "Please select",
+      "searchPlaceholder": "Search...",
+      "datePlaceholder": "Pick a date",
+      "time": "Time",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "darkMode": "Dark mode",
+      "mainNavigation": "Main navigation",
+      "footerNavigation": "Footer navigation",
+      "menu": "Menu",
+      "viewMode": "View",
+      "noResults": "No results",
+      "toggleOptions": "Show options",
+      "clearDate": "Clear date",
+      "openCalendar": "Open calendar",
+      "dateFormat": "DD.MM.YYYY",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "home": "Home",
+      "opensInNewTab": "opens in a new tab"
+    }
+  }
+}

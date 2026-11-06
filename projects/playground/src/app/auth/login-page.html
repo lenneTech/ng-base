@@ -1,0 +1,26 @@
+<main>
+  <lt-page-card title="Anmelden" description="Mit E-Mail-Adresse und Passwort oder mit einem Passkey.">
+    <div class="grid gap-4">
+      @if (setup() === 'done') {
+        <lt-notice variant="success" title="Administrator angelegt">Melde dich jetzt mit dem neuen Konto an.</lt-notice>
+      }
+      <form class="grid gap-4" [formRoot]="loginForm">
+        <lt-text-field id="login-email" label="E-Mail" type="email" autocomplete="username" [formField]="loginForm.email" />
+        <lt-form-field for="login-password" label="Passwort" [error]="fieldError(loginForm.password)">
+          <lt-password-input id="login-password" autocomplete="current-password" [formField]="loginForm.password" />
+        </lt-form-field>
+        @if (error(); as message) {
+          <lt-notice variant="error" title="Anmeldung fehlgeschlagen" data-testid="login-error">{{ message }}</lt-notice>
+        }
+        <button hlmBtn type="submit" class="w-full" [disabled]="pending()">Anmelden</button>
+      </form>
+      @if (auth.passkeySupported()) {
+        <button hlmBtn type="button" variant="outline" class="w-full" [disabled]="auth.isLoading()" (click)="signInWithPasskey()">Mit Passkey anmelden</button>
+      }
+    </div>
+    <p ltPageCardFooter>
+      Noch kein Konto?
+      <a routerLink="/auth/register" class="text-primary font-medium underline-offset-4 hover:underline">Registrieren</a>
+    </p>
+  </lt-page-card>
+</main>

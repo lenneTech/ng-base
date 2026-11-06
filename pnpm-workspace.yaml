@@ -1,0 +1,12 @@
+packages:
+  - '.'
+
+# Build scripts that may run on install. The Angular toolchain ships prebuilt binaries for these.
+allowBuilds:
+  '@parcel/watcher': false
+  esbuild: false
+  lmdb: false
+  msgpackr-extract: false
+
+# Fresh releases wait a day before pnpm resolves them (supply-chain guard, as in the other base repos).
+minimumReleaseAge: 1440

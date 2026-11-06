@@ -1,0 +1,11 @@
+<router-outlet />
+<!-- The toaster pulls the ui layer; deferred so it stays out of the initial bundle. Toasts raised earlier are queued. -->
+@defer (on idle) {
+  <app-toaster />
+}
+<!-- Bug reporter: loaded only in stages where it is on, right after the first render so the capture starts early. -->
+@if (bugActive) {
+  @defer (on immediate) {
+    <lt-bug-report />
+  }
+}

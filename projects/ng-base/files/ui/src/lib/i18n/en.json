@@ -1,0 +1,27 @@
+{
+  "lt": {
+    "files": {
+      "dropzone": "Drop files here or browse",
+      "select": "Select files",
+      "pause": "Pause",
+      "resume": "Resume",
+      "cancel": "Cancel",
+      "retry": "Retry",
+      "remove": "Remove",
+      "completed": "Uploaded",
+      "failed": "Failed",
+      "dropzoneSingle": "Drop a file here or browse",
+      "selectSingle": "Select file",
+      "start": "Upload",
+      "waiting": "Waiting",
+      "uploading": "Uploading",
+      "paused": "Paused",
+      "files": "Files",
+      "remaining": "{time} left",
+      "maxFileSize": "At most {max} per file",
+      "tooLarge": "{name} is too large (at most {max})",
+      "tooMany": "{name} was not added: at most {max} files",
+      "invalidType": "{name} has a file type that is not allowed"
+    }
+  }
+}

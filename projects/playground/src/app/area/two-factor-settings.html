@@ -1,0 +1,31 @@
+<section aria-labelledby="two-factor-title" class="grid gap-3 rounded-lg border p-4">
+  <h3 id="two-factor-title" class="font-semibold">Zwei-Faktor-Authentifizierung</h3>
+  @if (auth.is2FAEnabled()) {
+    <lt-notice variant="success" title="2FA ist aktiv" data-testid="two-factor-active">Bei der Anmeldung wird zusätzlich ein Code abgefragt.</lt-notice>
+  } @else if (totpUri(); as uri) {
+    <p class="text-sm">Füge den Schlüssel deiner Authenticator-App hinzu (QR-Code oder diese Adresse) und bestätige mit dem ersten Code.</p>
+    <code class="bg-muted block rounded p-2 text-xs break-all" data-testid="totp-uri">{{ uri }}</code>
+    <div class="grid gap-1">
+      <p class="text-sm font-medium" id="backup-codes-title">Backup-Codes (sicher aufbewahren)</p>
+      <ul class="grid grid-cols-2 gap-1 font-mono text-sm" aria-labelledby="backup-codes-title" data-testid="backup-codes">
+        @for (code of backupCodes(); track code) {
+          <li>{{ code }}</li>
+        }
+      </ul>
+    </div>
+    <form class="grid gap-3" [formRoot]="verifyForm">
+      <lt-text-field id="two-factor-verify-code" label="Code aus der App" autocomplete="one-time-code" [formField]="verifyForm.code" />
+      <button hlmBtn type="submit" [disabled]="pending()">2FA aktivieren</button>
+    </form>
+  } @else {
+    <form class="grid gap-3" [formRoot]="enableForm">
+      <lt-form-field for="two-factor-password" label="Passwort" [error]="fieldError(enableForm.password)">
+        <lt-password-input id="two-factor-password" autocomplete="current-password" [formField]="enableForm.password" />
+      </lt-form-field>
+      <button hlmBtn type="submit" [disabled]="pending()">2FA einrichten</button>
+    </form>
+  }
+  @if (error(); as message) {
+    <lt-notice variant="error" title="2FA" data-testid="two-factor-settings-error">{{ message }}</lt-notice>
+  }
+</section>

@@ -1,0 +1,95 @@
+<div class="flex flex-col gap-3">
+  @if (showViewSwitch()) {
+    <div class="flex justify-end">
+      <div
+        hlmToggleGroup
+        type="single"
+        variant="outline"
+        size="sm"
+        [nullable]="false"
+        [value]="mode()"
+        [attr.aria-label]="i18n.t('lt.ui.viewMode')"
+        (valueChange)="onModeChange($event)"
+      >
+        <button hlmToggleGroupItem value="table" [aria-label]="i18n.t('lt.ui.tableView')" [attr.title]="i18n.t('lt.ui.tableView')">
+          <ng-icon name="lucideTable" />
+        </button>
+        <button hlmToggleGroupItem value="tiles" [aria-label]="i18n.t('lt.ui.tileView')" [attr.title]="i18n.t('lt.ui.tileView')">
+          <ng-icon name="lucideLayoutGrid" />
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (items().length === 0) {
+    <p class="text-muted-foreground rounded-lg border border-dashed px-4 py-8 text-center text-sm" role="status">{{ emptyMessage() }}</p>
+  } @else if (mode() === 'table') {
+    <div hlmTableContainer>
+      <table hlmTable>
+        <caption class="sr-only">
+          {{
+            label()
+          }}
+        </caption>
+        <thead hlmTHead>
+          <tr hlmTr>
+            @for (column of columns(); track $index) {
+              <!-- Static classes: they outrank the helm alignment, also in the SSR markup. -->
+              @if (column.numeric) {
+                <th hlmTh scope="col" class="text-end">{{ column.header }}</th>
+              } @else {
+                <th hlmTh scope="col">{{ column.header }}</th>
+              }
+            }
+          </tr>
+        </thead>
+        <tbody hlmTBody>
+          @for (item of items(); track trackItem(item, $index)) {
+            <tr hlmTr>
+              @for (column of columns(); track $index; let col = $index) {
+                @if (column.numeric) {
+                  <td hlmTd class="text-end tabular-nums">
+                    <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ item, column, col }" />
+                  </td>
+                } @else {
+                  <td hlmTd>
+                    <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ item, column, col }" />
+                  </td>
+                }
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <ul class="grid grid-cols-[repeat(auto-fill,minmax(min(16rem,100%),1fr))] gap-4" role="list" [attr.aria-label]="label()">
+      @for (item of items(); track trackItem(item, $index); let index = $index) {
+        <li class="min-w-0">
+          @if (tileTemplate(); as tile) {
+            <ng-container [ngTemplateOutlet]="tile.template" [ngTemplateOutletContext]="{ $implicit: item, index }" />
+          } @else {
+            <div hlmCard size="sm" class="h-full">
+              <div hlmCardContent>
+                <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+                  @for (column of columns(); track $index) {
+                    <dt class="text-muted-foreground">{{ column.header }}</dt>
+                    <dd class="min-w-0 font-medium break-words" [class.tabular-nums]="!!column.numeric">{{ cellText(item, column) }}</dd>
+                  }
+                </dl>
+              </div>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>
+
+<ng-template #cell let-item="item" let-column="column" let-col="col">
+  @if (columnTemplates()[col]; as template) {
+    <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{ $implicit: item, column, value: cellValue(item, column) }" />
+  } @else {
+    {{ cellText(item, column) }}
+  }
+</ng-template>

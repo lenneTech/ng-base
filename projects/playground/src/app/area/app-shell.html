@@ -1,0 +1,9 @@
+<lt-header title="ng-base Playground" homeLink="/app" [items]="items()">
+  <div ltHeaderActions class="flex items-center gap-3">
+    <span class="text-muted-foreground hidden text-sm sm:inline" data-testid="header-user">{{ auth.user()?.email }}</span>
+    <button hlmBtn type="button" variant="outline" size="sm" [disabled]="auth.isLoading()" (click)="signOut()">Abmelden</button>
+  </div>
+</lt-header>
+<main class="mx-auto grid w-full max-w-3xl gap-6 px-4 py-8">
+  <router-outlet />
+</main>

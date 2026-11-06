@@ -1,0 +1,78 @@
+<div
+  class="border-border flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-4 text-center transition-colors data-[disabled=true]:opacity-50 data-[dragging=true]:border-primary data-[dragging=true]:bg-primary/5"
+  data-slot="dropzone"
+  [attr.data-dragging]="dragging() || null"
+  [attr.data-disabled]="disabled() || null"
+  (dragenter)="onDragEnter($event)"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+>
+  <ng-icon name="lucideUpload" class="text-muted-foreground text-2xl" aria-hidden="true" />
+  <button hlmBtn type="button" variant="outline" size="sm" [disabled]="disabled()" [attr.aria-describedby]="hintId" (click)="openFileDialog(fileInput)">
+    {{ i18n.t('lt.bug.selectFiles') }}
+  </button>
+  <p [id]="hintId" class="text-muted-foreground text-xs">{{ i18n.t('lt.bug.dropHint') }} · {{ i18n.t('lt.bug.maxFileSize', { max: maxFileSize() }) }}</p>
+  <input
+    #fileInput
+    type="file"
+    multiple
+    class="sr-only"
+    tabindex="-1"
+    aria-hidden="true"
+    data-slot="file-input"
+    [accept]="accept()"
+    [disabled]="disabled()"
+    (change)="onInputChange(fileInput)"
+  />
+</div>
+
+@if (rejections().length > 0) {
+  <ul class="text-error flex flex-col gap-1 text-sm" role="alert" data-slot="rejections">
+    @for (message of rejections(); track $index) {
+      <li>{{ message }}</li>
+    }
+  </ul>
+}
+
+@if (attachments().length > 0) {
+  <div class="flex flex-col gap-2">
+    <p class="text-sm font-medium" [id]="hintId + '-list'">{{ i18n.t('lt.bug.attachmentsCount', { count: attachments().length }) }}</p>
+    <ul class="flex flex-col gap-1" data-slot="attachment-list" [attr.aria-labelledby]="hintId + '-list'">
+      @for (attachment of attachments(); track attachment.id) {
+        <li class="bg-muted/50 flex items-center gap-3 rounded-lg p-2" data-slot="attachment" [attr.data-screenshot]="attachment.isScreenshot || null">
+          @if (attachment.preview) {
+            <img class="size-10 shrink-0 rounded object-cover" [src]="attachment.preview" [alt]="attachment.name" />
+          } @else {
+            <ng-icon
+              class="text-muted-foreground shrink-0 text-2xl"
+              aria-hidden="true"
+              [name]="attachment.type.startsWith('text/') || attachment.type.includes('pdf') ? 'lucideFileText' : 'lucidePaperclip'"
+            />
+          }
+          <div class="flex min-w-0 flex-1 flex-col">
+            <div class="flex min-w-0 items-center gap-2">
+              <span class="truncate text-sm font-medium" [title]="attachment.name">{{ attachment.name }}</span>
+              @if (attachment.isScreenshot) {
+                <span hlmBadge variant="secondary">{{ i18n.t('lt.bug.screenshot') }}</span>
+              }
+            </div>
+            <span class="text-muted-foreground text-xs">{{ formatSize(attachment.size) }}</span>
+          </div>
+          <button
+            hlmBtn
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            data-action="remove"
+            [disabled]="disabled()"
+            [attr.aria-label]="removeLabel(attachment)"
+            (click)="removed.emit(attachment.id)"
+          >
+            <ng-icon name="lucideX" aria-hidden="true" />
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+}

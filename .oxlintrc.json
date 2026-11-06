@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // Same baseline as nuxt-extensions / nuxt-base-starter. The vendored copy (`projects/app/src/core/` in a generated
+  // project) is linted by the starter with a subset of these plugins, never more, so warnings here are denied
+  // (`--deny-warnings`) instead of surfacing in every generated project.
+  "plugins": ["typescript", "unicorn", "import"],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "eqeqeq": "warn",
+    "no-console": "off",
+    "no-unused-vars": "warn",
+    // A promise nobody awaits loses its rejection; deliberate fire-and-forget is written `void promise`.
+    "typescript/no-floating-promises": "error",
+    // Deliberate idioms here, not defects: `String(unknown)` on backend error bodies, unbound methods of Better Auth's
+    // proxy client, numbers in template strings.
+    "typescript/no-base-to-string": "off",
+    "typescript/restrict-template-expressions": "off",
+    "typescript/unbound-method": "off"
+  },
+  "ignorePatterns": ["node_modules", "dist", "out-tsc", ".angular", "coverage", "*.d.ts", "projects/ng-base/ui/src/lib/helm/**"]
+}

@@ -1,0 +1,23 @@
+<main>
+  <lt-page-card title="Zwei-Faktor-Bestätigung" description="Dein Konto ist mit einem zweiten Faktor geschützt.">
+    <form class="grid gap-4" [formRoot]="codeForm">
+      @if (method() === 'totp') {
+        <lt-text-field id="two-factor-code" [label]="codeLabel()" autocomplete="one-time-code" [formField]="codeForm.code" />
+      } @else {
+        <lt-text-field id="two-factor-code" [label]="codeLabel()" autocomplete="off" [formField]="codeForm.code" />
+      }
+      @if (error(); as message) {
+        <lt-notice variant="error" title="Bestätigung fehlgeschlagen" data-testid="two-factor-error">{{ message }}</lt-notice>
+      }
+      <button hlmBtn type="submit" class="w-full" [disabled]="pending()">Bestätigen</button>
+    </form>
+    <div ltPageCardFooter class="grid gap-2">
+      @if (method() === 'totp') {
+        <button hlmBtn type="button" variant="link" (click)="switchMethod('backup')">Stattdessen einen Backup-Code verwenden</button>
+      } @else {
+        <button hlmBtn type="button" variant="link" (click)="switchMethod('totp')">Code aus der Authenticator-App verwenden</button>
+      }
+      <a routerLink="/auth/login" class="text-primary font-medium underline-offset-4 hover:underline">Zurück zur Anmeldung</a>
+    </div>
+  </lt-page-card>
+</main>

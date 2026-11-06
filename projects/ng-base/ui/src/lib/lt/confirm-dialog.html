@@ -1,0 +1,12 @@
+<div hlmDialogHeader>
+  <h2 hlmDialogTitle>{{ options.title }}</h2>
+  @if (options.description) {
+    <p hlmDialogDescription>{{ options.description }}</p>
+  }
+</div>
+<div hlmDialogFooter>
+  <button hlmBtn type="button" variant="outline" data-lt-confirm="cancel" (click)="ref.close(false)">{{ cancelLabel() }}</button>
+  <button hlmBtn type="button" [variant]="options.destructive ? 'destructive' : 'default'" data-lt-confirm="confirm" (click)="ref.close(true)">
+    {{ confirmLabel() }}
+  </button>
+</div>

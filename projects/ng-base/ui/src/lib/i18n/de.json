@@ -1,0 +1,38 @@
+{
+  "lt": {
+    "ui": {
+      "close": "Schließen",
+      "colorMode": "Farbschema",
+      "colorModeDark": "Dunkel",
+      "colorModeLight": "Hell",
+      "colorModeSystem": "System",
+      "hidePassword": "Passwort verbergen",
+      "showPassword": "Passwort anzeigen",
+      "breadcrumb": "Brotkrumennavigation",
+      "toolbar": "Funktionsleiste",
+      "tableView": "Tabellenansicht",
+      "tileView": "Kachelansicht",
+      "noData": "Keine Einträge",
+      "selectPlaceholder": "Bitte auswählen",
+      "searchPlaceholder": "Suchen...",
+      "datePlaceholder": "Datum wählen",
+      "time": "Uhrzeit",
+      "confirm": "Bestätigen",
+      "cancel": "Abbrechen",
+      "darkMode": "Dunkles Farbschema",
+      "mainNavigation": "Hauptnavigation",
+      "footerNavigation": "Fußzeilennavigation",
+      "menu": "Menü",
+      "viewMode": "Ansicht",
+      "noResults": "Keine Treffer",
+      "toggleOptions": "Optionen anzeigen",
+      "clearDate": "Datum entfernen",
+      "openCalendar": "Kalender öffnen",
+      "dateFormat": "TT.MM.JJJJ",
+      "previousMonth": "Vorheriger Monat",
+      "nextMonth": "Nächster Monat",
+      "home": "Startseite",
+      "opensInNewTab": "öffnet in neuem Tab"
+    }
+  }
+}

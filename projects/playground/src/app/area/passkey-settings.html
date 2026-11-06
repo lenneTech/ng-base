@@ -1,0 +1,16 @@
+<section aria-labelledby="passkey-title" class="grid gap-3 rounded-lg border p-4">
+  <h3 id="passkey-title" class="font-semibold">Passkey</h3>
+  @if (auth.passkeySupported()) {
+    <p class="text-sm">Melde dich künftig ohne Passwort an, mit Fingerabdruck, Gesichtserkennung oder Sicherheitsschlüssel.</p>
+    <button hlmBtn type="button" variant="outline" class="justify-self-start" [disabled]="auth.isLoading()" (click)="register()">Passkey hinzufügen</button>
+  } @else {
+    <p class="text-muted-foreground text-sm">Passkeys sind auf diesem Server oder in diesem Browser nicht verfügbar.</p>
+  }
+  @if (result(); as outcome) {
+    @if (outcome.success) {
+      <lt-notice variant="success" title="Passkey gespeichert" data-testid="passkey-registered">Du kannst dich jetzt mit dem Passkey anmelden.</lt-notice>
+    } @else {
+      <lt-notice variant="error" title="Passkey" data-testid="passkey-error">{{ outcome.error }}</lt-notice>
+    }
+  }
+</section>

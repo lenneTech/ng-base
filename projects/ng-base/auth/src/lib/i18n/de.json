@@ -1,0 +1,17 @@
+{
+  "lt": {
+    "auth": {
+      "loggingOut": "Abmelden...",
+      "noPasskeySelected": "Kein Passkey ausgewählt",
+      "passkeyAborted": "Passkey-Authentifizierung wurde abgebrochen",
+      "passkeyAlreadyRegistered": "Du hast bereits einen Passkey für diese Website registriert. Lösche ihn zuerst oder verwende einen anderen Authenticator.",
+      "passkeyCreationAborted": "Passkey-Erstellung wurde abgebrochen",
+      "passkeyError": "Konnte Passkey-Optionen nicht laden",
+      "passkeyFailed": "Passkey-Anmeldung fehlgeschlagen",
+      "passkeyRegisterFailed": "Passkey-Registrierung fehlgeschlagen",
+      "passkeyUnsupported": "Passkeys werden in diesem Browser nicht unterstützt",
+      "registerOptionsError": "Konnte Registrierungsoptionen nicht laden",
+      "sessionExpired": "Sitzung abgelaufen"
+    }
+  }
+}

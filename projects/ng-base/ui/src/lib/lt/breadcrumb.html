@@ -1,0 +1,18 @@
+<nav hlmBreadcrumb [aria-label]="navLabel()">
+  <ol hlmBreadcrumbList>
+    @for (item of items(); track $index; let last = $last) {
+      <li hlmBreadcrumbItem>
+        @if (last) {
+          <span hlmBreadcrumbPage>{{ item.label }}</span>
+        } @else {
+          @if (item.link) {
+            <a hlmBreadcrumbLink [link]="item.link">{{ item.label }}</a>
+          } @else {
+            <span>{{ item.label }}</span>
+          }
+          <span hlmBreadcrumbSeparator></span>
+        }
+      </li>
+    }
+  </ol>
+</nav>

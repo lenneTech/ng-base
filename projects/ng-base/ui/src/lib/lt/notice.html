@@ -1,0 +1,15 @@
+<!-- Variant colors via data-variant: the selector outranks the helm base colors (also in the SSR markup). -->
+<div
+  hlmAlert
+  class="data-[variant=error]:border-error/30 data-[variant=error]:bg-error/10 data-[variant=error]:text-error data-[variant=info]:border-info/30 data-[variant=info]:bg-info/10 data-[variant=info]:text-info data-[variant=success]:border-success/30 data-[variant=success]:bg-success/10 data-[variant=success]:text-success data-[variant=warning]:border-warning/30 data-[variant=warning]:bg-warning/10 data-[variant=warning]:text-warning"
+  [attr.role]="role()"
+  [attr.data-variant]="variant()"
+>
+  <ng-icon [name]="icon()" />
+  @if (title()) {
+    <div hlmAlertTitle>{{ title() }}</div>
+  }
+  <div data-slot="alert-description" class="text-sm text-pretty group-has-[>ng-icon]/alert:col-start-2 [&_a]:underline [&_a]:underline-offset-3 [&_p:not(:last-child)]:mb-2">
+    <ng-content />
+  </div>
+</div>

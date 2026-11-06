@@ -1,0 +1,33 @@
+<div class="flex flex-col gap-1.5">
+  <label class="text-sm font-medium" [for]="filterId">{{ i18n.t('lt.bug.journeyFilter') }}</label>
+  <hlm-native-select size="sm" [selectId]="filterId" [value]="filter()" (valueChange)="filter.set($event || 'all')">
+    @for (type of types(); track type) {
+      <option hlmNativeSelectOption [value]="type">{{ typeLabel(type) }}</option>
+    }
+  </hlm-native-select>
+</div>
+
+@if (filtered().length > 0) {
+  <ol class="flex max-h-96 flex-col gap-2 overflow-y-auto" data-slot="journey-list" [attr.aria-label]="i18n.t('lt.bug.journeyEvents')">
+    @for (event of filtered(); track $index) {
+      <li class="border-border flex items-start gap-3 rounded-lg border p-3" data-slot="journey-event" [attr.data-type]="event.type">
+        <ng-icon class="mt-0.5 shrink-0 text-lg" aria-hidden="true" [class]="color(event.type)" [name]="icon(event.type)" />
+        <div class="flex min-w-0 flex-1 flex-col gap-1">
+          <div class="flex items-center justify-between gap-2">
+            <span hlmBadge variant="outline">{{ typeLabel(event.type) }}</span>
+            <time class="text-muted-foreground text-xs" [attr.datetime]="event.timestamp">{{ time(event.timestamp) }}</time>
+          </div>
+          <p class="truncate text-sm font-medium" [title]="event.target">{{ event.target }}</p>
+          @if (details(event); as text) {
+            <p class="text-muted-foreground truncate text-xs" [title]="text">{{ text }}</p>
+          }
+        </div>
+      </li>
+    }
+  </ol>
+} @else {
+  <div class="text-muted-foreground flex flex-col items-center gap-2 py-8 text-center" data-slot="journey-empty">
+    <ng-icon name="lucideClock" class="text-4xl opacity-50" aria-hidden="true" />
+    <p class="text-sm">{{ i18n.t('lt.bug.journeyEmpty') }}</p>
+  </div>
+}

@@ -1,0 +1,47 @@
+<header class="mx-auto flex h-16 w-full max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+  <a
+    class="text-foreground focus-visible:ring-ring/50 flex shrink-0 items-center gap-2 rounded-md font-semibold outline-none focus-visible:ring-3"
+    [routerLink]="homeLink()"
+    [attr.aria-label]="homeAriaLabel()"
+  >
+    <ng-content select="[ltHeaderLogo]" />
+    @if (title()) {
+      <span class="truncate">{{ title() }}</span>
+    }
+  </a>
+
+  @if (items().length) {
+    <!-- Wrapper: the menu host is display:block itself, so the breakpoint class lives here. -->
+    <div class="hidden md:block">
+      <lt-navigation-menu [items]="items()" [label]="navigationLabel()" />
+    </div>
+  }
+
+  <div class="ms-auto flex items-center gap-2">
+    <ng-content select="[ltHeaderActions]" />
+    @if (items().length) {
+      <button
+        hlmBtn
+        type="button"
+        variant="ghost"
+        size="icon"
+        class="md:hidden"
+        [attr.aria-label]="i18n.t('lt.ui.menu')"
+        [attr.aria-expanded]="menuOpen()"
+        [attr.aria-controls]="menuId"
+        (click)="toggleMenu()"
+      >
+        <ng-icon name="lucideMenu" />
+      </button>
+    }
+  </div>
+</header>
+
+<hlm-sheet side="right" [state]="menuOpen() ? 'open' : 'closed'" (stateChanged)="onSheetState($event)">
+  <hlm-sheet-content *hlmSheetPortal="let ctx" class="w-72" [id]="menuId" [closeLabel]="i18n.t('lt.ui.close')">
+    <div hlmSheetHeader>
+      <h2 hlmSheetTitle>{{ menuTitle() }}</h2>
+    </div>
+    <lt-navigation-menu class="px-2" orientation="vertical" [items]="items()" [label]="navigationLabel()" (navigate)="menuOpen.set(false)" />
+  </hlm-sheet-content>
+</hlm-sheet>

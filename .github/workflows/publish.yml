@@ -1,23 +1,63 @@
 name: Publish
 
+# Release recipe: bump the version (root package.json, then `pnpm run version:sync`), commit, create the annotated tag
+# `v<version>` and push it. This workflow then runs the full gate and publishes the built `dist/ng-base` to npm with
+# provenance, and creates the GitHub release from the CHANGELOG section of that version.
 on:
   push:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   publish:
+    name: Publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
+      - name: Git checkout
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
-      - run: npm install
-      - run: npm run build
-      - uses: JS-DevTools/npm-publish@v3
+          node-version: 24.x
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Tag matches version
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          if [ "v${VERSION}" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match package.json version ${VERSION}" >&2
+            exit 1
+          fi
+
+      - name: Check
+        run: pnpm run check:raw
+
+      - name: Publish to npm
+        working-directory: dist/ng-base
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Release notes
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v version="$VERSION" '
+            $0 ~ "^## \\[?" version "\\]?" { capture = 1; next }
+            capture && /^## / { exit }
+            capture { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          [ -s RELEASE_NOTES.md ] || echo "See CHANGELOG.md" > RELEASE_NOTES.md
+
+      - name: GitHub release
+        uses: softprops/action-gh-release@v2
         with:
-          access: public
-          package: ./dist/ng-base
-          token: ${{ secrets.NPM_TOKEN }}
+          body_path: RELEASE_NOTES.md

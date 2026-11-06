@@ -1,0 +1,41 @@
+<!-- Orientation-dependent classes via data-orientation (set by Spartan), so they also apply in the SSR markup. -->
+<nav hlmNavigationMenu class="data-[orientation=vertical]:w-full data-[orientation=vertical]:max-w-none" [orientation]="orientation()" [attr.aria-label]="navLabel()">
+  <ul hlmNavigationMenuList class="gap-1 data-[orientation=vertical]:items-stretch">
+    @for (item of items(); track item.link ?? item.href) {
+      <li hlmNavigationMenuItem>
+        @if (item.href) {
+          <a
+            hlmNavigationMenuLink
+            class="text-muted-foreground hover:text-foreground in-data-[orientation=vertical]:w-full"
+            [href]="item.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            (click)="navigate.emit(item)"
+          >
+            @if (item.icon) {
+              <ng-icon [name]="item.icon" />
+            }
+            {{ item.label }}<span class="sr-only"> ({{ newTabHint() }})</span>
+          </a>
+        } @else {
+          <a
+            hlmNavigationMenuLink
+            class="text-muted-foreground hover:text-foreground in-data-[orientation=vertical]:w-full data-[active=true]:text-foreground data-[active=true]:font-medium"
+            [routerLink]="item.link"
+            routerLinkActive
+            #active="routerLinkActive"
+            [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+            ariaCurrentWhenActive="page"
+            [active]="active.isActive"
+            (click)="navigate.emit(item)"
+          >
+            @if (item.icon) {
+              <ng-icon [name]="item.icon" />
+            }
+            {{ item.label }}
+          </a>
+        }
+      </li>
+    }
+  </ul>
+</nav>

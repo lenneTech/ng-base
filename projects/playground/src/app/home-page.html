@@ -1,0 +1,16 @@
+<main class="mx-auto grid w-full max-w-3xl gap-4 px-4 py-8">
+  <h1 class="text-2xl font-semibold">&#64;lenne.tech/ng-base Playground</h1>
+  <p>Echte Seiten gegen einen echten nest-server: Anmeldung, Zwei-Faktor, Passkeys, Upload, Toasts und Dialoge.</p>
+  <app-ai-status />
+  <nav aria-label="Demos">
+    <ul class="grid gap-2">
+      @if (auth.isAuthenticated()) {
+        <li><a routerLink="/app" class="text-primary underline underline-offset-4">Zum geschützten Bereich</a></li>
+      } @else {
+        <li><a routerLink="/auth/login" class="text-primary underline underline-offset-4">Anmelden</a></li>
+        <li><a routerLink="/auth/register" class="text-primary underline underline-offset-4">Registrieren</a></li>
+      }
+      <li><a routerLink="/demo" class="text-primary underline underline-offset-4">Toast und Dialog</a></li>
+    </ul>
+  </nav>
+</main>

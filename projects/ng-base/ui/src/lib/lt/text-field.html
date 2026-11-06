@@ -1,0 +1,51 @@
+<lt-form-field [for]="inputId()" [label]="label()" [hint]="hint()" [error]="displayError()" [required]="required()" [describedBy]="describedBy()">
+  @if (prefix() || unit()) {
+    <div hlmInputGroup [attr.data-disabled]="disabled() ? 'true' : null">
+      @if (prefix()) {
+        <span hlmInputGroupAddon align="inline-start" [id]="prefixId()">{{ prefix() }}</span>
+      }
+      <input
+        #control
+        hlmInputGroupInput
+        [id]="inputId()"
+        [type]="type()"
+        [attr.name]="name() || null"
+        [attr.autocomplete]="autocomplete()"
+        [attr.maxlength]="maxLength() ?? null"
+        [attr.minlength]="minLength() ?? null"
+        [placeholder]="placeholder()"
+        [disabled]="disabled()"
+        [readOnly]="readonly()"
+        [required]="required()"
+        [forceInvalid]="showInvalid()"
+        [value]="value()"
+        (input)="onInput($event)"
+        (blur)="onBlur()"
+        (keydown.enter)="onEnter($event)"
+      />
+      @if (unit()) {
+        <span hlmInputGroupAddon align="inline-end" [id]="unitId()">{{ unit() }}</span>
+      }
+    </div>
+  } @else {
+    <input
+      #control
+      hlmInput
+      [id]="inputId()"
+      [type]="type()"
+      [attr.name]="name() || null"
+      [attr.autocomplete]="autocomplete()"
+      [attr.maxlength]="maxLength() ?? null"
+      [attr.minlength]="minLength() ?? null"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [readOnly]="readonly()"
+      [required]="required()"
+      [forceInvalid]="showInvalid()"
+      [value]="value()"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      (keydown.enter)="onEnter($event)"
+    />
+  }
+</lt-form-field>

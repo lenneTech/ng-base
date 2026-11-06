@@ -1,0 +1,12 @@
+<button
+  hlmBtn
+  type="button"
+  variant="ghost"
+  [size]="size()"
+  [attr.aria-label]="i18n.t('lt.ui.darkMode')"
+  [attr.aria-pressed]="dark()"
+  [attr.title]="i18n.t('lt.ui.darkMode')"
+  (click)="colorMode.toggle()"
+>
+  <ng-icon [name]="dark() ? 'lucideMoon' : 'lucideSun'" />
+</button>
