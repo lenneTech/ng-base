@@ -1,40 +1,77 @@
 {
   "name": "@lenne.tech/ng-base",
-  "description": "Angular library with basic elements and for communication with the lenne.Tech Nest Server",
+  "version": "22.0.0",
+  "description": "Angular library for lenne.Tech projects: nest-server integration (Better Auth, TUS upload, AI, offline sync), Spartan-based UI, SSR server helpers and Playwright helpers",
   "keywords": [
     "angular",
-    "apollo",
-    "graphql",
-    "apollo-client",
-    "apollo-angular",
     "angular-library",
-    "angular13+"
+    "better-auth",
+    "lenne.tech",
+    "nest-server",
+    "signals",
+    "spartan",
+    "ssr",
+    "tailwindcss"
   ],
-  "version": "18.1.3",
-  "author": "lenne.Tech <info@lenne.tech> (https://lenne.tech)",
-  "homepage": "https://github.com/lenneTech/ng-base",
+  "homepage": "https://github.com/lenneTech/ng-base#readme",
+  "bugs": {
+    "url": "https://github.com/lenneTech/ng-base/issues"
+  },
   "license": "MIT",
+  "author": "lenne.Tech <info@lenne.tech> (https://lenne.tech)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lenneTech/ng-base"
+    "url": "git+https://github.com/lenneTech/ng-base.git"
   },
-  "peerDependencies": {
-    "@angular/common": "18.*.*",
-    "@angular/core": "18.*.*",
-    "@angular/forms": "18.*.*",
-    "@angular/platform-browser": "18.*.*",
-    "@angular/router": "18.*.*",
-    "bootstrap": "5.*.*",
-    "compressorjs": "1.2.*",
-    "js-sha256": "*",
-    "rxjs": "7.*.*",
-    "ngx-image-cropper": "8.*.*",
-    "@apollo/client": "3.10.*",
-    "apollo-angular": "7.*.*",
-    "graphql": "16.8.*",
-    "graphql-ws": "5.*.*"
+  "sideEffects": false,
+  "exports": {
+    "./ui/styles/*": {
+      "style": "./ui/styles/*",
+      "default": "./ui/styles/*"
+    },
+    "./i18n/*": {
+      "default": "./i18n/*"
+    }
   },
   "dependencies": {
-    "tslib": "2.6.3"
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.7.0",
+    "tslib": "^2.9.1"
+  },
+  "peerDependencies": {
+    "@angular/cdk": "^22.2.0",
+    "@angular/common": "^22.2.0",
+    "@angular/core": "^22.2.0",
+    "@angular/forms": "^22.2.0",
+    "@angular/platform-browser": "^22.2.0",
+    "@angular/router": "^22.2.0",
+    "@angular/ssr": "^22.2.0",
+    "@better-auth/passkey": ">=1.7.16 <1.8.0",
+    "@ng-icons/core": ">=36.0.0",
+    "@ng-icons/lucide": ">=36.0.0",
+    "@playwright/test": ">=1.0.0",
+    "@spartan-ng/brain": ">=1.9.0 <2.0.0",
+    "better-auth": ">=1.7.16 <1.8.0",
+    "modern-screenshot": ">=4.6.0",
+    "rxjs": "^7.8.0",
+    "tus-js-client": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@angular/ssr": {
+      "optional": true
+    },
+    "@better-auth/passkey": {
+      "optional": true
+    },
+    "@playwright/test": {
+      "optional": true
+    },
+    "modern-screenshot": {
+      "optional": true
+    },
+    "tus-js-client": {
+      "optional": true
+    }
   }
 }
