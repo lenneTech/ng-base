@@ -145,7 +145,7 @@ export class HlmDatePicker<T> implements BrnDatePickerBase<T>, ControlValueAcces
 	 */
 	public updateDate(value: T | null) {
 		if (this._disabled()) return;
-		const transformedDate = value != null ? this.transformDate()(value) : undefined;
+		const transformedDate = value !== null && value !== undefined ? this.transformDate()(value) : undefined;
 
 		this._mutableDate.set(transformedDate);
 		this._onChange?.(transformedDate ?? null);

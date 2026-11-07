@@ -90,7 +90,25 @@ function invalidFollowsErrorState(brn) {
     return source;
   };
 }
+/**
+ * lenne.Tech patch: strict equality (`eqeqeq`). A consuming app lints its vendored core with that rule, and ng-base
+ * lints the helm layer the same way, so a loose `value != null` would surface as a warning in every generated project.
+ * Same semantics: `null` and `undefined` both skip the transform.
+ */
+function strictNullCheck(file) {
+  return (source) => {
+    const loose = 'const transformedDate = value != null ? ';
+    if (source.split(loose).length !== 2) {
+      console.error(`generate-helm: eqeqeq patch for ${file} no longer applies (${loose})`);
+      process.exit(1);
+    }
+    return source.replace(loose, 'const transformedDate = value !== null && value !== undefined ? ');
+  };
+}
+
 const PATCHES = {
+  'date-picker/lib/hlm-date-picker.ts': strictNullCheck('hlm-date-picker.ts'),
+  'date-picker/lib/hlm-month-year-picker.ts': strictNullCheck('hlm-month-year-picker.ts'),
   'input/lib/hlm-input.ts': invalidFollowsErrorState('BrnInput'),
   'textarea/lib/hlm-textarea.ts': invalidFollowsErrorState('BrnTextarea'),
 };

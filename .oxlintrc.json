@@ -3,7 +3,7 @@
   // Same baseline as nuxt-extensions / nuxt-base-starter. The vendored copy (`projects/app/src/core/` in a generated
   // project) is linted by the starter with a subset of these plugins, never more, so warnings here are denied
   // (`--deny-warnings`) instead of surfacing in every generated project.
-  "plugins": ["typescript", "unicorn", "import"],
+  "plugins": ["typescript", "import"],
   "env": {
     "browser": true,
     "node": true
@@ -20,5 +20,15 @@
     "typescript/restrict-template-expressions": "off",
     "typescript/unbound-method": "off"
   },
-  "ignorePatterns": ["node_modules", "dist", "out-tsc", ".angular", "coverage", "*.d.ts", "projects/ng-base/ui/src/lib/helm/**"]
+  "overrides": [
+    {
+      // The generated Spartan helm layer (scripts/generate-helm.mjs) is linted with exactly the rules a consuming app
+      // applies to its vendored core: without unicorn, but with eqeqeq and the rest. A finding there is fixed by a
+      // patch in the generator, never by hand.
+      "files": ["**/*"],
+      "excludeFiles": ["projects/ng-base/ui/src/lib/helm/**"],
+      "plugins": ["unicorn"]
+    }
+  ],
+  "ignorePatterns": ["node_modules", "dist", "out-tsc", ".angular", "coverage", "*.d.ts"]
 }
