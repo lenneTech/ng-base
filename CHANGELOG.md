@@ -6,6 +6,15 @@ All notable changes to `@lenne.tech/ng-base` are documented here. The format fol
 The history up to 18.x (Bootstrap, Apollo/GraphQL, legacy JWT auth) is reachable via the tag `v18.1.3` and the git
 history; that line is not maintained any more.
 
+## [22.0.2] - 2026-11-07
+
+### Fixed
+
+- `/ui`: `HlmDatePicker` and `HlmMonthYearPicker` use strict equality (`value !== null && value !== undefined` instead
+  of `value != null`, same behaviour), so an app that vendors ng-base no longer gets two `eqeqeq` lint warnings from
+  its `src/core/`. Patched in `scripts/generate-helm.mjs`; ng-base now lints the generated helm layer with the rules an
+  app applies to its vendored core, so such a warning fails here first.
+
 ## [22.0.1] - 2026-11-06
 
 ### Added
