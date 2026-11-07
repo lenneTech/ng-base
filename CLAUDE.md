@@ -120,6 +120,9 @@ into `projects/app/src/core/`. A defect found in a project that affects every pr
 - Base-repo rule: work on the checked-out branch and do not commit unless asked; the release is done via
   `/lt-dev:publish ng-base` (bump, commit, annotated tag `v<version>`, push → `.github/workflows/publish.yml` publishes
   `dist/ng-base` to npm with provenance).
-- Version scheme: major = Angular major. Keep `package.json`, `projects/ng-base/package.json` and
-  `LT_NG_BASE_VERSION` in sync (`pnpm run version:sync`). Update `CHANGELOG.md` and add a migration guide for breaking
-  changes (`migration-guides/`).
+- Version scheme (shared by all base repos, details in `.claude/rules/versioning.md`): MAJOR = Angular major, never
+  raised for a breaking change; MINOR = a change an app has to act on when it updates (behaviour, code or
+  configuration), always with a migration guide in `migration-guides/`; PATCH = a fix, improvement or addition an app
+  takes over as is. `ng-base-starter` always carries the same version; the next release is 22.0.4 (22.0.3 is skipped).
+  Keep `package.json`, `projects/ng-base/package.json` and `LT_NG_BASE_VERSION` in sync (`pnpm run version:sync`)
+  and update `CHANGELOG.md`.

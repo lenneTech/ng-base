@@ -4,12 +4,12 @@ Workspace of [`@lenne.tech/ng-base`](projects/ng-base/README.md), the Angular li
 (Angular 22, Tailwind CSS 4, Spartan UI, nest-server integration). Template for apps:
 [`ng-base-starter`](https://github.com/lenneTech/ng-base-starter).
 
-| Path                   | Content                                                                                                           |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `projects/ng-base/`    | The library (primary entry point plus `auth`, `ui`, `files`, `share`, `ai`, `sync`, `server`, `testing`, `utils`) |
-| `projects/playground/` | SSR app for library E2E tests against a local nest-server-starter (API :3000, app :3001)                          |
-| `scripts/`             | `check`, version sync, package manifest check, Angular baseline check, Spartan helm generator                     |
-| `migration-guides/`    | Migration guides per major                                                                                        |
+| Path                   | Content                                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `projects/ng-base/`    | The library (primary entry point plus `auth`, `ui`, `files`, `share`, `ai`, `sync`, `server`, `testing`, `utils`)   |
+| `projects/playground/` | SSR app for library E2E tests against a local nest-server-starter (API :3000, app :3001)                            |
+| `scripts/`             | `check`, version sync, package manifest and publish workflow checks, Angular baseline check, Spartan helm generator |
+| `migration-guides/`    | Migration guide for every MINOR release (and the 18.x → 22.0.0 rebuild)                                             |
 
 ## Development
 
@@ -29,10 +29,27 @@ Test a change in an app (e.g. ng-base-starter): `pnpm build`, then in the app
 and `pnpm install` after every ng-base build. Not `pnpm link`: the symlinked package resolves `@angular/core` from this
 workspace, two copies end up in the app and SSR fails with `NG0203`.
 
+## Versioning
+
+`MAJOR.MINOR.PATCH`, the scheme every lenne.Tech base repository uses (modelled on `@lenne.tech/nest-server`):
+
+| Part    | Meaning                                                                                                                       |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `MAJOR` | The Angular major (`22.x.x` = Angular 22). It moves only with Angular, never because a change is breaking.                    |
+| `MINOR` | A change an app has to act on when it updates (behaviour, code or configuration), always with a guide in `migration-guides/`. |
+| `PATCH` | A fix, improvement or addition an app takes over without doing anything.                                                      |
+
+`ng-base-starter` always carries the version of the ng-base it pins: every ng-base release is followed by a starter
+release with the same number. ng-base skips 22.0.3, which the starter released before this rule; from 22.0.4 on both
+share every version number.
+
 ## Release
 
-Bump the version in `package.json`, run `pnpm run version:sync`, update `CHANGELOG.md`, commit, create the annotated
-tag `v<version>` and push it. The publish workflow runs the gate and publishes `dist/ng-base` to npm with provenance.
+Bump the version in `package.json`, run `pnpm run version:sync`, update `CHANGELOG.md` (and add the migration guide for
+a MINOR release), commit, create the annotated tag `v<version>` and push it. The publish workflow runs the gate and
+publishes `dist/ng-base` to npm through Trusted Publishing (OIDC, Trusted Publisher on npmjs.com: `lenneTech` /
+`ng-base` / `publish.yml`, no environment) with provenance. Until one release went out that way, a failed OIDC publish
+falls back to the `NPM_TOKEN` secret in a separate step that leaves a warning on the run.
 
 ## License
 

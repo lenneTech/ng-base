@@ -5,7 +5,10 @@ It connects an Angular 22 app to [`@lenne.tech/nest-server`](https://github.com/
 upload, AI, offline sync), ships a Spartan-based UI layer for Tailwind CSS 4, SSR server helpers and Playwright helpers.
 
 - Angular `^22.2` (standalone, zoneless, OnPush, signals), Tailwind CSS `4.3`, Spartan UI `1.9`
-- Version scheme: major = Angular major. `22.0.0` is a rebuild; versions up to `18.x` are reachable via tag `v18.1.3`.
+- Version scheme: MAJOR = Angular major (never raised for a breaking change), MINOR = a change an app has to act on
+  when it updates, always with a [migration guide](https://github.com/lenneTech/ng-base/tree/main/migration-guides),
+  PATCH = a fix or addition that needs no action. `ng-base-starter` carries the same version; there is no 22.0.3.
+  `22.0.0` is a rebuild; versions up to `18.x` are reachable via tag `v18.1.3`.
 - Template: [`ng-base-starter`](https://github.com/lenneTech/ng-base-starter) (`lt fullstack init --frontend angular`).
 
 ## Entry points

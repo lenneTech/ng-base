@@ -539,7 +539,9 @@ describe('injectLtTusUpload', () => {
     expect(upload.uploads()).toEqual([]);
   });
 
-  it('loads the real tus-js-client lazily', async () => {
+  // A cold import of the real package through the test build: it checks that the lazy load works, not how fast it is,
+  // and took over the 5 s default under a loaded machine (load average 80, 2026-11-07).
+  it('loads the real tus-js-client lazily', { timeout: 30_000 }, async () => {
     const client = await loadLtTusClient();
     expect(typeof client.Upload).toBe('function');
     expect(await loadLtTusClient()).toBe(client);
