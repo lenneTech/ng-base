@@ -1,10 +1,24 @@
 # Changelog
 
 All notable changes to `@lenne.tech/ng-base` are documented here. The format follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the major version follows the Angular major.
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions are `MAJOR.MINOR.PATCH`: MAJOR is the Angular major
+and never moves for a breaking change, MINOR is a change an app has to act on when it updates (with a guide in
+[migration-guides/](migration-guides/)), PATCH a fix, improvement or addition an app takes over as is.
 
 The history up to 18.x (Bootstrap, Apollo/GraphQL, legacy JWT auth) is reachable via the tag `v18.1.3` and the git
 history; that line is not maintained any more.
+
+## [22.0.4] - 2026-11-07
+
+22.0.3 is left out on purpose. From this version on `ng-base-starter` carries the version of the ng-base it pins, and
+the starter had already released 22.0.3 (with ng-base 22.0.2) before that rule. Versions follow the scheme above, which
+all lenne.Tech base repositories now share.
+
+### Changed
+
+- Releases are published through npm Trusted Publishing (OIDC) instead of a long-lived npm token, still with
+  provenance. Nothing changes for apps; a version published that way shows `trustedPublisher` in its `_npmUser` on the
+  registry.
 
 ## [22.0.2] - 2026-11-07
 
