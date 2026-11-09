@@ -1,6 +1,6 @@
 {
   "name": "@lenne.tech/ng-base",
-  "version": "22.0.4",
+  "version": "22.0.5",
   "private": true,
   "description": "Workspace of @lenne.tech/ng-base: Angular library for lenne.Tech projects (nest-server integration, Spartan UI) plus its playground app",
   "homepage": "https://github.com/lenneTech/ng-base",

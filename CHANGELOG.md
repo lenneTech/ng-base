@@ -8,6 +8,15 @@ and never moves for a breaking change, MINOR is a change an app has to act on wh
 The history up to 18.x (Bootstrap, Apollo/GraphQL, legacy JWT auth) is reachable via the tag `v18.1.3` and the git
 history; that line is not maintained any more.
 
+## [22.0.5] - 2026-11-09
+
+### Changed
+
+- Built and tested with Angular 22.2.5 and Tailwind CSS 4.3.5, and tested against better-auth and
+  `@better-auth/passkey` 1.7.18. The peer ranges stay as they are (`@angular/core` `^22.2.0`, better-auth
+  `>=1.7.16 <1.8.0` in lock-step with nest-server); nothing changes for apps.
+- Releases go out through npm Trusted Publishing only: 22.0.4 proved the route, so the npm token fallback is gone.
+
 ## [22.0.4] - 2026-11-07
 
 22.0.3 is left out on purpose. From this version on `ng-base-starter` carries the version of the ng-base it pins, and
