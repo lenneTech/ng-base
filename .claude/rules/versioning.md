@@ -26,9 +26,7 @@ The same scheme in every lenne.Tech base repository, modelled on `@lenne.tech/ne
 2. **ng-base-starter carries the same version.** Every ng-base version published to npm is followed by an
    ng-base-starter release with the same number that pins it, also when the bump is the only change. The starter
    follows ng-base, never the other way round.
-3. **22.0.3 does not exist for ng-base.** The starter had released 22.0.3 (pinning ng-base 22.0.2) before rule 2; the
-   next ng-base release is 22.0.4 and its `CHANGELOG.md` section says so. Remove this rule once 22.0.4 is out.
-4. **Consider downstream impact**: apps consume ng-base via npm and as a vendored copy in `src/core/`.
+3. **Consider downstream impact**: apps consume ng-base via npm and as a vendored copy in `src/core/`.
 
 ## Release Process
 

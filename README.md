@@ -48,8 +48,7 @@ share every version number.
 Bump the version in `package.json`, run `pnpm run version:sync`, update `CHANGELOG.md` (and add the migration guide for
 a MINOR release), commit, create the annotated tag `v<version>` and push it. The publish workflow runs the gate and
 publishes `dist/ng-base` to npm through Trusted Publishing (OIDC, Trusted Publisher on npmjs.com: `lenneTech` /
-`ng-base` / `publish.yml`, no environment) with provenance. Until one release went out that way, a failed OIDC publish
-falls back to the `NPM_TOKEN` secret in a separate step that leaves a warning on the run.
+`ng-base` / `publish.yml`, no environment) with provenance, without any npm token (since 22.0.4).
 
 ## License
 

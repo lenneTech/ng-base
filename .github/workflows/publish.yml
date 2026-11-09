@@ -50,32 +50,18 @@ jobs:
       - name: npm for Trusted Publishing
         run: npm install -g npm@12
 
-      # Trusted Publishing (OIDC, DEV-3143): npm exchanges this run's GitHub OIDC token (`id-token: write`) for a publish
-      # token that lives for minutes. It needs the Trusted Publisher on npmjs.com: lenneTech / ng-base / publish.yml, no
-      # environment; renaming this file breaks publishing until that entry is changed too. The step holds no token: the
-      # empty NODE_AUTH_TOKEN lets a failed exchange stop with ENEEDAUTH before anything is signed or uploaded, instead of
-      # sending the `${NODE_AUTH_TOKEN}` placeholder of the .npmrc. A version published here shows
-      # `_npmUser.trustedPublisher` on the registry. `--ignore-scripts`: no lifecycle script runs in a publish step.
+      # Trusted Publishing (OIDC, DEV-3143, proven with 22.0.4): npm exchanges this run's GitHub OIDC token
+      # (`id-token: write`) for a publish token that lives for minutes; there is no npm token in this repository any
+      # more. It needs the Trusted Publisher on npmjs.com: lenneTech / ng-base / publish.yml, no environment; renaming
+      # this file breaks publishing until that entry is changed too. The empty NODE_AUTH_TOKEN lets a failed exchange stop
+      # with ENEEDAUTH before anything is signed or uploaded, instead of sending the `${NODE_AUTH_TOKEN}` placeholder of
+      # the .npmrc; the failed step then stops the run before the GitHub release. A version published here shows
+      # `_npmUser.trustedPublisher` on the registry. `--ignore-scripts`: no lifecycle script runs in the publish step.
       - name: Publish to npm (Trusted Publishing)
-        id: publish-oidc
-        continue-on-error: true
         working-directory: dist/ng-base
         run: npm publish --provenance --access public --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ''
-
-      # Fallback until one release went out through OIDC (DEV-3143), then delete this step together with `id` and
-      # `continue-on-error` of the step above (left alone, a failed publish would end the run green; the check fails
-      # then). It runs only when the step above failed, for example while no Trusted Publisher is configured, and
-      # publishes with NPM_TOKEN (still with provenance, signed with the same OIDC token).
-      - name: Publish to npm (NPM_TOKEN fallback)
-        if: steps.publish-oidc.outcome == 'failure'
-        working-directory: dist/ng-base
-        run: |
-          echo "::warning title=Trusted Publishing::The OIDC publish failed, publishing with NPM_TOKEN (DEV-3143)"
-          npm publish --provenance --access public --ignore-scripts
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Release notes
         run: |

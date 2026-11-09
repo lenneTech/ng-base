@@ -123,6 +123,5 @@ into `projects/app/src/core/`. A defect found in a project that affects every pr
 - Version scheme (shared by all base repos, details in `.claude/rules/versioning.md`): MAJOR = Angular major, never
   raised for a breaking change; MINOR = a change an app has to act on when it updates (behaviour, code or
   configuration), always with a migration guide in `migration-guides/`; PATCH = a fix, improvement or addition an app
-  takes over as is. `ng-base-starter` always carries the same version; the next release is 22.0.4 (22.0.3 is skipped).
-  Keep `package.json`, `projects/ng-base/package.json` and `LT_NG_BASE_VERSION` in sync (`pnpm run version:sync`)
-  and update `CHANGELOG.md`.
+  takes over as is. `ng-base-starter` always carries the same version. Keep `package.json`,
+  `projects/ng-base/package.json` and `LT_NG_BASE_VERSION` in sync (`pnpm run version:sync`) and update `CHANGELOG.md`.
