@@ -1,6 +1,6 @@
 {
   "name": "@lenne.tech/ng-base",
-  "version": "22.0.5",
+  "version": "22.1.0",
   "description": "Angular library for lenne.Tech projects: nest-server integration (Better Auth, TUS upload, AI, offline sync), Spartan-based UI, SSR server helpers and Playwright helpers",
   "keywords": [
     "angular",

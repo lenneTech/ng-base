@@ -8,6 +8,50 @@ and never moves for a breaking change, MINOR is a change an app has to act on wh
 The history up to 18.x (Bootstrap, Apollo/GraphQL, legacy JWT auth) is reachable via the tag `v18.1.3` and the git
 history; that line is not maintained any more.
 
+## [22.1.0] - 2026-11-11
+
+ng-base level with `@lenne.tech/nuxt-extensions` 4.0.1 (1.26.0 to 4.0.1 compared). It contains one breaking change,
+hence a MINOR release; see [migration-guides/22.0.x-to-22.1.0.md](migration-guides/22.0.x-to-22.1.0.md).
+
+### Breaking
+
+- `/auth`: `LtPasskeyAuthResult` has no `session` any more. It carried Better Auth's opaque session token, the value of
+  the httpOnly `iam.session_token` cookie; `authenticateWithPasskey()` returns `{ success, error?, user? }`
+  (nuxt-extensions 1.26.0).
+
+### Security
+
+- `/auth`: `twoFactor.verifyTotp()` / `verifyBackupCode()`, on `LtAuthService` and on `getClient()`, drop Better Auth's
+  opaque session token from the answer they return; a JWT (nest-server with `cookies: false`) stays. A page that stored
+  `data.token` after 2FA kept the session where every script could read it.
+
+### Fixed
+
+- `/files`: `getFileUrl()` and `getDownloadUrl()` return the URL the browser uses during SSR too (`NG_PUBLIC_API_URL`, or
+  `/api` behind the dev proxy), so the server-only `NG_API_URL` never ends up in the HTML. `getFileInfo()` still fetches
+  on `NG_API_URL` on the server.
+- Texts: the unused keys `lt.auth.loggingOut`, `lt.auth.sessionExpired`, `lt.error.loadFailed`, `lt.ui.colorMode`,
+  `lt.ui.colorModeDark`, `lt.ui.colorModeLight`, `lt.ui.colorModeSystem` and `lt.ui.datePlaceholder` are removed. `check`
+  now fails on a key the code uses but no locale file defines, on a key no code uses, and on a key in one language only.
+
+### Added
+
+- `LtApiUrlService.buildBrowserUrl(path)`: the API URL the browser uses, also during SSR, for links in the HTML.
+- `isLtJwtShaped(value)` in `/auth/provide`, the JWT test ng-base applies to every token it stores (nest-server's
+  `isJwtShaped`; nuxt-extensions exports it from `/lib`).
+- `/auth/provide`: a one-time warning when `provideLtAuth({ enableAdmin: true })` is set and `/iam/features` reports no
+  admin plugin (admin calls answer 404, and ng-base does not hash the admin methods' passwords).
+- `tailwindcss` `>=4.0.0` as optional peer dependency: the `/ui` styles and `lt-*` components are Tailwind 4 classes.
+- README: "Server-side rendering: backend calls are anonymous", and the differences to nuxt-extensions brought up to
+  4.0.1.
+
+### Changed
+
+- Tested against better-auth and `@better-auth/passkey` 1.7.19, agreed with nest-server and nuxt-extensions, which
+  move to 1.7.19 as well (nest-server with 12.9.0); the peer range stays `>=1.7.16 <1.8.0`. An app that pins better-auth
+  pins `better-auth`, `@better-auth/core` and `@better-auth/passkey` to the same version: passkey 1.7.19 requires
+  `better-auth ^1.7.19`.
+
 ## [22.0.5] - 2026-11-09
 
 ### Changed
