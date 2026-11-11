@@ -17,7 +17,7 @@ export {
   resolveLtCookiePrefix,
 } from './lib/auth-options';
 export type { LtAuthCookieNamesOptions, LtAuthOptions, LtResolvedAuthOptions } from './lib/auth-options';
-export { LT_AUTH_COOKIE_MAX_AGE, LtAuthStateService, resolveLtAuthState } from './lib/auth-state';
+export { isLtJwtShaped, LT_AUTH_COOKIE_MAX_AGE, LtAuthStateService, resolveLtAuthState } from './lib/auth-state';
 export { hasLtRole, LT_AUTH_FEATURES_STATE_KEY, LT_AUTH_SIGN_OUT_HOOKS, LT_VALIDATE_SESSION_TIMEOUT_MS, LtAuthStore, readLtAuthAnswer } from './lib/auth-store';
 export type { LtAuthAnswer, LtAuthSignOutHook } from './lib/auth-store';
 export type {

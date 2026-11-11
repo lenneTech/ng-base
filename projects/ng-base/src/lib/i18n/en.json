@@ -1,8 +1,7 @@
 {
   "lt": {
     "error": {
-      "title": "Error",
-      "loadFailed": "Failed to load error translations"
+      "title": "Error"
     }
   }
 }

@@ -2,10 +2,6 @@
   "lt": {
     "ui": {
       "close": "Schließen",
-      "colorMode": "Farbschema",
-      "colorModeDark": "Dunkel",
-      "colorModeLight": "Hell",
-      "colorModeSystem": "System",
       "hidePassword": "Passwort verbergen",
       "showPassword": "Passwort anzeigen",
       "breadcrumb": "Brotkrumennavigation",
@@ -15,7 +11,6 @@
       "noData": "Keine Einträge",
       "selectPlaceholder": "Bitte auswählen",
       "searchPlaceholder": "Suchen...",
-      "datePlaceholder": "Datum wählen",
       "time": "Uhrzeit",
       "confirm": "Bestätigen",
       "cancel": "Abbrechen",

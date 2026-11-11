@@ -58,6 +58,15 @@ describe('LtApiUrlService', () => {
     expect(setup({ apiUrl: 'https://api.example.com' }, 'server', 'http://api:3000').buildUrl('/meta')).toBe('http://api:3000/meta');
   });
 
+  it('builds browser URLs on the server too, never with the server-only NG_API_URL (links that go into the HTML)', () => {
+    const server = setup({ apiProxy: false, apiUrl: 'https://api.example.com' }, 'server', 'http://api:3000');
+    expect(server.buildBrowserUrl('/files/id/1')).toBe('https://api.example.com/files/id/1');
+    expect(server.buildBrowserUrl('https://cdn.example.com/x')).toBe('https://cdn.example.com/x');
+    expect(server.buildUrl('/files/id/1')).toBe('http://api:3000/files/id/1');
+    TestBed.resetTestingModule();
+    expect(setup({ apiProxy: true, apiUrl: 'https://api.example.com' }, 'server', 'http://api:3000').buildBrowserUrl('files/id/1')).toBe('/api/files/id/1');
+  });
+
   it('warns once about a missing URL', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     const service = setup({ apiProxy: false, apiUrl: '' });

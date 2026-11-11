@@ -258,7 +258,7 @@ describe('LtAuthService — sign-in, sign-up (real nest-server answers)', () => 
   });
 });
 
-describe('LtAuthService — two-factor verification sets the user (fix vs. Nuxt)', () => {
+describe('LtAuthService — two-factor verification sets the user', () => {
   it('verifyTotp takes the user from the answer', async () => {
     const auth = setup();
     route = (url) => (url === `${IAM}/two-factor/verify-totp` ? json({ token: null, user: USER }) : json({}));
@@ -293,6 +293,20 @@ describe('LtAuthService — two-factor verification sets the user (fix vs. Nuxt)
     expect(calls(`${IAM}/token`)[0]?.credentials).toBe('include');
     expect(cookieToken()).toBe('eyJ0.real.jwt');
     expect(auth.authMode()).toBe('cookie');
+  });
+
+  it('drops the opaque session token from the verify answers it returns (service and raw client) and keeps a JWT', async () => {
+    const auth = setup();
+    route = (url) => (url === `${IAM}/two-factor/verify-totp` || url === `${IAM}/two-factor/verify-backup-code` ? json({ token: 'session-token', user: USER }) : json({}, 404));
+    const results = [await auth.twoFactor.verifyTotp({ code: '123456' }), await (await auth.getClient()).twoFactor.verifyBackupCode({ code: 'backup-1' })];
+    for (const result of results) {
+      expect(result.data).not.toHaveProperty('token');
+      expect(result.data).toMatchObject({ user: { id: 'u1' } });
+      expect(JSON.stringify(result)).not.toContain('session-token');
+    }
+
+    route = (url) => (url === `${IAM}/two-factor/verify-totp` ? json({ token: 'eyJ0.real.jwt', user: USER }) : json({}, 404));
+    expect((await auth.twoFactor.verifyTotp({ code: '123456' })).data).toMatchObject({ token: 'eyJ0.real.jwt' });
   });
 
   it('verifyBackupCode loads the user from the session when the answer has none', async () => {

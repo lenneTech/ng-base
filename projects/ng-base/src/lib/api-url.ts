@@ -103,6 +103,25 @@ export class LtApiUrlService {
     return `${this.resolveAndWarn().baseUrl}${normalized}`;
   }
 
+  /**
+   * Build the URL the browser uses for `path`, also during SSR: `NG_PUBLIC_API_URL` (or `/api` behind the dev proxy),
+   * never the server-only `NG_API_URL`. For links that end up in the HTML (`href`, `src`), which the browser follows
+   * itself: an internal API host would be unreachable there and must not leak into the page. Absolute URLs are returned
+   * unchanged.
+   */
+  buildBrowserUrl(path: string): string {
+    if (isLtAbsoluteUrl(path)) {
+      return path;
+    }
+    const resolution = resolveLtApiBaseUrl({
+      apiProxy: this.runtimeConfig?.apiProxy ?? null,
+      apiUrl: this.runtimeConfig?.apiUrl ?? '',
+      devMode: isDevMode(),
+      scope: 'browser',
+    });
+    return `${resolution.baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
+  }
+
   /** Whether browser requests go through the dev-server proxy under `/api`. Always `false` on the server. */
   isProxy(): boolean {
     return this.resolve().proxy;

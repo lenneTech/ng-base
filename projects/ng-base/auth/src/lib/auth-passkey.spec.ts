@@ -129,6 +129,15 @@ describe('authenticateWithPasskey', () => {
     expect(document.cookie).not.toContain('opaque-session-token');
   });
 
+  it('returns no session token to the caller: the result carries success and user only', async () => {
+    const { auth } = setup();
+    responses['/passkey/verify-authentication'] = () => json({ session: { token: 'opaque-session-token' }, user: { email: 'a@example.com', id: 'u1' } });
+    const result = await auth.authenticateWithPasskey();
+    expect(result.success).toBe(true);
+    expect(result).not.toHaveProperty('session');
+    expect(JSON.stringify(result)).not.toContain('opaque-session-token');
+  });
+
   it('never takes the session token of a passkey answer as JWT, also without a cookie session (fails instead)', async () => {
     const { auth } = setup();
     responses['/passkey/verify-authentication'] = () => json({ session: { token: 'opaque-session-token' } });

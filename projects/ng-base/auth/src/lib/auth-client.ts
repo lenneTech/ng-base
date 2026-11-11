@@ -1,7 +1,15 @@
 import type { createAuthClient } from 'better-auth/client';
 import { ltSha256, type LtApiUrlResolution, type LtFetch } from '@lenne.tech/ng-base';
 
-import type { LtAuthCallOptions, LtAuthResponse, LtNoStrayCredential, LtPasskey, LtTwoFactorEnableResult, LtUser } from '@lenne.tech/ng-base/auth/provide';
+import {
+  isLtJwtShaped,
+  type LtAuthCallOptions,
+  type LtAuthResponse,
+  type LtNoStrayCredential,
+  type LtPasskey,
+  type LtTwoFactorEnableResult,
+  type LtUser,
+} from '@lenne.tech/ng-base/auth/provide';
 
 /** Configuration of {@link createLtAuthClient}. */
 export interface LtAuthClientConfig {
@@ -172,6 +180,17 @@ export async function createLtAuthClient(config: LtAuthClientConfig): Promise<Lt
     return result as T;
   };
   const withOptions = (options?: LtAuthCallOptions) => (options ? [{ fetchOptions: options }] : []);
+  // Better Auth answers `two-factor/verify-totp` and `verify-backup-code` with `{ token, user }`; with cookies on, the
+  // token is the opaque session token (the value of the httpOnly `iam.session_token`). It is dropped from the answer, so
+  // no caller can store it where scripts read it. A JWT (`cookies: false`) stays: it is the transport of JWT mode.
+  const withoutSessionToken = (response: LtAuthResponse<any>): LtAuthResponse<any> => {
+    const data = response?.data;
+    if (!data || typeof data !== 'object' || !('token' in data) || isLtJwtShaped(data.token)) {
+      return response;
+    }
+    const { token: _sessionToken, ...rest } = data as Record<string, unknown>;
+    return { ...response, data: rest };
+  };
 
   return {
     raw,
@@ -200,8 +219,8 @@ export async function createLtAuthClient(config: LtAuthClientConfig): Promise<Lt
         call(['twoFactor', 'enable'], [await hashed(params as Record<string, unknown>, ['password'], 'twoFactor.enable'), ...withOptions(options)]),
       generateBackupCodes: async (params, options) =>
         call(['twoFactor', 'generateBackupCodes'], [await hashed(params as Record<string, unknown>, ['password'], 'twoFactor.generateBackupCodes'), ...withOptions(options)]),
-      verifyBackupCode: (params, options) => call(['twoFactor', 'verifyBackupCode'], [params, ...withOptions(options)]),
-      verifyTotp: (params, options) => call(['twoFactor', 'verifyTotp'], [params, ...withOptions(options)]),
+      verifyBackupCode: async (params, options) => withoutSessionToken(await call(['twoFactor', 'verifyBackupCode'], [params, ...withOptions(options)])),
+      verifyTotp: async (params, options) => withoutSessionToken(await call(['twoFactor', 'verifyTotp'], [params, ...withOptions(options)])),
     },
     verifyEmail: (params, options) => call(['verifyEmail'], [{ query: params }, ...withOptions(options)]),
   };

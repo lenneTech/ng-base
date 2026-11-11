@@ -55,12 +55,14 @@ const PEERS = {
   '@better-auth/passkey': '>=1.7.16 <1.8.0',
   '@playwright/test': '>=1.0.0',
   'better-auth': '>=1.7.16 <1.8.0',
+  // The /ui styles and the lt-* components are Tailwind 4 classes; the app compiles them (DEV-4079 in nuxt-extensions).
+  tailwindcss: '>=4.0.0',
   'tus-js-client': '>=4.0.0',
 };
 for (const [name, range] of Object.entries(PEERS)) {
   if (manifest.peerDependencies?.[name] !== range) fail(`peer ${name} must be "${range}", is "${manifest.peerDependencies?.[name]}"`);
 }
-for (const optional of ['@better-auth/passkey', '@playwright/test', 'tus-js-client', '@angular/ssr']) {
+for (const optional of ['@better-auth/passkey', '@playwright/test', 'tailwindcss', 'tus-js-client', '@angular/ssr']) {
   if (!manifest.peerDependenciesMeta?.[optional]?.optional) fail(`peer ${optional} must be optional`);
 }
 if (manifest.version !== JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version) fail('dist version differs from root package.json');

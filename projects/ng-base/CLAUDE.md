@@ -28,6 +28,11 @@ relatively. Changes to the vendored core belong upstream in `lenneTech/ng-base`.
 
 - Auth goes through `LtAuthService` only. Never send a plaintext password: the service hashes every credential
   (SHA-256) itself, so pass the raw form value once and never hash it yourself as well.
+- `lt-jwt-token` holds a JWT or nothing. After a passkey or 2FA sign-in never store a token yourself:
+  `authenticateWithPasskey()` returns `{ success, error?, user? }`, and `twoFactor.verifyTotp()` / `verifyBackupCode()`
+  set the session and return no session token.
+- SSR backend calls are anonymous (also `fetchWithAuth`): load user data in the browser (`afterNextRender()`, or a
+  resource that only starts when `isPlatformBrowser(…)`), render public data on the server, never decide access there.
 - `lt-auth-state` is a UI cache. Guards (`ltAuthGuard`, `ltRoleGuard`) gate UI only; the backend authorises every
   request. Do not build security decisions on `isAdmin()`.
 - Redirect/callback URLs for auth mails are absolute app URLs from `NG_PUBLIC_SITE_URL` (`LtAuthService.absoluteAppUrl`),

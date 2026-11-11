@@ -1,5 +1,6 @@
+import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { LT_FETCH, LT_RUNTIME_CONFIG, LT_RUNTIME_CONFIG_DEFAULTS, mergeLtRuntimeConfig, type LtRuntimeConfig } from '@lenne.tech/ng-base';
+import { LT_FETCH, LT_RUNTIME_CONFIG, LT_RUNTIME_CONFIG_DEFAULTS, LT_SERVER_RUNTIME_CONFIG, mergeLtRuntimeConfig, type LtRuntimeConfig } from '@lenne.tech/ng-base';
 
 import { formatLtDuration, formatLtFileSize, isLtMongoId, LtFileService } from './file-service';
 import { LT_FILES_DEFAULTS, LT_FILES_OPTIONS, provideLtFiles, type LtFilesOptions } from './files-options';
@@ -24,6 +25,23 @@ describe('LtFileService', () => {
   afterEach(() => vi.restoreAllMocks());
 
   describe('URLs', () => {
+    it('builds the links the browser uses during SSR too, never with the server-only NG_API_URL; getFileInfo fetches on NG_API_URL', async () => {
+      TestBed.configureTestingModule({
+        providers: [
+          { provide: PLATFORM_ID, useValue: 'server' },
+          { provide: LT_FETCH, useValue: fetchMock },
+          { provide: LT_RUNTIME_CONFIG, useValue: mergeLtRuntimeConfig(LT_RUNTIME_CONFIG_DEFAULTS, { apiProxy: false, apiUrl: 'https://api.test' }) },
+          { provide: LT_SERVER_RUNTIME_CONFIG, useValue: { public: {}, serverApiUrl: 'http://api:3000' } },
+        ],
+      });
+      const files = TestBed.inject(LtFileService);
+      expect(files.getFileUrl(ID)).toBe(`https://api.test/files/id/${ID}`);
+      expect(files.getDownloadUrl(ID)).toBe(`https://api.test/files/id/${ID}`);
+      fetchMock.mockResolvedValue(new Response('null', { status: 200 }));
+      await files.getFileInfo(ID);
+      expect(String(fetchMock.mock.calls[0]![0])).toBe(`http://api:3000/files/info/${ID}`);
+    });
+
     it('resolves file and download URLs against the API', () => {
       const files = setup();
       expect(files.getFileUrl(ID)).toBe(`https://api.test/files/id/${ID}`);

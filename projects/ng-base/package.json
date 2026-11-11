@@ -55,6 +55,7 @@
     "better-auth": ">=1.7.16 <1.8.0",
     "modern-screenshot": ">=4.6.0",
     "rxjs": "^7.8.0",
+    "tailwindcss": ">=4.0.0",
     "tus-js-client": ">=4.0.0"
   },
   "peerDependenciesMeta": {
@@ -68,6 +69,9 @@
       "optional": true
     },
     "modern-screenshot": {
+      "optional": true
+    },
+    "tailwindcss": {
       "optional": true
     },
     "tus-js-client": {

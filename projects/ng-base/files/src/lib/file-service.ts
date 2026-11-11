@@ -43,10 +43,11 @@ export class LtFileService implements LtFileState {
 
   /**
    * `<api>/files/id/:id` — nest-server's `GET files/id/:id` (CoreFileController), which streams the file (or redirects
-   * to a presigned S3 URL) after the rights check (`file.downloadRoles`, default admin).
+   * to a presigned S3 URL) after the rights check (`file.downloadRoles`, default admin). The URL the browser uses, also
+   * during SSR (`NG_PUBLIC_API_URL` or `/api`): it ends up in `href`/`src`, so the server-only `NG_API_URL` never does.
    */
   getFileUrl(id: string): string {
-    return `${this.baseUrl()}/id/${encodeURIComponent(id)}`;
+    return `${this.linkBaseUrl()}/id/${encodeURIComponent(id)}`;
   }
 
   /**
@@ -74,9 +75,16 @@ export class LtFileService implements LtFileState {
   }
 
   /** `<api><filesBasePath>` without a trailing slash; an absolute `filesBasePath` is used as is. */
+  /** Base for requests this service sends itself (`NG_API_URL` during SSR). */
   private baseUrl(): string {
     const basePath = this.options.filesBasePath || '/files';
     return this.api.buildUrl(basePath).replace(/\/+$/, '');
+  }
+
+  /** Base for links the browser follows (see {@link getFileUrl}). */
+  private linkBaseUrl(): string {
+    const basePath = this.options.filesBasePath || '/files';
+    return this.api.buildBrowserUrl(basePath).replace(/\/+$/, '');
   }
 }
 

@@ -1,7 +1,7 @@
 import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { computed, inject, InjectionToken, Injector, makeStateKey, PLATFORM_ID, Service, signal, TransferState, type Signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { isLtAbsoluteUrl, LT_RUNTIME_CONFIG, ltCredentialsFetch, LtApiUrlService } from '@lenne.tech/ng-base';
+import { isLtAbsoluteUrl, LT_RUNTIME_CONFIG, ltCredentialsFetch, LtApiUrlService, warnLtOnce } from '@lenne.tech/ng-base';
 
 import { LT_AUTH_OPTIONS } from './auth-options';
 import { isLtJwtShaped, LtAuthStateService, ltJwtExpiresWithin } from './auth-state';
@@ -598,6 +598,14 @@ export class LtAuthStore {
         if (body && typeof body === 'object' && !Array.isArray(body)) {
           this.featuresState.set(body as LtAuthFeatures);
           this.featuresLoaded = true;
+          if (this.options.enableAdmin && (body as LtAuthFeatures)['admin'] !== true) {
+            warnLtOnce(
+              'admin-plugin-unserved',
+              '[@lenne.tech/ng-base] provideLtAuth({ enableAdmin: true }) is set, but the API reports no admin plugin (no `admin` in ' +
+                '/iam/features): admin.* calls answer 404, and ng-base does not hash the passwords of admin.createUser / ' +
+                'admin.setUserPassword. Switch enableAdmin off unless the backend serves the Better Auth admin routes.',
+            );
+          }
           if (this.isServer) {
             this.transferState.set(LT_AUTH_FEATURES_STATE_KEY, body as LtAuthFeatures);
           }

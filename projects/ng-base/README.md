@@ -153,6 +153,31 @@ root route `canActivateChild: [ltSystemSetupGuard]`. Import the guards, `ltAuthI
 no Better Auth, 2FA or passkey code. `LtAuthService` (`/auth`) shares the same state and belongs on the pages that sign
 in, register, verify 2FA or manage passkeys. `/auth` re-exports everything of `/auth/provide`, so either import works.
 
+`lt-jwt-token` holds a JWT or nothing. After 2FA or a passkey sign-in never store a token yourself: the service puts the
+session in place, `authenticateWithPasskey()` returns `{ success, error?, user? }`, and `twoFactor.verifyTotp()` /
+`verifyBackupCode()` drop Better Auth's opaque session token from their answer (a JWT of `cookies: false` stays).
+
+## Server-side rendering: backend calls are anonymous
+
+During SSR every API call of ng-base goes out **without** the user's session: `LT_FETCH` / `fetchWithAuth`,
+`ltAuthInterceptor`, the AI services and offline sync. The server takes the auth state from the `lt-auth-state` cookie,
+a display cache for UI gating and no proof of a session, and never reads `lt-jwt-token`; Node's `fetch` does not forward
+the browser's cookies. The session cookie `iam.session_token` belongs to the API host anyway (host-only unless
+nest-server's `crossSubDomainCookies` is set), so the app server usually never receives it.
+
+For pages that show user data:
+
+- **Load it in the browser**, for example in `afterNextRender()` or a resource that only starts when
+  `isPlatformBrowser(…)`, with a skeleton for the first paint. `resource()` / `httpResource()` run during SSR too.
+- **Render only public data on the server**, and never decide access there: a guard that reads `lt-auth-state` decides
+  what to render, the API decides what the user may see.
+- If a page truly needs user data in the SSR HTML, that needs a route of the app's own server that forwards the
+  request's session to the API, set up per project together with a shared cookie domain. ng-base does not do it.
+
+Unlike nuxt-extensions, `fetchWithAuth` is anonymous during SSR too (nuxt-extensions sends the request's `lt-jwt-token`
+as bearer there): no SSR output depends on one user's token, and a cached route can never serve one user's data to the
+next.
+
 ## Texts (de/en)
 
 Library texts are German and English, chosen by the browser language, `LtI18nService.setLocale()` or an app i18n
@@ -221,19 +246,23 @@ Differences to bug.lt 1.6.9:
   has no subtree error capture): the app's `ErrorHandler` is wrapped (it keeps handling every error) and
   `LtBugReportService.reportError()` reports by hand; `LtBugReportService.open()` replaces `useBugReport().openModal()`.
 
-## Differences to nuxt-extensions 1.25.0
+## Differences to nuxt-extensions 4.0.1
+
+ng-base follows nuxt-extensions release for release (last compared: 1.26.0 to 4.0.1). Behaviour that is the same in both
+(2FA and passkey sign-in never expose the session token, one auth fetch with JWT renewal and `basePath`, file URLs on the
+API with `GET /files/id/:id`, TUS on `/tus`, `enableAdmin` off with a warning, error translations that never hold back the
+start, `includeDisabled` for AI prompts) is not listed. What differs on purpose:
 
 - Composables with per-call state are `inject…()` factories bound to the injection context (`injectLtTusUpload()`,
   `injectLtAiChat()`, `injectLtOfflineSync()`); shared state lives in root services (`LtAuthService`, `LtAi…Service`).
-- Bugs not ported: the user is set after 2FA verification; one shared auth fetch (`LT_FETCH`) refreshes a stale JWT for
-  AI, SSE and sync too; file URLs resolve against the API; the TUS endpoint defaults to `/tus`; the missing
-  `passkeyAlreadyRegistered` text exists; transitions use Angular `animate.enter`/`animate.leave` classes.
+- `fetchWithAuth` is anonymous during SSR too (see "Server-side rendering: backend calls are anonymous").
+- Transitions use Angular `animate.enter` / `animate.leave` classes with CSS variables for the durations, no Tailwind
+  duration utilities.
 - nest-server's real JWT mode (`cookies: false`, env `NSC__COOKIES=false`) works end to end: a JWT in a sign-in, 2FA or
   passkey answer puts the store into JWT mode, session checks keep the mode (a bearer-proven session never falls back to
   cookie mode), and a JWT expiring within 60 s is refreshed with itself as bearer before it is sent (nest-server's JWTs
   live 15 minutes and there is no cookie to mint a new one). An opaque Better Auth session token is never stored. Before
   nest-server 12.7.0 the browser must reach the API same-origin in this mode (`NG_PUBLIC_API_PROXY=true`).
-- The Better Auth admin plugin is off by default (`enableAdmin`), nest-server does not serve it.
 - Passkeys work without `@better-auth/passkey` (WebAuthn calls go straight to `/iam/passkey/*`); the plugin can still be
   passed via `provideLtAuth({ plugins })`.
 - Pre-hydration input is preserved (`provideLtNgBase({ preHydrationInput })`, on by default): the first change
@@ -242,8 +271,6 @@ Differences to bug.lt 1.6.9:
   HTML that blocks the native submit of forms without `action` before hydration (no password in a GET URL).
 - Not ported: the form-label association repair (a Nuxt UI/reka-ui id divergence that Angular's id handling does not
   have).
-- File URLs use nest-server 12.5's real routes (`/files/id/:id`, `/files/info/:id`); nuxt-extensions built
-  `/files/:id` and `/files/download/:id`, which answer 404.
 
 ## Vendor mode
 

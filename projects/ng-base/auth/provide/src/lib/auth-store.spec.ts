@@ -1,7 +1,7 @@
 import { PLATFORM_ID, REQUEST, TransferState, type Provider, type StateKey } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { LT_RUNTIME_CONFIG, LT_RUNTIME_CONFIG_DEFAULTS, mergeLtRuntimeConfig, type LtRuntimeConfig } from '@lenne.tech/ng-base';
+import { LT_RUNTIME_CONFIG, LT_RUNTIME_CONFIG_DEFAULTS, mergeLtRuntimeConfig, resetLtWarnOnceState, type LtRuntimeConfig } from '@lenne.tech/ng-base';
 
 import { LT_AUTH_INPUT_OPTIONS, type LtAuthOptions } from './auth-options';
 import { LT_AUTH_FEATURES_STATE_KEY, LT_AUTH_SIGN_OUT_HOOKS, LtAuthStore, readLtAuthAnswer } from './auth-store';
@@ -626,6 +626,29 @@ describe('LtAuthStore — feature flags', () => {
     fetchMock.mockClear();
     await setup({ platform: 'server', runtime: { apiUrl: '' } }).fetchFeatures();
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('warns once when enableAdmin is on but /iam/features reports no admin plugin, otherwise never', async () => {
+    resetLtWarnOnceState();
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const adminWarnings = () => warn.mock.calls.filter(([message]) => String(message).includes('enableAdmin'));
+    route = (url) => (url === `${IAM}/features` ? json({ passkey: true }) : json({}));
+    const auth = setup({ auth: { enableAdmin: true } });
+    await auth.fetchFeatures();
+    await auth.fetchFeatures();
+    expect(adminWarnings()).toHaveLength(1);
+
+    for (const [enableAdmin, features] of [
+      [true, { admin: true }],
+      [false, { passkey: true }],
+    ] as const) {
+      warn.mockClear();
+      resetLtWarnOnceState();
+      TestBed.resetTestingModule();
+      route = (url) => (url === `${IAM}/features` ? json(features) : json({}));
+      await setup({ auth: { enableAdmin } }).fetchFeatures();
+      expect(adminWarnings()).toHaveLength(0);
+    }
   });
 
   it('passkeySupported needs the backend feature, WebAuthn and enablePasskey', async () => {

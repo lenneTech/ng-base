@@ -285,12 +285,13 @@ export class LtAuthService {
         }
         // A JWT in the answer (nest-server with `cookies: false`) → JWT mode; otherwise the verification set the session
         // cookie. The opaque session token (`session.token`, or `token` from older servers) is never stored as JWT (it
-        // would land in a script-readable cookie). Without user in the answer it is loaded from the session.
+        // would land in a script-readable cookie), and never returned: the caller gets success and user only. Without
+        // user in the answer it is loaded from the session.
         const user = await this.store.adoptVerifiedSession(result);
         if (!user) {
           return { error: this.i18n.t('lt.auth.passkeyFailed'), success: false };
         }
-        return { session: result.session, success: true, user };
+        return { success: true, user };
       } catch (error) {
         if (error instanceof Error && error.name === 'NotAllowedError') {
           return { error: this.i18n.t('lt.auth.passkeyAborted'), success: false };
@@ -380,7 +381,10 @@ export class LtAuthService {
   };
 
   // ── two-factor (TOTP + backup codes) ───────────────────────────────────────────────────────────────────────────────
-  /** Two-factor methods (passwords hashed). `verifyTotp` / `verifyBackupCode` set the user on success (fix vs. Nuxt). */
+  /**
+   * Two-factor methods (passwords hashed). `verifyTotp` / `verifyBackupCode` set the user on success and return the answer
+   * without Better Auth's opaque session token (a JWT of `cookies: false` stays).
+   */
   readonly twoFactor = {
     disable: async <T extends { password: string }>(params: LtNoStrayCredential<T, 'password'>): Promise<LtAuthResponse> => (await this.getClient()).twoFactor.disable(params),
     enable: async <T extends { issuer?: string; password: string }>(params: LtNoStrayCredential<T, 'password'>): Promise<LtAuthResponse<LtTwoFactorEnableResult>> =>

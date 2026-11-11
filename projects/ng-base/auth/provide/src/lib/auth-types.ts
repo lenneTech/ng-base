@@ -67,7 +67,6 @@ export interface LtAuthError {
 /** Result of `LtAuthService.authenticateWithPasskey()`. */
 export interface LtPasskeyAuthResult {
   error?: string;
-  session?: { token: string };
   success: boolean;
   user?: LtUser;
 }
