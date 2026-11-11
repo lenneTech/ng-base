@@ -30,6 +30,20 @@ test('HTML carries the public runtime config, never the server-only API URL', as
   expect(html).toMatch(/KI-Modul: <strong[^>]*>aus</);
 });
 
+test('file links in server-rendered HTML carry the public API URL, never the server-only one', async ({ request }) => {
+  // DEMO_FILE_ID of src/app/demo/file-links-demo-page.ts. JWT runs reach the API through the SSR proxy.
+  const fileUrl = `${AUTH_MODE === 'jwt' ? '/api' : API_URL}/files/id/6650a1b2c3d4e5f6a7b8c9d0`;
+  const response = await request.get(`${SITE_URL}/demo/file-links`);
+  expect(response.status()).toBe(200);
+  const html = await response.text();
+
+  expect(html).toContain('ng-server-context="ssr"');
+  expect(html).toContain(`src="${fileUrl}"`);
+  expect(html).toContain(`href="${fileUrl}"`);
+  expect(html).not.toContain(SERVER_API_URL);
+  expect(html).not.toContain(new URL(SERVER_API_URL).host);
+});
+
 test('HTML responses carry the security and cache headers', async ({ request }) => {
   const response = await request.get(`${SITE_URL}/auth/login`);
   const headers = response.headers();

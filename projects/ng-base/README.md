@@ -134,6 +134,13 @@ the CDK overlay module):
 
 Without SSR (static hosting, foreign backend) pass the values in code: `provideLtNgBase({ runtime: { apiUrl: '…' } })`.
 
+`NG_API_URL` is for requests only. `LtApiUrlService.buildUrl()` returns it during SSR, so its result never goes into the
+HTML: a `src` or `href` with the internal host (`http://api:3000/…`) is unreachable for the browser. Every API URL that
+ends up in the page (`src`, `href`, `srcset`, `poster`, CSS `url()`, meta tags) comes from
+`LtApiUrlService.buildBrowserUrl()` or `LtFileService.getFileUrl()` / `getDownloadUrl()`, which use `NG_PUBLIC_API_URL`
+(or `/api` behind the proxy) on the server too. `files/src/lib/file-service-ssr.spec.ts` renders a page with
+`NG_API_URL=http://api:3000` and fails as soon as that host appears in the HTML.
+
 ## Auth in short
 
 ```ts

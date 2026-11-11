@@ -9,4 +9,9 @@ export const demoRoutes: Routes = [
     providers: [provideLtUiOverlayDefaults()],
     title: 'Toast und Dialog',
   },
+  {
+    path: 'file-links',
+    loadComponent: () => import('./file-links-demo-page').then((module) => module.FileLinksDemoPage),
+    title: 'Datei-Links',
+  },
 ];

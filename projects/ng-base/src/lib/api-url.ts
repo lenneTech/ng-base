@@ -89,12 +89,21 @@ export class LtApiUrlService {
     });
   }
 
-  /** Base URL (no trailing slash) for the current scope. */
+  /**
+   * Base URL (no trailing slash) for the current scope, for requests only: during SSR it is the internal `NG_API_URL`.
+   * Never put it into the HTML; links take {@link buildBrowserUrl}.
+   */
   baseUrl(): string {
     return this.resolveAndWarn().baseUrl;
   }
 
-  /** Build a full API URL for a path such as `/iam/sign-in/email`. Absolute URLs are returned unchanged. */
+  /**
+   * Build a full API URL for a path such as `/iam/sign-in/email`, for **requests this app sends** (`fetch`,
+   * `HttpClient`, `LT_FETCH`). During SSR it returns the internal `NG_API_URL`, which the browser cannot reach and which
+   * must not leak into the page: never use it for a URL that ends up in the HTML (`src`, `href`, `srcset`, `poster`, CSS
+   * `url()`, meta tags), use {@link buildBrowserUrl} or `LtFileService.getFileUrl()` / `getDownloadUrl()` for those.
+   * Absolute URLs are returned unchanged.
+   */
   buildUrl(path: string): string {
     if (isLtAbsoluteUrl(path)) {
       return path;
@@ -105,9 +114,10 @@ export class LtApiUrlService {
 
   /**
    * Build the URL the browser uses for `path`, also during SSR: `NG_PUBLIC_API_URL` (or `/api` behind the dev proxy),
-   * never the server-only `NG_API_URL`. For links that end up in the HTML (`href`, `src`), which the browser follows
-   * itself: an internal API host would be unreachable there and must not leak into the page. Absolute URLs are returned
-   * unchanged.
+   * never the server-only `NG_API_URL`. Use it for **every API URL that ends up in the HTML** (`src`, `href`, `srcset`,
+   * `poster`, CSS `url()`, meta tags), which the browser follows itself: an internal API host is unreachable there and
+   * must not leak into the page. Without a public API URL the result stays relative. Absolute URLs are returned
+   * unchanged. Requests the app sends itself take {@link buildUrl}.
    */
   buildBrowserUrl(path: string): string {
     if (isLtAbsoluteUrl(path)) {

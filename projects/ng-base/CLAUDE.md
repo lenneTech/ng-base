@@ -33,6 +33,9 @@ relatively. Changes to the vendored core belong upstream in `lenneTech/ng-base`.
   set the session and return no session token.
 - SSR backend calls are anonymous (also `fetchWithAuth`): load user data in the browser (`afterNextRender()`, or a
   resource that only starts when `isPlatformBrowser(…)`), render public data on the server, never decide access there.
+- API URLs that go into the HTML (`src`, `href`, `srcset`, `poster`, CSS `url()`, meta tags) come from
+  `LtFileService.getFileUrl()` / `getDownloadUrl()` or `LtApiUrlService.buildBrowserUrl()`. `buildUrl()` is for
+  requests only: during SSR it returns the internal `NG_API_URL`, which the browser cannot reach.
 - `lt-auth-state` is a UI cache. Guards (`ltAuthGuard`, `ltRoleGuard`) gate UI only; the backend authorises every
   request. Do not build security decisions on `isAdmin()`.
 - Redirect/callback URLs for auth mails are absolute app URLs from `NG_PUBLIC_SITE_URL` (`LtAuthService.absoluteAppUrl`),
