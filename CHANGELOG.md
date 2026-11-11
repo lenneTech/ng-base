@@ -8,6 +8,25 @@ and never moves for a breaking change, MINOR is a change an app has to act on wh
 The history up to 18.x (Bootstrap, Apollo/GraphQL, legacy JWT auth) is reachable via the tag `v18.1.3` and the git
 history; that line is not maintained any more.
 
+## [22.1.1] - 2026-11-11
+
+No change in behaviour; apps take it over as is.
+
+### Changed
+
+- Docs: `LtApiUrlService.buildUrl()` and `baseUrl()` say plainly that they are for requests only. During SSR they
+  return the internal `NG_API_URL`, which the browser cannot reach. API URLs that end up in the HTML (`src`, `href`,
+  `srcset`, `poster`, CSS `url()`, meta tags) come from `buildBrowserUrl()` or `LtFileService.getFileUrl()` /
+  `getDownloadUrl()`. The README ("Runtime configuration") and the agent notes shipped in `CLAUDE.md` carry the same
+  rule.
+
+### Tests
+
+- `/files`: a server-platform spec renders an image and a download link with `NG_API_URL=http://api:3000` and fails as
+  soon as that host appears in the HTML (public URL, dev proxy, and no public URL).
+- Playground: the page `/demo/file-links` and an SSR E2E test that reads the real server-rendered HTML and expects the
+  public API URL (or `/api` behind the proxy) in `src` and `href`, never the server-only one.
+
 ## [22.1.0] - 2026-11-11
 
 ng-base level with `@lenne.tech/nuxt-extensions` 4.0.1 (1.26.0 to 4.0.1 compared). It contains one breaking change,
