@@ -8,6 +8,48 @@ and never moves for a breaking change, MINOR is a change an app has to act on wh
 The history up to 18.x (Bootstrap, Apollo/GraphQL, legacy JWT auth) is reachable via the tag `v18.1.3` and the git
 history; that line is not maintained any more.
 
+## [22.1.2] - 2026-11-19
+
+Sign-in through a social provider, level with nuxt-extensions PR #34 (`signIn.social` and no inline image in the auth
+state), built with Angular 22.2.6. Apps take it over as is.
+
+### Added
+
+- `/auth`: `LtAuthService.signIn.social(params, options?)` and `getClient().signIn.social()` sign in through a provider
+  the API configured (`betterAuth.socialProviders` in nest-server, e.g. Microsoft Entra ID for single sign-on) on
+  `POST /iam/sign-in/social`. A redirect answer leaves the page and stores nothing; an ID-token answer signs the user in
+  like the 2FA step (JWT mode when the API answers a JWT, otherwise the cookie session plus a JWT from `/iam/token`), and
+  Better Auth's opaque session token is never stored or returned. Relative `callbackURL`, `errorCallbackURL` and
+  `newUserCallbackURL` become absolute app URLs (`NG_PUBLIC_SITE_URL`). Type `LtSocialSignInParams` in
+  `/auth/provide`.
+- `/auth/provide`: `/sign-in/social` is in `LT_AUTH_COOKIE_PATHS`, so a request through `fetchWithAuth` / `LT_FETCH`
+  carries cookies there in JWT mode too (the Better Auth client sends `credentials: 'include'` itself). The route sets
+  Better Auth's OAuth `state` cookie, which the provider's callback checks.
+
+### Fixed
+
+- `/auth`: an inline image (a `data:` URL in `user.image`) is never kept in the auth state. Better Auth's Microsoft
+  provider stores the profile photo as one; a few KB of it pushed `lt-auth-state` past the browser's 4096 bytes, the
+  browser dropped the cookie without an error, and the next page load read as a logout (with a silent sign-in on the
+  login page: a loop). Every read and write of the auth state leaves it out; `user().image` is `undefined` for such a
+  user, an `http(s)` URL or a path stays.
+- `/auth`: the call options of `getClient()` methods that take parameters (`signIn.email`, `signUp.email`,
+  `changePassword`, `requestPasswordReset`, `resetPassword`, `sendVerificationEmail`, `verifyEmail`, `twoFactor.*`)
+  reach the request. They were wrapped as `{ fetchOptions }` in Better Auth's second argument, which Better Auth reads as
+  the fetch options themselves, so `headers`, `signal` and the rest were dropped.
+
+### Security
+
+- `/auth`: with `throw: true` Better Auth answers the body instead of `{ data, error }`; `twoFactor.verifyTotp()`,
+  `verifyBackupCode()` and `signIn.social()` drop the opaque session token from that body as well.
+
+### Changed
+
+- Built and tested with Angular 22.2.6 (CLI, build and SSR 22.2.7), `@angular/cdk` 22.3.0 and `ng-packagr` 22.3.0.
+  The peer ranges stay as they are (`@angular/*` `^22.2.0`, better-auth `>=1.7.16 <1.8.0`); better-auth and
+  `@better-auth/passkey` stay at 1.7.19, level with nuxt-extensions and nest-server-starter. The workspace no longer
+  carries `luxon`, which the library never imported.
+
 ## [22.1.1] - 2026-11-11
 
 No change in behaviour; apps take it over as is.
