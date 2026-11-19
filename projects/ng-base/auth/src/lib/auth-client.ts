@@ -7,6 +7,7 @@ import {
   type LtAuthResponse,
   type LtNoStrayCredential,
   type LtPasskey,
+  type LtSocialSignInParams,
   type LtTwoFactorEnableResult,
   type LtUser,
 } from '@lenne.tech/ng-base/auth/provide';
@@ -54,6 +55,13 @@ export interface LtAuthClient {
       params: LtNoStrayCredential<T, 'password'>,
       options?: LtAuthCallOptions,
     ): Promise<LtAuthResponse>;
+    /**
+     * `POST <basePath>/sign-in/social` (see {@link LtSocialSignInParams}). No credential travels, so the parameters go
+     * through as they are. Without `idToken` Better Auth answers the provider's authorization URL and its client
+     * navigates there; with `idToken` it answers `{ token, user }` at once, and that opaque session token is dropped
+     * from the answer like in the 2FA answers (a JWT of `cookies: false` stays).
+     */
+    social(params: LtSocialSignInParams, options?: LtAuthCallOptions): Promise<LtAuthResponse>;
   };
   signOut(options?: LtAuthCallOptions): Promise<LtAuthResponse>;
   signUp: {
@@ -179,17 +187,27 @@ export async function createLtAuthClient(config: LtAuthClientConfig): Promise<Lt
     }
     return result as T;
   };
-  const withOptions = (options?: LtAuthCallOptions) => (options ? [{ fetchOptions: options }] : []);
-  // Better Auth answers `two-factor/verify-totp` and `verify-backup-code` with `{ token, user }`; with cookies on, the
-  // token is the opaque session token (the value of the httpOnly `iam.session_token`). It is dropped from the answer, so
-  // no caller can store it where scripts read it. A JWT (`cookies: false`) stays: it is the transport of JWT mode.
-  const withoutSessionToken = (response: LtAuthResponse<any>): LtAuthResponse<any> => {
-    const data = response?.data;
-    if (!data || typeof data !== 'object' || !('token' in data) || isLtJwtShaped(data.token)) {
-      return response;
+  // The fetch options of a call that takes a body: Better Auth's proxy reads them from its SECOND argument as they are
+  // (`{ fetchOptions }` there would be ignored). Calls without a body pass `{ fetchOptions }` as their first argument.
+  const withOptions = (options?: LtAuthCallOptions) => (options ? [options] : []);
+  // Better Auth answers `two-factor/verify-totp`, `verify-backup-code` and `sign-in/social` with `idToken` with
+  // `{ token, user }`; with cookies on, the token is the opaque session token (the value of the httpOnly
+  // `iam.session_token`). It is dropped from the answer, so no caller can store it where scripts read it. A JWT
+  // (`cookies: false`) stays: it is the transport of JWT mode. The answer is the `{ data, error }` envelope, or the body
+  // itself when the caller passed `throw: true`; both are cleaned.
+  const dropSessionToken = (body: unknown): unknown => {
+    if (!body || typeof body !== 'object' || !('token' in body) || isLtJwtShaped((body as { token: unknown }).token)) {
+      return body;
     }
-    const { token: _sessionToken, ...rest } = data as Record<string, unknown>;
-    return { ...response, data: rest };
+    const { token: _sessionToken, ...rest } = body as Record<string, unknown>;
+    return rest;
+  };
+  const withoutSessionToken = (response: LtAuthResponse<any>): LtAuthResponse<any> => {
+    if (response && typeof response === 'object' && 'data' in response) {
+      const data = dropSessionToken(response.data);
+      return data === response.data ? response : { ...response, data };
+    }
+    return dropSessionToken(response) as LtAuthResponse<any>;
   };
 
   return {
@@ -207,6 +225,7 @@ export async function createLtAuthClient(config: LtAuthClientConfig): Promise<Lt
     sendVerificationEmail: (params, options) => call(['sendVerificationEmail'], [params, ...withOptions(options)]),
     signIn: {
       email: async (params, options) => call(['signIn', 'email'], [await hashed(params as Record<string, unknown>, ['password'], 'signIn.email'), ...withOptions(options)]),
+      social: async (params, options) => withoutSessionToken(await call(['signIn', 'social'], [params, ...withOptions(options)])),
     },
     signOut: (options) => call(['signOut'], options ? [{ fetchOptions: options }] : []),
     signUp: {

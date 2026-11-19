@@ -147,6 +147,7 @@ ends up in the page (`src`, `href`, `srcset`, `poster`, CSS `url()`, meta tags) 
 protected readonly auth = inject(LtAuthService);
 
 await this.auth.signIn.email({ email, password });   // password is SHA-256 hashed before it leaves the browser
+await this.auth.signIn.social({ provider: 'microsoft', callbackURL: '/auth/callback' }); // SSO, see below
 this.auth.user();                                     // signal
 this.auth.isAdmin();                                  // computed signal (UX gate only)
 await this.auth.twoFactor.verifyTotp({ code });       // sets the user on success
@@ -160,9 +161,76 @@ root route `canActivateChild: [ltSystemSetupGuard]`. Import the guards, `ltAuthI
 no Better Auth, 2FA or passkey code. `LtAuthService` (`/auth`) shares the same state and belongs on the pages that sign
 in, register, verify 2FA or manage passkeys. `/auth` re-exports everything of `/auth/provide`, so either import works.
 
-`lt-jwt-token` holds a JWT or nothing. After 2FA or a passkey sign-in never store a token yourself: the service puts the
-session in place, `authenticateWithPasskey()` returns `{ success, error?, user? }`, and `twoFactor.verifyTotp()` /
-`verifyBackupCode()` drop Better Auth's opaque session token from their answer (a JWT of `cookies: false` stays).
+`lt-jwt-token` holds a JWT or nothing. After 2FA, a passkey or a social sign-in never store a token yourself: the service
+puts the session in place, `authenticateWithPasskey()` returns `{ success, error?, user? }`, and `twoFactor.verifyTotp()`
+/ `verifyBackupCode()` / `signIn.social()` drop Better Auth's opaque session token from their answer (a JWT of
+`cookies: false` stays). That covers the returned value, also with `throw: true`; an `onSuccess` hook in the call
+options sees the answer before.
+
+### Sign-in through a social provider
+
+`LtAuthService.signIn.social(params)` signs in through a provider the API configured (`betterAuth.socialProviders` in
+nest-server), for example Microsoft Entra ID for single sign-on. `GET /iam/features` lists the enabled providers as
+`socialProviders`; `auth.features()` holds that answer, so a login page can show one button per entry.
+`getClient().signIn.social()` is the same call without the auth state. Every field is documented on
+`LtSocialSignInParams`.
+
+```ts
+// login page
+protected readonly auth = inject(LtAuthService);
+protected readonly providers = computed(() => {
+  const value = this.auth.features()['socialProviders'];
+  return Array.isArray(value) ? value : [];
+});
+
+// Interactive: the provider shows its account picker. Relative URLs become <NG_PUBLIC_SITE_URL>/…
+protected signInWith(provider: string): Promise<LtAuthResponse> {
+  return this.auth.signIn.social({ additionalParams: { prompt: 'select_account' }, callbackURL: '/auth/callback', errorCallbackURL: '/auth/login', provider });
+}
+```
+
+```ts
+// auth/callback page (no ltAuthGuard: the user is not loaded yet, the API has just set the session cookie)
+constructor() {
+  afterNextRender(async () => {
+    const signedIn = await this.auth.validateSession();
+    await this.router.navigateByUrl(signedIn ? '/app' : '/auth/login', { replaceUrl: true });
+  });
+}
+```
+
+Both shapes go to `POST <basePath>/sign-in/social`:
+
+- **Redirect, the usual one.** The answer is the provider's authorization URL, and Better Auth's client navigates there:
+  the page is left and nothing is stored yet. The provider sends the browser to the API, which sets the session cookie
+  and redirects to `callbackURL`, where the user arrives through `validateSession()`.
+- **ID token**, for an app inside a host that already knows the user (Microsoft Teams, a native shell). With `idToken`
+  the API answers `{ token, user }` at once, without navigation. The service signs the user in like after 2FA: on the
+  cookie session with a JWT from `/iam/token`, or in JWT mode when the API answers a JWT (`cookies: false`). The session
+  token in that answer is removed.
+
+- **A silent attempt is `additionalParams: { prompt: 'none' }`.** The provider answers without showing anything: with
+  the session when the user has one there, otherwise through `errorCallbackURL` with `?error=login_required` (or
+  `interaction_required`). That way back is the only one, so the page behind it must not start the attempt again:
+  remember it per tab, and do not try silently after an explicit sign-out, or the user is signed in again at once.
+- **`?error=` on `errorCallbackURL` is a code from the provider or from Better Auth** (`access_denied`,
+  `signup_disabled`, …). Map it to your own text. Never render `error_description` or anything else from the query:
+  anybody can put text there and send the link around.
+- **`callbackURL`, `errorCallbackURL` and `newUserCallbackURL` are app URLs and never come from user input.** The
+  service turns a relative value into an absolute one on `NG_PUBLIC_SITE_URL` (`absoluteAppUrl()`, as for
+  `requestPasswordReset`); Better Auth itself would resolve it against the API. An absolute value goes through
+  unchanged, and the API's `trustedOrigins` is the only check on it. A deep link the user should land on afterwards
+  goes into their query only after it was validated as an app-relative path.
+- **Nothing is hashed**: no credential travels, the parameters go through as they are. The request carries cookies in
+  JWT mode too (`LT_AUTH_COOKIE_PATHS`): it sets Better Auth's OAuth `state` cookie, which the callback checks.
+
+**An inline profile photo is not kept in the auth state.** Better Auth's Microsoft provider stores the user's photo in
+`user.image` as a `data:` URL. In the `lt-auth-state` cookie a few KB of it push the cookie past the browser's limit of
+4096 bytes; the browser drops it without an error, and the next page load reads as a logout. So `user().image` is
+`undefined` for such a user, while an `http(s)` URL or a path stays (also when an earlier version stored the photo).
+Where you render an avatar, read the photo from the session answer (`GET <basePath>/get-session`, e.g.
+`(await auth.getClient()).getSession()`). An API that does not need the photo sets `disableProfilePhoto: true` on the
+Microsoft provider.
 
 ## Server-side rendering: backend calls are anonymous
 
@@ -272,6 +340,11 @@ start, `includeDisabled` for AI prompts) is not listed. What differs on purpose:
   nest-server 12.7.0 the browser must reach the API same-origin in this mode (`NG_PUBLIC_API_PROXY=true`).
 - Passkeys work without `@better-auth/passkey` (WebAuthn calls go straight to `/iam/passkey/*`); the plugin can still be
   passed via `provideLtAuth({ plugins })`.
+- Social sign-in (nuxt-extensions PR #34): `LtAuthService.signIn.social()` turns relative callback URLs into absolute
+  app URLs (nuxt-extensions passes them on, and Better Auth resolves them against the API); `/sign-in/social` is in
+  `LT_AUTH_COOKIE_PATHS`, so `fetchWithAuth` sends cookies there in JWT mode too, for Better Auth's OAuth `state` cookie
+  (nuxt-extensions with `cookiesInJwtMode: 'auth-paths'` omits them); and with `throw: true` the session token is
+  removed from the returned body as well (nuxt-extensions removes it from `{ data }` only).
 - Pre-hydration input is preserved (`provideLtNgBase({ preHydrationInput })`, on by default): the first change
   detection after hydration overwrites typed text even with `withEventReplay()` (measured in the playground E2E), so
   fields are snapshot before and restored after hydration. `ltAngularRequestHandler()` also writes a guard into the

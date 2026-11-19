@@ -12,6 +12,7 @@ import {
   type LtPasskey,
   type LtPasskeyAuthResult,
   type LtPasskeyRegisterResult,
+  type LtSocialSignInParams,
   type LtTwoFactorEnableResult,
   type LtUser,
   type LtUserInput,
@@ -160,6 +161,26 @@ export class LtAuthService {
       }),
     /** Passkey sign-in (same as {@link authenticateWithPasskey}). */
     passkey: (): Promise<LtPasskeyAuthResult> => this.authenticateWithPasskey(),
+    /**
+     * Sign-in through a social provider the API configured (see {@link LtSocialSignInParams}). A relative
+     * `callbackURL`, `errorCallbackURL` or `newUserCallbackURL` becomes an absolute app URL ({@link absoluteAppUrl});
+     * Better Auth would resolve it against the API.
+     *
+     * - Redirect answer (no `idToken`): Better Auth's client leaves the page, nothing is stored. The user arrives through
+     *   `validateSession()` on the page behind `callbackURL`.
+     * - ID-token answer: the user is signed in like after 2FA (a JWT of `cookies: false` → JWT mode, otherwise cookie
+     *   mode plus a JWT from `GET /iam/token`). Better Auth's opaque session token is never stored and never returned.
+     */
+    social: async (params: LtSocialSignInParams, options?: LtAuthCallOptions): Promise<LtAuthResponse> =>
+      this.store.withLoading(async () => {
+        const result = await (await this.getClient()).signIn.social(this.withAppCallbackUrls(params), options);
+        // Only an answer that carries the user completes the sign-in here (envelope or, with `throw: true`, the body);
+        // a redirect answer or an error changes nothing.
+        if (!result?.error && readLtAuthAnswer(result).user) {
+          await this.store.adoptVerifiedSession(result);
+        }
+        return result;
+      }),
   };
 
   /**
@@ -433,6 +454,18 @@ export class LtAuthService {
    */
   absoluteAppUrl(path: string): string {
     return this.store.absoluteAppUrl(path);
+  }
+
+  /** `params` with relative callback URLs of a social sign-in turned into absolute app URLs (absolute ones unchanged). */
+  private withAppCallbackUrls(params: LtSocialSignInParams): LtSocialSignInParams {
+    const resolved: LtSocialSignInParams = { ...params };
+    for (const key of ['callbackURL', 'errorCallbackURL', 'newUserCallbackURL'] as const) {
+      const value = params[key];
+      if (value) {
+        resolved[key] = this.absoluteAppUrl(value);
+      }
+    }
+    return resolved;
   }
 
   /**

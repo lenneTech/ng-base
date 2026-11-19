@@ -28,9 +28,15 @@ relatively. Changes to the vendored core belong upstream in `lenneTech/ng-base`.
 
 - Auth goes through `LtAuthService` only. Never send a plaintext password: the service hashes every credential
   (SHA-256) itself, so pass the raw form value once and never hash it yourself as well.
-- `lt-jwt-token` holds a JWT or nothing. After a passkey or 2FA sign-in never store a token yourself:
+- `lt-jwt-token` holds a JWT or nothing. After a passkey, 2FA or social sign-in never store a token yourself:
   `authenticateWithPasskey()` returns `{ success, error?, user? }`, and `twoFactor.verifyTotp()` / `verifyBackupCode()`
-  set the session and return no session token.
+  / `signIn.social()` set the session and return no session token.
+- Social sign-in (`LtAuthService.signIn.social()`): `callbackURL` / `errorCallbackURL` are fixed app paths (relative ones
+  become `NG_PUBLIC_SITE_URL` URLs), never values from the query. Map `?error=` codes to own texts and never render
+  `error_description`. A silent attempt (`additionalParams: { prompt: 'none' }`) runs at most once per tab and never
+  after an explicit sign-out. The redirect lands on a callback page that calls `validateSession()` (no `ltAuthGuard`).
+- `user().image` never holds a `data:` image (it would push `lt-auth-state` past 4096 bytes and the browser would drop
+  it); an avatar from Microsoft Entra reads the photo from `getSession()`.
 - SSR backend calls are anonymous (also `fetchWithAuth`): load user data in the browser (`afterNextRender()`, or a
   resource that only starts when `isPlatformBrowser(…)`), render public data on the server, never decide access there.
 - API URLs that go into the HTML (`src`, `href`, `srcset`, `poster`, CSS `url()`, meta tags) come from

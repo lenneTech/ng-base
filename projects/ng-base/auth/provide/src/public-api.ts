@@ -32,6 +32,7 @@ export type {
   LtPasskey,
   LtPasskeyAuthResult,
   LtPasskeyRegisterResult,
+  LtSocialSignInParams,
   LtSystemSetupInput,
   LtSystemSetupStatus,
   LtTwoFactorEnableResult,

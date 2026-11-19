@@ -34,9 +34,10 @@ export const LT_AUTH_ENDPOINT_FRAGMENTS: readonly string[] = [
 /**
  * Paths that need the session cookie even in JWT mode: passkey and 2FA challenges are bound to cookies, and
  * `/get-session` resolves the session from the cookie only (a bearer-only request gets `200 null`, which the session
- * probe would read as "dead" for every user in JWT mode).
+ * probe would read as "dead" for every user in JWT mode). `/sign-in/social` sets Better Auth's OAuth `state` cookie,
+ * which the provider's callback checks; a request without credentials loses it and the callback fails.
  */
-export const LT_AUTH_COOKIE_PATHS: readonly string[] = ['/passkey/', '/two-factor/', '/2fa/', '/get-session'];
+export const LT_AUTH_COOKIE_PATHS: readonly string[] = ['/passkey/', '/two-factor/', '/2fa/', '/get-session', '/sign-in/social'];
 
 /** Whether a 401 from `url` belongs to an auth flow (wrong password, wrong code, probe) rather than a lost session. */
 export function isLtAuthEndpoint(url: string): boolean {

@@ -3,7 +3,7 @@ import { inject, PLATFORM_ID, Service } from '@angular/core';
 import { LtCookieService } from '@lenne.tech/ng-base';
 
 import { LT_AUTH_OPTIONS } from './auth-options';
-import type { LtAuthMode, LtAuthState, LtUser } from './auth-types';
+import type { LtAuthMode, LtAuthState, LtUser, LtUserInput } from './auth-types';
 
 /** Lifetime of the auth-state and JWT cookies (7 days). */
 export const LT_AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -41,6 +41,34 @@ export function resolveLtAuthState(cookieString: string, stateCookieName: string
   return fallback;
 }
 
+/** Whether `value` is an inline image: a string with the `data:` scheme, in any case and after leading whitespace. */
+function isLtInlineImage(value: unknown): boolean {
+  return typeof value === 'string' && /^\s*data:/i.test(value);
+}
+
+/**
+ * The auth state as it is kept: in the `lt-auth-state` cookie and in the user signal. `LtAuthStateService` runs every
+ * state it reads or writes through this function, `LtAuthStore.setUser()` the user it holds.
+ *
+ * - `image: null` (Better Auth's "no picture") becomes `undefined`: readers have one empty case.
+ * - An inline image (a `data:` URL) is left out, whatever its size. Better Auth's Microsoft provider stores the profile
+ *   photo as one unless the API sets `disableProfilePhoto`, and a few KB of it push the cookie past the browser's limit
+ *   of 4096 bytes. The browser drops such a cookie without an error, and the next page load finds a signed-in user
+ *   signed out. An app that shows the photo reads it from the session answer (`GET <basePath>/get-session`).
+ * - An `http(s)` URL or a path stays as it is, and so does every other field.
+ *
+ * Internal to `@lenne.tech/ng-base/auth/provide` (not in the public API).
+ */
+export function toLtStoredAuthState(state: { authMode: LtAuthMode; user: LtUserInput | null }): LtAuthState {
+  const { user } = state;
+  if (user === null || typeof user !== 'object') {
+    // Signed out, or a malformed value from the client-writable cookie: nothing to clean.
+    return state as LtAuthState;
+  }
+  const image = user.image ?? undefined;
+  return { ...state, user: { ...user, image: isLtInlineImage(image) ? undefined : image } as LtUser };
+}
+
 /**
  * Read/write access to the auth cookies (`lt-auth-state`, `lt-jwt-token`) with the duplicate-tolerant read and the
  * SSR no-write rule. The server reads the request cookies and never writes.
@@ -57,17 +85,24 @@ export class LtAuthStateService {
     return this.options.cookieNames;
   }
 
-  /** Current auth state from the cookies (`null` when none). */
+  /**
+   * Current auth state from the cookies (`null` when none), as it is kept (see {@link toLtStoredAuthState}): an inline
+   * image an earlier version stored is not handed on.
+   */
   readState(): LtAuthState | null {
-    return resolveLtAuthState(this.cookies.raw(), this.cookieNames.state);
+    const state = resolveLtAuthState(this.cookies.raw(), this.cookieNames.state);
+    return state ? toLtStoredAuthState(state) : null;
   }
 
-  /** Write the auth state (browser only; never writes a user-less state during SSR). */
+  /**
+   * Write the auth state (browser only; the server never writes). Every write goes through
+   * {@link toLtStoredAuthState}, so no caller can put an inline image into the cookie.
+   */
   writeState(state: LtAuthState): void {
     if (this.isServer) {
       return;
     }
-    const encoded = JSON.stringify(state);
+    const encoded = JSON.stringify(toLtStoredAuthState(state));
     if (encodeURIComponent(encoded).length > 3500 && typeof ngDevMode !== 'undefined' && ngDevMode) {
       console.warn(`[@lenne.tech/ng-base] The auth-state cookie is ${encodeURIComponent(encoded).length} bytes; browsers drop cookies over 4 KB.`);
     }

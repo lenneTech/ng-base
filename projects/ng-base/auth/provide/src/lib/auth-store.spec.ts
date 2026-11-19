@@ -300,13 +300,15 @@ describe('LtAuthStore — fetchWithAuth()', () => {
     };
   }
 
-  it('in JWT mode sends the bearer and omits cookies, except for get-session, passkey and 2FA', async () => {
+  it('in JWT mode sends the bearer and omits cookies, except for get-session, passkey, 2FA and social sign-in', async () => {
     signedIn('jwt');
     const auth = setup();
     await auth.fetchWithAuth(`${API}/measures`);
     expect(calls(`${API}/measures`)[0]?.credentials).toBe('omit');
     expect(bearerOf(calls(`${API}/measures`)[0])).toBe('Bearer eyJ0.stale.jwt');
-    for (const path of ['/get-session', '/passkey/generate-authenticate-options', '/two-factor/verify-totp']) {
+    // `/sign-in/social` sets Better Auth's OAuth `state` cookie, which the provider's callback checks: without
+    // credentials the browser drops it and the callback fails (`state_mismatch`).
+    for (const path of ['/get-session', '/passkey/generate-authenticate-options', '/two-factor/verify-totp', '/sign-in/social']) {
       await auth.fetchWithAuth(`${IAM}${path}`, { method: 'POST' });
       expect(calls(`${IAM}${path}`)[0]?.credentials).toBe('include');
     }

@@ -13,14 +13,17 @@ import {
 const PLAINTEXT = 'correct horse battery staple';
 
 /** The real Better Auth client over a recording fetch: asserts what reaches the wire. */
-async function wireClient(): Promise<{ client: LtAuthClient; fetch: ReturnType<typeof vi.fn>; lastBody: () => Record<string, unknown>; lastUrl: () => string }> {
-  const fetch = vi.fn(async () => new Response(JSON.stringify({ status: true }), { headers: { 'content-type': 'application/json' }, status: 200 }));
+async function wireClient(
+  answer: { body: unknown; status?: number } = { body: { status: true } },
+): Promise<{ client: LtAuthClient; fetch: ReturnType<typeof vi.fn>; lastBody: () => Record<string, unknown>; lastInit: () => RequestInit; lastUrl: () => string }> {
+  const fetch = vi.fn(async () => new Response(JSON.stringify(answer.body), { headers: { 'content-type': 'application/json' }, status: answer.status ?? 200 }));
   const client = await createLtAuthClient({ basePath: '/iam', baseURL: 'https://api.example.com', fetch });
   const lastCall = () => fetch.mock.calls.at(-1) as unknown as [RequestInfo | URL, RequestInit];
   return {
     client,
     fetch,
     lastBody: () => JSON.parse(String(lastCall()[1].body)) as Record<string, unknown>,
+    lastInit: () => lastCall()[1],
     lastUrl: () => String(lastCall()[0]),
   };
 }
@@ -93,6 +96,107 @@ describe('createLtAuthClient — what reaches the wire', () => {
     await client.verifyEmail({ token: 'tok' });
     expect(lastUrl()).toBe('https://api.example.com/iam/verify-email?token=tok');
   });
+
+  it('applies the call options (headers, signal) to the request of every method that takes parameters', async () => {
+    // Better Auth's proxy takes the fetch options as the second argument itself; `{ fetchOptions }` there is ignored.
+    const { client, lastInit } = await wireClient();
+    const signal = new AbortController().signal;
+    const calls: ((options: { headers: Record<string, string>; signal: AbortSignal }) => Promise<unknown>)[] = [
+      (o) => client.signIn.email({ email: 'a@test.com', password: PLAINTEXT }, o),
+      (o) => client.signUp.email({ email: 'a@test.com', name: 'A', password: PLAINTEXT }, o),
+      (o) => client.changePassword({ currentPassword: 'old-one', newPassword: PLAINTEXT }, o),
+      (o) => client.requestPasswordReset({ email: 'a@test.com' }, o),
+      (o) => client.resetPassword({ newPassword: PLAINTEXT, token: 't' }, o),
+      (o) => client.sendVerificationEmail({ email: 'a@test.com' }, o),
+      (o) => client.verifyEmail({ token: 'tok' }, o),
+      (o) => client.twoFactor.verifyTotp({ code: '123456' }, o),
+      (o) => client.twoFactor.enable({ password: PLAINTEXT }, o),
+    ];
+    for (const call of calls) {
+      await call({ headers: { 'x-trace': 'abc' }, signal });
+      expect(new Headers(lastInit().headers).get('x-trace')).toBe('abc');
+      expect(lastInit().signal).toBe(signal);
+    }
+  });
+});
+
+describe('createLtAuthClient — the session token never reaches application code', () => {
+  const SESSION_TOKEN = 'XqvQpZ8R2b1sD4fG6hJ7kL9mN0pQrStU';
+
+  it('is dropped from the raw body too, when the caller asks Better Auth to answer it (throw: true)', async () => {
+    const { client } = await wireClient({ body: { redirect: false, token: SESSION_TOKEN, user: { email: 'a@test.com', id: 'u1' } } });
+    const answers = [
+      await client.twoFactor.verifyTotp({ code: '123456' }, { throw: true }),
+      await client.twoFactor.verifyBackupCode({ code: 'backup-1' }, { throw: true }),
+      await client.signIn.social({ idToken: { token: 'provider-id-token' }, provider: 'microsoft' }, { throw: true }),
+    ];
+    for (const answer of answers) {
+      expect(answer).toEqual({ redirect: false, user: { email: 'a@test.com', id: 'u1' } });
+      expect(JSON.stringify(answer)).not.toContain(SESSION_TOKEN);
+    }
+  });
+});
+
+/**
+ * Sign-in through a provider the API configured (`betterAuth.socialProviders` in nest-server), on
+ * `POST /iam/sign-in/social` in two shapes: without `idToken` the answer is the provider's authorization URL (Better
+ * Auth's client navigates there), with `idToken` it is `{ token, user }` at once, `token` being the opaque session
+ * token. No credential travels, so nothing is hashed and the parameters go through as they are.
+ */
+describe('createLtAuthClient — signIn.social', () => {
+  /** An opaque Better Auth session token, as `/sign-in/social` with `idToken` puts it into the body. */
+  const SESSION_TOKEN = 'XqvQpZ8R2b1sD4fG6hJ7kL9mN0pQrStU';
+  const JWT = 'eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ1MSJ9.c2lnbmF0dXJl';
+  const USER = { email: 'a@test.com', id: 'u1' };
+
+  it('sends POST /iam/sign-in/social with every field untouched and hashes nothing', async () => {
+    const { client, lastBody, lastInit, lastUrl } = await wireClient();
+    // `callbackURL` / `errorCallbackURL` are resolved by Better Auth like `redirectTo`, and `additionalParams` carries
+    // `prompt: 'none'` for the silent attempt: a wrapper that rebuilt the payload would drop them.
+    const params = {
+      additionalParams: { prompt: 'none' },
+      callbackURL: 'https://app.example.com/auth/callback?redirect=%2Fapp',
+      errorCallbackURL: 'https://app.example.com/auth/login',
+      loginHint: 'a@test.com',
+      provider: 'microsoft',
+    };
+    await client.signIn.social(params);
+    expect(lastUrl()).toBe('https://api.example.com/iam/sign-in/social');
+    expect(lastInit().method).toBe('POST');
+    expect(lastBody()).toEqual(params);
+  });
+
+  it('forwards the call options as fetch options', async () => {
+    const { client, lastInit } = await wireClient();
+    await client.signIn.social({ provider: 'microsoft' }, { headers: { 'x-tenant': 't1' } });
+    expect(new Headers(lastInit().headers).get('x-tenant')).toBe('t1');
+  });
+
+  it('answers the authorization URL of the redirect shape unchanged', async () => {
+    const { client } = await wireClient({ body: { redirect: false, url: 'https://login.example.com/authorize' } });
+    const result = await client.signIn.social({ disableRedirect: true, provider: 'microsoft' });
+    expect(result.data).toEqual({ redirect: false, url: 'https://login.example.com/authorize' });
+  });
+
+  it('removes the session token from an ID-token answer and keeps the user', async () => {
+    const { client } = await wireClient({ body: { redirect: false, token: SESSION_TOKEN, user: USER } });
+    const result = await client.signIn.social({ idToken: { token: 'provider-id-token' }, provider: 'microsoft' });
+    expect(result.data).toEqual({ redirect: false, user: USER });
+    expect(JSON.stringify(result)).not.toContain(SESSION_TOKEN);
+  });
+
+  it('keeps a JWT the server put into the answer on purpose', async () => {
+    const { client } = await wireClient({ body: { redirect: false, token: JWT, user: USER } });
+    const result = await client.signIn.social({ idToken: { token: 'provider-id-token' }, provider: 'microsoft' });
+    expect(result.data?.token).toBe(JWT);
+  });
+
+  it('passes an error through', async () => {
+    const { client } = await wireClient({ body: { code: 'SIGNUP_DISABLED', message: 'signup disabled' }, status: 401 });
+    const result = await client.signIn.social({ idToken: { token: 'provider-id-token' }, provider: 'microsoft' });
+    expect(result.data).toBeNull();
+    expect(result.error).toMatchObject({ message: 'signup disabled', status: 401 });
+  });
 });
 
 describe('createLtAuthClient — the listed surface is the whole surface', () => {
@@ -114,7 +218,7 @@ describe('createLtAuthClient — the listed surface is the whole surface', () =>
         'verifyEmail',
       ].sort(),
     );
-    expect(Object.keys(client.signIn)).toEqual(['email']);
+    expect(Object.keys(client.signIn).sort()).toEqual(['email', 'social']);
     expect(Object.keys(client.twoFactor).sort()).toEqual(['disable', 'enable', 'generateBackupCodes', 'verifyBackupCode', 'verifyTotp']);
     expect(Object.keys(client.passkey).sort()).toEqual(['deletePasskey', 'listUserPasskeys', 'updatePasskey']);
   });

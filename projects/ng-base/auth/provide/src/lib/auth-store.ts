@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { isLtAbsoluteUrl, LT_RUNTIME_CONFIG, ltCredentialsFetch, LtApiUrlService, warnLtOnce } from '@lenne.tech/ng-base';
 
 import { LT_AUTH_OPTIONS } from './auth-options';
-import { isLtJwtShaped, LtAuthStateService, ltJwtExpiresWithin } from './auth-state';
+import { isLtJwtShaped, LtAuthStateService, ltJwtExpiresWithin, toLtStoredAuthState } from './auth-state';
 import type { LtAuthCallOptions, LtAuthFeatures, LtAuthMode, LtUser, LtUserInput } from './auth-types';
 import { isLtApiRequest, isLtAuthEndpoint, LT_AUTH_PUBLIC_PATHS, ltRequestUrl, ltUrlRequiresCookies } from './auth-urls';
 import { createLtSessionLossDetector } from './session-loss';
@@ -206,12 +206,15 @@ export class LtAuthStore {
   }
 
   // ── session ────────────────────────────────────────────────────────────────────────────────────────────────────────
-  /** Store the user in state and cookie (browser always; SSR never writes). `image: null` becomes `undefined`. */
+  /**
+   * Store the user in state and cookie (browser always; SSR never writes). `image: null` becomes `undefined`, and an
+   * inline `data:` image is left out (it would push the cookie past the browser's 4096 bytes, see `LtUser.image`).
+   */
   setUser(user: LtUserInput | null, mode: LtAuthMode = 'cookie'): void {
-    const normalised: LtUser | null = user ? ({ ...user, image: user.image ?? undefined } as LtUser) : null;
-    this.userState.set(normalised);
+    const state = toLtStoredAuthState({ authMode: mode, user });
+    this.userState.set(state.user);
     this.modeState.set(mode);
-    this.authState.writeState({ authMode: mode, user: normalised });
+    this.authState.writeState(state);
   }
 
   /** Clear local auth state and cookies (browser). Does not delete offline data (use `signOut()` for that). */

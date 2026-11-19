@@ -327,6 +327,172 @@ describe('LtAuthService — two-factor verification sets the user', () => {
   });
 });
 
+/**
+ * Every string written to `document.cookie` until `stop()`: proves a value never reached a cookie, not even for the
+ * moment before a later write replaced it.
+ */
+function recordCookieWrites(): { stop: () => void; written: string[] } {
+  const written: string[] = [];
+  let owner: object | null = document;
+  let native: PropertyDescriptor | undefined;
+  while (owner && !native) {
+    native = Object.getOwnPropertyDescriptor(owner, 'cookie');
+    owner = Object.getPrototypeOf(owner) as object | null;
+  }
+  if (!native?.get || !native.set) {
+    throw new Error('document.cookie has no accessor to wrap');
+  }
+  const { get, set } = native;
+  Object.defineProperty(document, 'cookie', {
+    configurable: true,
+    get: () => get.call(document) as string,
+    set: (value: string) => {
+      written.push(value);
+      set.call(document, value);
+    },
+  });
+  return { stop: () => Reflect.deleteProperty(document, 'cookie'), written };
+}
+
+/**
+ * `signIn.social` completes a sign-in the way the 2FA step does. The redirect shape (no `idToken`) answers
+ * `{ url, redirect: true }` and leaves the page: nothing is stored, the user arrives through `validateSession()` on the
+ * page the provider sends the browser back to. The ID-token shape (an app inside Microsoft Teams, where the host
+ * already knows the user) answers `{ token, user }` at once: the user is stored, the JWT comes from `/iam/token`, and
+ * the opaque session token of the answer never reaches a script-readable cookie.
+ */
+describe('LtAuthService — sign-in through a social provider', () => {
+  /** An opaque Better Auth session token, as `/sign-in/social` with `idToken` puts it into the body. */
+  const SESSION_TOKEN = 'XqvQpZ8R2b1sD4fG6hJ7kL9mN0pQrStU';
+  const TOKEN_JWT = 'eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ1MSIsInR5cCI6InRva2VuIn0.c2lnbmF0dXJl';
+  const ID_TOKEN = { idToken: { token: 'provider-id-token' }, provider: 'microsoft' };
+  let cookieWrites: ReturnType<typeof recordCookieWrites>;
+
+  beforeEach(() => {
+    cookieWrites = recordCookieWrites();
+  });
+
+  afterEach(() => {
+    cookieWrites.stop();
+  });
+
+  const bodyOf = (url: string) => JSON.parse(String(calls(url)[0]?.body)) as Record<string, unknown>;
+
+  it('hands the parameters on, lets Better Auth leave the page and stores nothing on a redirect answer', async () => {
+    signedIn();
+    const auth = setup();
+    const before = cookieState();
+    const href = vi.spyOn(location, 'href', 'set').mockImplementation(() => undefined);
+    route = (url) => (url === `${IAM}/sign-in/social` ? json({ redirect: true, url: 'https://login.example.com/authorize' }) : json({}));
+    const params = {
+      additionalParams: { prompt: 'none' },
+      callbackURL: 'https://app.example.com/auth/callback',
+      errorCallbackURL: 'https://app.example.com/auth/login',
+      provider: 'microsoft',
+    };
+    const result = await auth.signIn.social(params);
+    await flush();
+    expect(bodyOf(`${IAM}/sign-in/social`)).toEqual(params);
+    expect(result.data?.url).toBe('https://login.example.com/authorize');
+    expect(href).toHaveBeenCalledWith('https://login.example.com/authorize');
+    // A redirect answer carries no user: no session lookup, no JWT, the state stays as it was.
+    expect(auth.user()).toEqual(USER);
+    expect(cookieState()).toEqual(before);
+    expect(calls(`${IAM}/get-session`)).toHaveLength(0);
+    expect(calls(`${IAM}/token`)).toHaveLength(0);
+  });
+
+  it('signs the user in on an ID-token answer and fetches the JWT from /iam/token', async () => {
+    const auth = setup();
+    route = (url) =>
+      url === `${IAM}/sign-in/social` ? json({ redirect: false, token: SESSION_TOKEN, user: USER }) : url === `${IAM}/token` ? json({ token: TOKEN_JWT }) : json({});
+    const pending = auth.signIn.social(ID_TOKEN);
+    expect(auth.isLoading()).toBe(true);
+    const result = await pending;
+    await flush();
+    expect(auth.isLoading()).toBe(false);
+    expect(auth.user()?.id).toBe('u1');
+    expect(auth.isAuthenticated()).toBe(true);
+    expect(auth.authMode()).toBe('cookie');
+    expect(cookieState()).toEqual({ authMode: 'cookie', user: USER });
+    expect(calls(`${IAM}/token`)).toHaveLength(1);
+    expect(cookieToken()).toBe(TOKEN_JWT);
+    // Neither the caller nor any cookie ever sees the session token.
+    expect(result.data).toEqual({ redirect: false, user: USER });
+    expect(cookieWrites.written.join('\n')).not.toContain(SESSION_TOKEN);
+  });
+
+  it.each([
+    ['the session token', { token: SESSION_TOKEN }],
+    ['an empty body', {}],
+  ])('stays on the cookie session when /iam/token answers %s instead of a JWT, and writes no token cookie', async (_label, tokenAnswer) => {
+    // No JWT arrives to overwrite a token cookie written before, so the recorded writes show what the sign-in stored.
+    const auth = setup();
+    route = (url) => (url === `${IAM}/sign-in/social` ? json({ redirect: false, token: SESSION_TOKEN, user: USER }) : url === `${IAM}/token` ? json(tokenAnswer) : json({}));
+    await auth.signIn.social(ID_TOKEN);
+    await flush();
+    expect(auth.user()?.id).toBe('u1');
+    expect(auth.authMode()).toBe('cookie');
+    expect(cookieToken()).toBeNull();
+    expect(calls(`${IAM}/token`)).toHaveLength(1);
+    expect(cookieWrites.written.join('\n')).not.toContain(SESSION_TOKEN);
+  });
+
+  it('signs the user in from the body too when the caller passed throw: true, and returns it without the token', async () => {
+    const auth = setup();
+    route = (url) => (url === `${IAM}/sign-in/social` ? json({ redirect: false, token: SESSION_TOKEN, user: USER }) : json({}));
+    const result = await auth.signIn.social(ID_TOKEN, { throw: true });
+    await flush();
+    expect(result).toEqual({ redirect: false, user: USER });
+    expect(auth.user()?.id).toBe('u1');
+    expect(cookieWrites.written.join('\n')).not.toContain(SESSION_TOKEN);
+  });
+
+  it('takes a JWT the server put into the answer (nest-server cookies: false) and switches to JWT mode', async () => {
+    const auth = setup();
+    route = (url) => (url === `${IAM}/sign-in/social` ? json({ redirect: false, token: BODY_JWT, user: USER }) : json({}));
+    await auth.signIn.social(ID_TOKEN);
+    await flush();
+    expect(auth.user()?.id).toBe('u1');
+    expect(auth.isJwtMode()).toBe(true);
+    expect(auth.jwtToken()).toBe(BODY_JWT);
+    expect(cookieState()?.authMode).toBe('jwt');
+    expect(calls(`${IAM}/token`)).toHaveLength(0);
+  });
+
+  it('stores nothing after a refused sign-in and clears the loading flag', async () => {
+    const auth = setup();
+    route = (url) => (url === `${IAM}/sign-in/social` ? json({ code: 'SIGNUP_DISABLED', message: 'signup disabled' }, 401) : json({}));
+    const result = await auth.signIn.social(ID_TOKEN);
+    await flush();
+    expect(result.error?.status).toBe(401);
+    expect(auth.isAuthenticated()).toBe(false);
+    expect(auth.isLoading()).toBe(false);
+    expect(cookieState()).toBeNull();
+    expect(calls(`${IAM}/get-session`)).toHaveLength(0);
+    expect(calls(`${IAM}/token`)).toHaveLength(0);
+  });
+
+  it('turns relative callback URLs into absolute app URLs (Better Auth would resolve them against the API)', async () => {
+    const auth = setup({ runtime: { siteUrl: 'https://app.example.com/' } });
+    route = () => json({ redirect: false, url: 'https://login.example.com/authorize' });
+    await auth.signIn.social({
+      callbackURL: '/auth/callback?redirect=%2Fapp',
+      disableRedirect: true,
+      errorCallbackURL: 'auth/login',
+      newUserCallbackURL: 'https://other.example.com/welcome',
+      provider: 'microsoft',
+    });
+    expect(bodyOf(`${IAM}/sign-in/social`)).toEqual({
+      callbackURL: 'https://app.example.com/auth/callback?redirect=%2Fapp',
+      disableRedirect: true,
+      errorCallbackURL: 'https://app.example.com/auth/login',
+      newUserCallbackURL: 'https://other.example.com/welcome',
+      provider: 'microsoft',
+    });
+  });
+});
+
 describe('LtAuthService — password and email', () => {
   it('requestPasswordReset defaults redirectTo to the absolute site URL and keeps an explicit one', async () => {
     const auth = setup({ runtime: { siteUrl: 'https://app.example.com/' } });
