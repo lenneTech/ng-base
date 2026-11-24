@@ -30,7 +30,9 @@ relatively. Changes to the vendored core belong upstream in `lenneTech/ng-base`.
   (SHA-256) itself, so pass the raw form value once and never hash it yourself as well.
 - `lt-jwt-token` holds a JWT or nothing. After a passkey, 2FA or social sign-in never store a token yourself:
   `authenticateWithPasskey()` returns `{ success, error?, user? }`, and `twoFactor.verifyTotp()` / `verifyBackupCode()`
-  / `signIn.social()` set the session and return no session token.
+  / `signIn.social()` set the session and return no session token. `twoFactor.enable()` / `disable()` and
+  `changePassword({ revokeOtherSessions: true })` replace the session and take its new JWT themselves. After switching
+  2FA on or off, `setUser({ ...user, twoFactorEnabled })` without a mode keeps the transport.
 - Social sign-in (`LtAuthService.signIn.social()`): `callbackURL` / `errorCallbackURL` are fixed app paths (relative ones
   become `NG_PUBLIC_SITE_URL` URLs), never values from the query. Map `?error=` codes to own texts and never render
   `error_description`. A silent attempt (`additionalParams: { prompt: 'none' }`) runs at most once per tab and never

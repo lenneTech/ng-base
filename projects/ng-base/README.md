@@ -165,13 +165,25 @@ in, register, verify 2FA or manage passkeys. `/auth` re-exports everything of `/
 puts the session in place, `authenticateWithPasskey()` returns `{ success, error?, user? }`, and `twoFactor.verifyTotp()`
 / `verifyBackupCode()` / `signIn.social()` drop Better Auth's opaque session token from their answer (a JWT of
 `cookies: false` stays). That covers the returned value, also with `throw: true`; an `onSuccess` hook in the call
-options sees the answer before.
+options sees the answer before. `twoFactor.enable()` / `disable()` and `changePassword({ revokeOtherSessions: true })`
+replace the session (nest-server 12.11 binds a JWT to its session): a JWT in their answer replaces the stored one, the
+transport stays, and any other token is dropped from the answer. `setUser(user)` without a mode keeps the transport when
+it updates the signed-in user (same `id`, e.g. `twoFactorEnabled` after switching 2FA on); another user starts on the
+cookie session.
+
+**An API without JWT is not asked for one.** When `GET /iam/features` reports `jwt: false` (nest-server with
+`betterAuth.jwt: false`, whose `/iam/token` answers 404), no sign-in, session check or 401 requests `/iam/token`: the app
+stays on the cookie session, and a 401 reaches the caller and the session-loss handling unchanged. There is nothing to
+configure, the API's flags decide; a JWT request at app start waits for a features request still on its way. An API that
+reports `jwt: true`, or no `jwt` at all, is asked as before.
 
 ### Sign-in through a social provider
 
 `LtAuthService.signIn.social(params)` signs in through a provider the API configured (`betterAuth.socialProviders` in
 nest-server), for example Microsoft Entra ID for single sign-on. `GET /iam/features` lists the enabled providers as
-`socialProviders`; `auth.features()` holds that answer, so a login page can show one button per entry.
+`socialProviders`; `auth.features()` holds that answer, so a login page can show one button per entry. Since nest-server
+12.11.0 the same answer carries `emailAndPassword`: when it is `false` the API signs in through a provider alone (and
+reports `passkey` and `twoFactor` as `false`), so a login page can hide its email form.
 `getClient().signIn.social()` is the same call without the auth state. Every field is documented on
 `LtSocialSignInParams`.
 
@@ -207,7 +219,8 @@ Both shapes go to `POST <basePath>/sign-in/social`:
 - **ID token**, for an app inside a host that already knows the user (Microsoft Teams, a native shell). With `idToken`
   the API answers `{ token, user }` at once, without navigation. The service signs the user in like after 2FA: on the
   cookie session with a JWT from `/iam/token`, or in JWT mode when the API answers a JWT (`cookies: false`). The session
-  token in that answer is removed.
+  token in that answer is removed. Since nest-server 12.11.0 the API answers `ID_TOKEN_NOT_SUPPORTED` unless the
+  provider sets `disableIdTokenSignIn: false`.
 
 - **A silent attempt is `additionalParams: { prompt: 'none' }`.** The provider answers without showing anything: with
   the session when the user has one there, otherwise through `errorCallbackURL` with `?error=login_required` (or
@@ -321,12 +334,18 @@ Differences to bug.lt 1.6.9:
   has no subtree error capture): the app's `ErrorHandler` is wrapped (it keeps handling every error) and
   `LtBugReportService.reportError()` reports by hand; `LtBugReportService.open()` replaces `useBugReport().openModal()`.
 
-## Differences to nuxt-extensions 4.0.1
+## Differences to nuxt-extensions 4.0.5
 
-ng-base follows nuxt-extensions release for release (last compared: 1.26.0 to 4.0.1). Behaviour that is the same in both
+ng-base follows nuxt-extensions release for release (last compared: 1.26.0 to 4.0.5). Behaviour that is the same in both
 (2FA and passkey sign-in never expose the session token, one auth fetch with JWT renewal and `basePath`, file URLs on the
 API with `GET /files/id/:id`, TUS on `/tus`, `enableAdmin` off with a warning, error translations that never hold back the
-start, `includeDisabled` for AI prompts) is not listed. What differs on purpose:
+start, `includeDisabled` for AI prompts, no `/iam/token` against an API that reports `jwt: false`, the JWT of a replaced
+session taken from the answer, `setUser()` keeping the transport for the same user) is not listed. What differs on purpose:
+
+- The auth state lives in `LtAuthService` only: `getClient()` is the stateless client. It removes an opaque session token
+  from every answer, but it never stores a JWT, also not the one in the answer of `twoFactor.verifyTotp()`,
+  `verifyBackupCode()`, `enable()`, `disable()` or `changePassword()`. nuxt-extensions 4.0.5 stores those in
+  `useLtAuthClient()` as well. Make these calls through `LtAuthService`, which keeps the session in place.
 
 - Composables with per-call state are `inject…()` factories bound to the injection context (`injectLtTusUpload()`,
   `injectLtAiChat()`, `injectLtOfflineSync()`); shared state lives in root services (`LtAuthService`, `LtAi…Service`).
@@ -337,7 +356,10 @@ start, `includeDisabled` for AI prompts) is not listed. What differs on purpose:
   passkey answer puts the store into JWT mode, session checks keep the mode (a bearer-proven session never falls back to
   cookie mode), and a JWT expiring within 60 s is refreshed with itself as bearer before it is sent (nest-server's JWTs
   live 15 minutes and there is no cookie to mint a new one). An opaque Better Auth session token is never stored. Before
-  nest-server 12.7.0 the browser must reach the API same-origin in this mode (`NG_PUBLIC_API_PROXY=true`).
+  nest-server 12.7.0 the browser must reach the API same-origin in this mode (`NG_PUBLIC_API_PROXY=true`). Since
+  nest-server 12.11.0 a JWT is bound to its session: switching 2FA on replaces the session, and `twoFactor.verifyTotp()`
+  takes the new session's JWT from the answer; a JWT issued before the update answers 401 once, and in this mode every
+  user signs in once more.
 - Passkeys work without `@better-auth/passkey` (WebAuthn calls go straight to `/iam/passkey/*`); the plugin can still be
   passed via `provideLtAuth({ plugins })`.
 - Social sign-in (nuxt-extensions PR #34): `LtAuthService.signIn.social()` turns relative callback URLs into absolute

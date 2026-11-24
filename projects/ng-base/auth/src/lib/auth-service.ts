@@ -208,8 +208,12 @@ export class LtAuthService {
   }
 
   // ── session ────────────────────────────────────────────────────────────────────────────────────────────────────────
-  /** Store the user in state and cookie (browser always; SSR never writes). `image: null` becomes `undefined`. */
-  setUser(user: LtUserInput | null, mode: LtAuthMode = 'cookie'): void {
+  /**
+   * Store the user in state and cookie (browser always; SSR never writes). `image: null` becomes `undefined`. Without
+   * `mode`, an update of the signed-in user (same `id`) keeps the current transport; any other user starts on the cookie
+   * session.
+   */
+  setUser(user: LtUserInput | null, mode?: LtAuthMode): void {
     this.store.setUser(user, mode);
   }
 
@@ -242,7 +246,10 @@ export class LtAuthService {
     return this.store.handleUnauthorized(url);
   }
 
-  /** `GET /iam/token` → store the JWT and switch to JWT mode. One request per burst. Browser only. */
+  /**
+   * `GET /iam/token` → store the JWT and switch to JWT mode. One request per burst. Browser only. `false` without a
+   * request when the API reports `jwt: false` in `GET /iam/features`.
+   */
   switchToJwtMode(): Promise<boolean> {
     return this.store.switchToJwtMode();
   }
@@ -404,12 +411,14 @@ export class LtAuthService {
   // ── two-factor (TOTP + backup codes) ───────────────────────────────────────────────────────────────────────────────
   /**
    * Two-factor methods (passwords hashed). `verifyTotp` / `verifyBackupCode` set the user on success and return the answer
-   * without Better Auth's opaque session token (a JWT of `cookies: false` stays).
+   * without Better Auth's opaque session token (a JWT of `cookies: false` stays). `enable` / `disable` replace the session
+   * in nest-server 12.11: a JWT in their answer (12.11.1) replaces the stored one (see {@link LtAuthStore.adoptRotatedJwt}).
    */
   readonly twoFactor = {
-    disable: async <T extends { password: string }>(params: LtNoStrayCredential<T, 'password'>): Promise<LtAuthResponse> => (await this.getClient()).twoFactor.disable(params),
+    disable: async <T extends { password: string }>(params: LtNoStrayCredential<T, 'password'>): Promise<LtAuthResponse> =>
+      this.adoptRotatedJwt(await (await this.getClient()).twoFactor.disable(params)),
     enable: async <T extends { issuer?: string; password: string }>(params: LtNoStrayCredential<T, 'password'>): Promise<LtAuthResponse<LtTwoFactorEnableResult>> =>
-      (await this.getClient()).twoFactor.enable(params),
+      this.adoptRotatedJwt(await (await this.getClient()).twoFactor.enable(params)),
     generateBackupCodes: async <T extends { password: string }>(params: LtNoStrayCredential<T, 'password'>): Promise<LtAuthResponse<{ backupCodes: string[] }>> =>
       (await this.getClient()).twoFactor.generateBackupCodes(params),
     verifyBackupCode: async (params: { code: string; trustDevice?: boolean }): Promise<LtAuthResponse> =>
@@ -419,11 +428,14 @@ export class LtAuthService {
   };
 
   // ── password & email ───────────────────────────────────────────────────────────────────────────────────────────────
-  /** `POST /iam/change-password` (both passwords hashed; `revokeOtherSessions` forwarded). */
+  /**
+   * `POST /iam/change-password` (both passwords hashed; `revokeOtherSessions` forwarded). With `revokeOtherSessions` the
+   * session is replaced: a JWT in the answer replaces the stored one (see {@link LtAuthStore.adoptRotatedJwt}).
+   */
   async changePassword<T extends { currentPassword: string; newPassword: string; revokeOtherSessions?: boolean }>(
     params: LtNoStrayCredential<T, 'currentPassword' | 'newPassword'>,
   ): Promise<LtAuthResponse> {
-    return (await this.getClient()).changePassword(params);
+    return this.adoptRotatedJwt(await (await this.getClient()).changePassword(params));
   }
 
   /** `POST /iam/request-password-reset`; `redirectTo` defaults to `<siteUrl>/auth/reset-password` (absolute, never user-derived). */
@@ -473,6 +485,14 @@ export class LtAuthService {
    * else cookie mode; Better Auth's opaque session token is never stored as JWT, that would put the session into a
    * script-readable cookie).
    */
+  /** After a call that replaced the session: see {@link LtAuthStore.adoptRotatedJwt} (failed answers change nothing). */
+  private adoptRotatedJwt<T>(result: LtAuthResponse<T>): LtAuthResponse<T> {
+    if (result && !result.error && result.data) {
+      this.store.adoptRotatedJwt(result);
+    }
+    return result;
+  }
+
   private async adoptVerifiedSession(result: LtAuthResponse): Promise<LtAuthResponse> {
     if (!result || result.error || !result.data) {
       return result;

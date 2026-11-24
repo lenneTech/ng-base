@@ -190,10 +190,11 @@ export async function createLtAuthClient(config: LtAuthClientConfig): Promise<Lt
   // The fetch options of a call that takes a body: Better Auth's proxy reads them from its SECOND argument as they are
   // (`{ fetchOptions }` there would be ignored). Calls without a body pass `{ fetchOptions }` as their first argument.
   const withOptions = (options?: LtAuthCallOptions) => (options ? [options] : []);
-  // Better Auth answers `two-factor/verify-totp`, `verify-backup-code` and `sign-in/social` with `idToken` with
-  // `{ token, user }`; with cookies on, the token is the opaque session token (the value of the httpOnly
-  // `iam.session_token`). It is dropped from the answer, so no caller can store it where scripts read it. A JWT
-  // (`cookies: false`) stays: it is the transport of JWT mode. The answer is the `{ data, error }` envelope, or the body
+  // Better Auth answers `two-factor/verify-totp`, `verify-backup-code`, `sign-in/social` with `idToken` and
+  // `change-password` with `revokeOtherSessions` with `{ token, user }`; nest-server 12.11.1 puts the new session's token
+  // into the answers of `two-factor/enable` and `disable` as well (both replace the session). With cookies on, the token is
+  // the opaque session token (the value of the httpOnly `iam.session_token`). It is dropped from the answer, so no caller
+  // can store it where scripts read it. A JWT (`cookies: false`) stays: it is the transport of JWT mode. The answer is the `{ data, error }` envelope, or the body
   // itself when the caller passed `throw: true`; both are cleaned.
   const dropSessionToken = (body: unknown): unknown => {
     if (!body || typeof body !== 'object' || !('token' in body) || isLtJwtShaped((body as { token: unknown }).token)) {
@@ -213,7 +214,9 @@ export async function createLtAuthClient(config: LtAuthClientConfig): Promise<Lt
   return {
     raw,
     changePassword: async (params, options) =>
-      call(['changePassword'], [await hashed(params as Record<string, unknown>, ['currentPassword', 'newPassword'], 'changePassword'), ...withOptions(options)]),
+      withoutSessionToken(
+        await call(['changePassword'], [await hashed(params as Record<string, unknown>, ['currentPassword', 'newPassword'], 'changePassword'), ...withOptions(options)]),
+      ),
     getSession: (options) => call(['getSession'], options ? [{ fetchOptions: options }] : []),
     passkey: {
       deletePasskey: (params, options) => call(['$fetch'], ['/passkey/delete-passkey', { body: params, method: 'POST', ...options }]),
@@ -233,9 +236,9 @@ export async function createLtAuthClient(config: LtAuthClientConfig): Promise<Lt
     },
     twoFactor: {
       disable: async (params, options) =>
-        call(['twoFactor', 'disable'], [await hashed(params as Record<string, unknown>, ['password'], 'twoFactor.disable'), ...withOptions(options)]),
+        withoutSessionToken(await call(['twoFactor', 'disable'], [await hashed(params as Record<string, unknown>, ['password'], 'twoFactor.disable'), ...withOptions(options)])),
       enable: async (params, options) =>
-        call(['twoFactor', 'enable'], [await hashed(params as Record<string, unknown>, ['password'], 'twoFactor.enable'), ...withOptions(options)]),
+        withoutSessionToken(await call(['twoFactor', 'enable'], [await hashed(params as Record<string, unknown>, ['password'], 'twoFactor.enable'), ...withOptions(options)])),
       generateBackupCodes: async (params, options) =>
         call(['twoFactor', 'generateBackupCodes'], [await hashed(params as Record<string, unknown>, ['password'], 'twoFactor.generateBackupCodes'), ...withOptions(options)]),
       verifyBackupCode: async (params, options) => withoutSessionToken(await call(['twoFactor', 'verifyBackupCode'], [params, ...withOptions(options)])),

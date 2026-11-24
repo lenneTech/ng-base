@@ -309,6 +309,113 @@ describe('LtAuthService — two-factor verification sets the user', () => {
     expect((await auth.twoFactor.verifyTotp({ code: '123456' })).data).toMatchObject({ token: 'eyJ0.real.jwt' });
   });
 
+  it('in JWT mode takes the JWT of the rotated session from verify-totp and sends it from then on (nest-server 12.11.0+)', async () => {
+    // The first verify-totp while enabling 2FA replaces the session, and since 12.11.0 a JWT is bound to its session:
+    // the JWT the client had before is refused, the answer carries the JWT of the new session.
+    signedIn('jwt');
+    const auth = setup();
+    route = (url, init) =>
+      url === `${IAM}/two-factor/verify-totp`
+        ? json({ token: BODY_JWT, user: USER })
+        : bearerOf(init) === `Bearer ${BODY_JWT}`
+          ? json({ ok: true })
+          : json({ message: 'Unauthorized' }, 401);
+    await auth.twoFactor.verifyTotp({ code: '123456' });
+    expect(bearerOf(calls(`${IAM}/two-factor/verify-totp`)[0])).toBe('Bearer eyJ0.stale.jwt');
+    expect(auth.jwtToken()).toBe(BODY_JWT);
+    expect(cookieToken()).toBe(BODY_JWT);
+
+    const response = await auth.fetchWithAuth(`${API}/measures`);
+    expect(response.status).toBe(200);
+    expect(calls(`${API}/measures`)).toHaveLength(1);
+    expect(calls(`${IAM}/token`)).toHaveLength(0);
+  });
+
+  it('in JWT mode takes the JWT of the rotated session from twoFactor.disable / enable (nest-server 12.11.1+), mode and user unchanged', async () => {
+    // Switching 2FA off (and on without verify-totp) replaces the session too; a JWT is bound to its session, and without
+    // a session cookie the JWT in the answer is the only way to stay signed in.
+    for (const method of ['disable', 'enable'] as const) {
+      TestBed.resetTestingModule();
+      fetchMock.mockClear();
+      signedIn('jwt');
+      const auth = setup();
+      const answer = method === 'enable' ? { backupCodes: ['b1'], token: BODY_JWT, totpURI: 'otpauth://totp/x' } : { status: true, token: BODY_JWT };
+      route = (url, init) =>
+        url === `${IAM}/two-factor/${method}` ? json(answer) : bearerOf(init) === `Bearer ${BODY_JWT}` ? json({ ok: true }) : json({ message: 'Unauthorized' }, 401);
+      const result = method === 'enable' ? await auth.twoFactor.enable({ password: 'secret' }) : await auth.twoFactor.disable({ password: 'secret' });
+      expect(result.error ?? null).toBeNull();
+      expect(auth.jwtToken()).toBe(BODY_JWT);
+      expect(cookieToken()).toBe(BODY_JWT);
+      expect(auth.authMode()).toBe('jwt');
+      expect(auth.user()).toMatchObject({ id: 'u1' });
+      expect((await auth.fetchWithAuth(`${API}/measures`)).status).toBe(200);
+      expect(calls(`${IAM}/token`)).toHaveLength(0);
+    }
+  });
+
+  it('leaves the JWT alone when twoFactor.disable / enable answer without a JWT (nest-server 12.11.0), and drops an opaque token', async () => {
+    signedIn('jwt');
+    const auth = setup();
+    route = (url) =>
+      url === `${IAM}/two-factor/disable`
+        ? json({ status: true })
+        : url === `${IAM}/two-factor/enable`
+          ? json({ backupCodes: ['b1'], token: 'session-token', totpURI: 'otpauth://totp/x' })
+          : json({});
+    await auth.twoFactor.disable({ password: 'secret' });
+    expect(auth.jwtToken()).toBe('eyJ0.stale.jwt');
+    for (const result of [await auth.twoFactor.enable({ password: 'secret' }), await (await auth.getClient()).twoFactor.enable({ password: 'secret' })]) {
+      expect(result.data).not.toHaveProperty('token');
+      expect(result.data).toMatchObject({ totpURI: 'otpauth://totp/x' });
+    }
+    expect(auth.jwtToken()).toBe('eyJ0.stale.jwt');
+    expect(cookieToken()).toBe('eyJ0.stale.jwt');
+  });
+
+  it('in cookie mode stays on the cookie session and keeps the JWT of a disable answer as fallback only', async () => {
+    signedIn('cookie');
+    const auth = setup();
+    route = (url) => (url === `${IAM}/two-factor/disable` ? json({ status: true, token: BODY_JWT }) : json({}));
+    await auth.twoFactor.disable({ password: 'secret' });
+    expect(auth.authMode()).toBe('cookie');
+    expect(auth.jwtToken()).toBeNull();
+    expect(cookieToken()).toBe(BODY_JWT);
+  });
+
+  it('changePassword({ revokeOtherSessions: true }) takes the JWT of the new session and drops an opaque token, mode unchanged', async () => {
+    signedIn('jwt');
+    const auth = setup();
+    route = (url) => (url === `${IAM}/change-password` ? json({ token: BODY_JWT, user: USER }) : json({}));
+    const changed = await auth.changePassword({ currentPassword: 'old-secret', newPassword: 'new-secret', revokeOtherSessions: true });
+    expect(changed.data).toMatchObject({ token: BODY_JWT });
+    expect(auth.jwtToken()).toBe(BODY_JWT);
+    expect(auth.authMode()).toBe('jwt');
+
+    route = (url) => (url === `${IAM}/change-password` ? json({ token: 'session-token', user: USER }) : json({}));
+    for (const result of [
+      await auth.changePassword({ currentPassword: 'old-secret', newPassword: 'new-secret', revokeOtherSessions: true }),
+      await (await auth.getClient()).changePassword({ currentPassword: 'old-secret', newPassword: 'new-secret', revokeOtherSessions: true }),
+    ]) {
+      expect(result.data).not.toHaveProperty('token');
+      expect(JSON.stringify(result)).not.toContain('session-token');
+    }
+    expect(auth.jwtToken()).toBe(BODY_JWT);
+  });
+
+  it('setUser() without a mode keeps JWT mode when the signed-in user is updated (2FA switched on), another user starts on the cookie session', async () => {
+    signedIn('jwt');
+    const auth = setup();
+    auth.setUser({ ...USER, twoFactorEnabled: true });
+    expect(auth.authMode()).toBe('jwt');
+    expect(auth.jwtToken()).toBe('eyJ0.stale.jwt');
+    expect(auth.user()).toMatchObject({ twoFactorEnabled: true });
+
+    auth.setUser({ email: 'b@example.com', id: 'u2' });
+    expect(auth.authMode()).toBe('cookie');
+    auth.setUser({ ...USER }, 'jwt');
+    expect(auth.authMode()).toBe('jwt');
+  });
+
   it('verifyBackupCode loads the user from the session when the answer has none', async () => {
     const auth = setup();
     route = (url) => (url === `${IAM}/two-factor/verify-backup-code` ? json({ status: true }) : url === `${IAM}/get-session` ? json({ user: USER }) : json({}));

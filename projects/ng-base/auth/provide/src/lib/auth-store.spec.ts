@@ -668,6 +668,92 @@ describe('LtAuthStore — feature flags', () => {
   });
 });
 
+describe('LtAuthStore — API without JWT (`/iam/features` reports `jwt: false`)', () => {
+  /** nest-server with `betterAuth.jwt: false`: `/token` answers 404, the session cookie is the only transport. */
+  function cookieOnlyApi(features: Record<string, unknown> | Promise<Response> = { jwt: false }): void {
+    route = (url) => {
+      if (url === `${IAM}/features`) {
+        return features instanceof Promise ? features : json(features);
+      }
+      if (url === `${IAM}/token`) {
+        return json({ message: 'Not Found' }, 404);
+      }
+      if (url === `${IAM}/get-session`) {
+        return json({ session: { id: 's1' }, user: USER });
+      }
+      return json({}, 401);
+    };
+  }
+
+  it('asks /token after no sign-in, session check or adopted session once the transferred flags say jwt: false', async () => {
+    signedIn('cookie');
+    cookieOnlyApi();
+    const auth = setup({ providers: [{ provide: TransferState, useFactory: () => transferred(LT_AUTH_FEATURES_STATE_KEY, { jwt: false }) }] });
+    await expect(auth.validateSession()).resolves.toBe(true);
+    expect(auth.applyAuthResult({ data: { success: true, user: USER } })).toBe(true);
+    await auth.adoptVerifiedSession({ data: { user: USER } });
+    await flush();
+    expect(calls(`${IAM}/token`)).toHaveLength(0);
+    expect(auth.authMode()).toBe('cookie');
+    expect(cookieToken()).toBeNull();
+  });
+
+  it('hands a 401 to the caller unchanged, without a /token request, and switchToJwtMode() answers false', async () => {
+    signedIn('cookie');
+    cookieOnlyApi();
+    const auth = setup();
+    await auth.fetchFeatures();
+    const response = await auth.fetchWithAuth(`${API}/measures`);
+    expect(response.status).toBe(401);
+    expect(calls(`${API}/measures`)).toHaveLength(1);
+    await expect(auth.switchToJwtMode()).resolves.toBe(false);
+    await flush();
+    expect(calls(`${IAM}/token`)).toHaveLength(0);
+    expect(auth.isJwtMode()).toBe(false);
+  });
+
+  it('waits for a features request still in flight at app start instead of racing it', async () => {
+    signedIn('cookie');
+    let answer!: (response: Response) => void;
+    cookieOnlyApi(new Promise<Response>((resolve) => (answer = resolve)));
+    const auth = setup();
+    const features = auth.ensureFeatures();
+    await expect(auth.validateSession()).resolves.toBe(true);
+    await flush();
+    expect(calls(`${IAM}/token`)).toHaveLength(0);
+    answer(json({ jwt: false }));
+    await features;
+    await flush();
+    expect(calls(`${IAM}/token`)).toHaveLength(0);
+  });
+
+  it('keeps asking an API that reports jwt: true, no jwt flag or whose features request failed; a later failure keeps jwt: false', async () => {
+    const answers: (() => Promise<Response> | Response)[] = [() => json({ jwt: true }), () => json({ passkey: true }), () => Promise.reject(new TypeError('offline'))];
+    for (const features of answers) {
+      TestBed.resetTestingModule();
+      fetchMock.mockClear();
+      signedIn('cookie');
+      route = (url) => (url === `${IAM}/features` ? features() : url === `${IAM}/token` ? json({ token: 'eyJ0.fresh.jwt' }) : json({ session: { id: 's1' }, user: USER }));
+      const auth = setup();
+      await auth.fetchFeatures();
+      await auth.validateSession();
+      await flush();
+      expect(calls(`${IAM}/token`)).toHaveLength(1);
+    }
+
+    TestBed.resetTestingModule();
+    fetchMock.mockClear();
+    signedIn('cookie');
+    cookieOnlyApi();
+    const auth = setup();
+    await auth.fetchFeatures();
+    route = () => Promise.reject(new TypeError('offline'));
+    await auth.fetchFeatures();
+    await expect(auth.switchToJwtMode()).resolves.toBe(false);
+    expect(calls(`${IAM}/token`)).toHaveLength(0);
+  });
+});
+
 describe('readLtAuthAnswer — nest-server and Better Auth answer shapes', () => {
   const user = { email: 'a@example.com', id: 'u1' };
 

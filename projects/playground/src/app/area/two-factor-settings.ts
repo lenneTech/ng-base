@@ -8,7 +8,8 @@ import { fieldError } from '../shared/field-error';
 
 /**
  * 2FA set-up: password → `twoFactor.enable()` (hashed) → otpauth URI (shown as text, the QR code is the app's job) and
- * backup codes → the first TOTP code confirms it (`twoFactor.verifyTotp()`).
+ * backup codes → the first TOTP code confirms it (`twoFactor.verifyTotp()`). While 2FA is on, the password switches it
+ * off again (`twoFactor.disable()`).
  */
 @Component({
   imports: [FormField, FormRoot, HlmButton, LtFormField, LtNotice, LtPasswordInput, LtTextField],
@@ -32,6 +33,15 @@ export class TwoFactorSettings {
       required(path.password, { message: 'Bitte bestätige mit deinem Passwort.' });
     },
     { name: 'enable2fa', submission: { action: async () => this.enable() } },
+  );
+
+  private readonly disableModel = signal({ password: '' });
+  protected readonly disableForm = form(
+    this.disableModel,
+    (path) => {
+      required(path.password, { message: 'Bitte bestätige mit deinem Passwort.' });
+    },
+    { name: 'disable2fa', submission: { action: async () => this.disable() } },
   );
 
   private readonly codeModel = signal({ code: '' });
@@ -66,6 +76,26 @@ export class TwoFactorSettings {
         await this.auth.validateSession();
       }
       this.totpUri.set(null);
+      return undefined;
+    });
+    return undefined;
+  }
+
+  /**
+   * `twoFactor.disable()` (password hashed; nest-server 12.11 replaces the session, and the service takes its new JWT),
+   * then the user is updated as an app does it: `setUser()` without a mode keeps the transport.
+   */
+  private async disable(): Promise<undefined> {
+    await this.run(async () => {
+      const result = await this.auth.twoFactor.disable({ password: this.disableModel().password });
+      if (result.error) {
+        return result.error.message;
+      }
+      const user = this.auth.user();
+      if (user) {
+        this.auth.setUser({ ...user, twoFactorEnabled: false });
+      }
+      this.disableModel.set({ password: '' });
       return undefined;
     });
     return undefined;

@@ -2,6 +2,12 @@
   <h3 id="two-factor-title" class="font-semibold">Zwei-Faktor-Authentifizierung</h3>
   @if (auth.is2FAEnabled()) {
     <lt-notice variant="success" title="2FA ist aktiv" data-testid="two-factor-active">Bei der Anmeldung wird zusätzlich ein Code abgefragt.</lt-notice>
+    <form class="grid gap-3" [formRoot]="disableForm">
+      <lt-form-field for="two-factor-disable-password" label="Passwort" [error]="fieldError(disableForm.password)">
+        <lt-password-input id="two-factor-disable-password" autocomplete="current-password" [formField]="disableForm.password" />
+      </lt-form-field>
+      <button hlmBtn type="submit" [disabled]="pending()">2FA deaktivieren</button>
+    </form>
   } @else if (totpUri(); as uri) {
     <p class="text-sm">Füge den Schlüssel deiner Authenticator-App hinzu (QR-Code oder diese Adresse) und bestätige mit dem ersten Code.</p>
     <code class="bg-muted block rounded p-2 text-xs break-all" data-testid="totp-uri">{{ uri }}</code>

@@ -1,7 +1,8 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type APIRequestContext, type BrowserContext, type Page } from '@playwright/test';
 import { extractTOTPSecret, fillInput, generateTOTP, gotoAndWaitForHydration, waitForURLAndHydration } from '@lenne.tech/ng-base/testing';
 
 import { createUser, expectVerifiedTransport, isApiPost, JWT_SHAPE, LOGIN_FIELDS, login, readAuthState, readJwtCookie, readSessionCookies, SHA256_HEX } from './support/auth';
+import { BROWSER_API_URL } from './support/env';
 
 /** 2FA: set-up on /app (TOTP + backup codes), then the sign-in detour over /auth/2fa with a TOTP and a backup code. */
 test.describe.configure({ mode: 'serial' });
@@ -26,6 +27,21 @@ async function signInExpectingSecondFactor(page: Page, redirect?: string): Promi
   // Marker that only survives client-side navigation: the second factor must sign in without a page load.
   await page.evaluate(() => ((window as unknown as Record<string, unknown>)['__noReload'] = true));
   return body;
+}
+
+/**
+ * The user of the session the app holds, asked the way the app's own API requests ask: in JWT mode with the bearer alone
+ * (a fresh request context without the browser's cookies; JWT mode omits cookies on everything but the auth paths that
+ * need them), in cookie mode with the browser's session cookie. Also returns the mode, for an annotation.
+ */
+async function sessionAsTheAppAsks(context: BrowserContext, request: APIRequestContext): Promise<{ mode?: string; user?: Record<string, unknown> }> {
+  const mode = (await readAuthState(context))?.authMode;
+  const jwt = await readJwtCookie(context);
+  const response =
+    mode === 'jwt'
+      ? await request.get(`${BROWSER_API_URL}/iam/get-session`, { headers: jwt ? { Authorization: `Bearer ${jwt}` } : {} })
+      : await context.request.get(`${BROWSER_API_URL}/iam/get-session`);
+  return { mode, user: ((await response.json().catch(() => null)) as { user?: Record<string, unknown> } | null)?.user };
 }
 
 async function expectSignedInWithoutReload(page: Page): Promise<void> {
@@ -55,6 +71,11 @@ test('enable 2FA (password hashed), sign out, sign in with the TOTP on /auth/2fa
   await fillInput(page, '#two-factor-verify-code', generateTOTP(secret));
   await page.getByRole('button', { name: '2FA aktivieren' }).click();
   await expect(page.getByTestId('two-factor-active')).toBeVisible();
+  // Switching 2FA on replaces the session, and since nest-server 12.11.0 a JWT is bound to its session: the transport
+  // the app holds now (the session cookie, in JWT mode the JWT of the verify-totp answer) must still authenticate.
+  const enabled = await sessionAsTheAppAsks(context, request);
+  test.info().annotations.push({ description: String(enabled.mode), type: 'auth mode after switching 2FA on' });
+  expect(enabled.user?.['email']).toBe(user.email);
 
   await page.getByRole('button', { name: 'Abmelden' }).click();
   await waitForURLAndHydration(page, /\/auth\/login$/);
@@ -106,4 +127,25 @@ test('after the second factor the session uses the transport the server proved, 
   for (const token of opaque) {
     expect(await readJwtCookie(context)).not.toBe(token);
   }
+});
+
+test('switching 2FA off keeps the session and its transport (nest-server 12.11.1+: the answer carries the new JWT)', async ({ page, context, request }) => {
+  // `two-factor/disable` replaces the session, and a JWT is bound to its session: in JWT runs the app must send the JWT
+  // of the answer from then on. The page then updates the user with `setUser()` without a mode, which keeps the transport.
+  await signInExpectingSecondFactor(page, '/app');
+  await fillInput(page, '#two-factor-code', generateTOTP(secret));
+  await page.getByRole('button', { name: 'Bestätigen' }).click();
+  await expectSignedInWithoutReload(page);
+  const mode = (await readAuthState(context))?.authMode;
+
+  await fillInput(page, '#two-factor-disable-password', user.password);
+  const disable = page.waitForRequest((candidate) => isApiPost(candidate, '/iam/two-factor/disable'));
+  await page.getByRole('button', { name: '2FA deaktivieren' }).click();
+  expect(((await disable).postDataJSON() as { password: string }).password).toMatch(SHA256_HEX);
+  await expect(page.getByRole('button', { name: '2FA einrichten' })).toBeVisible();
+
+  expect(await readAuthState(context)).toMatchObject({ authMode: mode, user: { email: user.email, twoFactorEnabled: false } });
+  const disabled = await sessionAsTheAppAsks(context, request);
+  test.info().annotations.push({ description: String(disabled.mode), type: 'auth mode after switching 2FA off' });
+  expect(disabled.user).toMatchObject({ email: user.email, twoFactorEnabled: false });
 });

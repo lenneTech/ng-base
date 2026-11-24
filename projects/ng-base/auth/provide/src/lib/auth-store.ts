@@ -209,11 +209,17 @@ export class LtAuthStore {
   /**
    * Store the user in state and cookie (browser always; SSR never writes). `image: null` becomes `undefined`, and an
    * inline `data:` image is left out (it would push the cookie past the browser's 4096 bytes, see `LtUser.image`).
+   * Without `mode`, an update of the signed-in user (same `id`, e.g. `twoFactorEnabled` after switching 2FA on) keeps
+   * the current transport; any other user starts on the cookie session.
    */
-  setUser(user: LtUserInput | null, mode: LtAuthMode = 'cookie'): void {
-    const state = toLtStoredAuthState({ authMode: mode, user });
+  setUser(user: LtUserInput | null, mode?: LtAuthMode): void {
+    const current = this.userState();
+    const id = user?.['id'];
+    const sameUser = !!id && !!current?.['id'] && String(id) === String(current['id']);
+    const resolved: LtAuthMode = mode ?? (sameUser ? this.modeState() : 'cookie');
+    const state = toLtStoredAuthState({ authMode: resolved, user });
     this.userState.set(state.user);
-    this.modeState.set(mode);
+    this.modeState.set(resolved);
     this.authState.writeState(state);
   }
 
@@ -348,7 +354,10 @@ export class LtAuthStore {
     return this.sessionLoss.handle(url);
   }
 
-  /** `GET /iam/token` → store the JWT and switch to JWT mode. One request per burst. Browser only. */
+  /**
+   * `GET /iam/token` → store the JWT and switch to JWT mode. One request per burst. Browser only. `false` without a
+   * request when the API reports `jwt: false` in `GET /iam/features`.
+   */
   async switchToJwtMode(): Promise<boolean> {
     return !!(await this.mintJwt());
   }
@@ -437,6 +446,17 @@ export class LtAuthStore {
       this.clearUser();
     }
     return loaded;
+  }
+
+  /**
+   * Take the JWT of a session another call replaced (`two-factor/enable` and `disable` from nest-server 12.11.1,
+   * `change-password` with `revokeOtherSessions`): a JWT-shaped `token` in the answer replaces the stored JWT. The mode
+   * stays (in JWT mode it is the new bearer, in cookie mode the fallback for a 401), no user is set, no `/iam/token` is
+   * asked. Any other token is never stored. `true` when a JWT was taken.
+   */
+  adoptRotatedJwt(result: unknown): boolean {
+    const { jwt } = readLtAuthAnswer(result);
+    return !!jwt && this.authState.setJwtToken(jwt);
   }
 
   /**
@@ -570,9 +590,13 @@ export class LtAuthStore {
 
   /**
    * `GET <auth>/token` with the session cookie and, in JWT mode, the current JWT as bearer while it is still valid
-   * (with `cookies: false` the bearer is the only proof of the session); the token or `null`.
+   * (with `cookies: false` the bearer is the only proof of the session); the token or `null`. The one place a JWT is
+   * fetched; an API that reports no JWT (see {@link apiServesJwt}) is not asked.
    */
   private async requestJwt(): Promise<string | null> {
+    if (!(await this.apiServesJwt())) {
+      return null;
+    }
     const current = this.jwtToken();
     const bearer = current && !ltJwtExpiresWithin(current, 0) ? current : null;
     try {
@@ -589,6 +613,19 @@ export class LtAuthStore {
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Whether the API hands out JWTs: `false` only after `GET /iam/features` reported `jwt: false` (nest-server with
+   * `betterAuth.jwt: false`, whose `/token` answers 404). Waits for a features request still in flight, since at app
+   * start `validateSession()` asks for the JWT while it runs. A missing flag keeps asking as before; a failed request
+   * keeps the last known flags.
+   */
+  private async apiServesJwt(): Promise<boolean> {
+    if (this.featuresRequest) {
+      await this.featuresRequest;
+    }
+    return this.featuresState()['jwt'] !== false;
   }
 
   private async loadFeatures(): Promise<LtAuthFeatures> {
