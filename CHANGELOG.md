@@ -8,6 +8,48 @@ and never moves for a breaking change, MINOR is a change an app has to act on wh
 The history up to 18.x (Bootstrap, Apollo/GraphQL, legacy JWT auth) is reachable via the tag `v18.1.3` and the git
 history; that line is not maintained any more.
 
+## [22.1.3] - 2026-11-24
+
+No `/iam/token` request against an API without JWT, and the JWT of a session nest-server 12.11 replaces is kept, level
+with nuxt-extensions 4.0.4 and 4.0.5. Tested against nest-server 12.11.1, built with Angular 22.2.7. Apps take it over
+as is.
+
+### Fixed
+
+- `/auth/provide`: an API that reports `jwt: false` in `GET /iam/features` (nest-server with `betterAuth.jwt: false`,
+  whose `/iam/token` answers 404) is no longer asked for a JWT. Before, every sign-in, session check and 401 in cookie
+  mode cost one `/iam/token` request with a 404 in the console. A JWT request at app start waits for a features request
+  still on its way; an API that reports `jwt: true` or no `jwt` flag, and a failed features request, keep today's
+  behaviour. Level with nuxt-extensions 4.0.4.
+- `/auth`: `setUser(user)` without a mode no longer leaves JWT mode when it updates the signed-in user (same `id`). A
+  settings page that calls `setUser({ ...user, twoFactorEnabled: true })` after switching 2FA on sent its next request
+  without the bearer; against `cookies: false` that request failed. Another user still starts on the cookie session,
+  and an explicit mode still wins.
+- `/auth`: `LtAuthService.twoFactor.enable()` / `disable()` and `changePassword({ revokeOtherSessions: true })` take
+  the JWT of the session they replace: a JWT-shaped `token` in the answer replaces the stored JWT (mode unchanged, no
+  `/iam/token`). Any other token is removed from these answers, on `LtAuthService` and on `getClient()`; the stateless
+  `getClient()` returns a JWT to its caller and stores nothing (nuxt-extensions 4.0.5 stores it in `useLtAuthClient()`
+  too, see the README's differences). nest-server 12.11 binds a JWT to its session, so with `cookies: false` the old JWT
+  was dead after these calls. `change-password` puts the new session's token into its answer; `two-factor/enable` and
+  `disable` do from nest-server 12.11.1, and against 12.11.0 nothing changes for them.
+
+### Changed
+
+- Tested against nest-server 12.11.0 and 12.11.1 in cookie and JWT mode; nothing to change in an app. A JWT is bound to
+  its session there: switching 2FA on or off replaces the session, and the service takes the new session's JWT from the
+  answer (`twoFactor.verifyTotp()` already did; unit tests and E2E steps after switching 2FA on and off now hold it, the
+  playground can switch 2FA off for that). With `cookies: false` every user signs in once more after the API update,
+  since a JWT issued before it answers 401.
+- Docs: the ID-token form of `signIn.social()` needs `disableIdTokenSignIn: false` on the provider since nest-server
+  12.11.0 (else `ID_TOKEN_NOT_SUPPORTED`; the redirect form is unaffected), and `emailAndPassword` in `/iam/features`
+  tells a login page whether to show its email form.
+- Dependencies: Angular 22.2.7 (`@angular/build`, `cli` and `ssr` 22.2.8), `@spartan-ng/brain` 1.10.0 (no export
+  removed; `aria-invalid` now follows the error state, which the helm layer already did), tailwind-merge 3.7.1, and a
+  lockfile refresh within the existing ranges; the built bundles are unchanged. Development: oxlint 1.95.0, oxfmt 0.80.0,
+  oxlint-tsgolint 7.0.2008 and pnpm 11.29.0, as in ng-base-starter and nuxt-extensions. Angular 22.3 is left out on
+  purpose: its CLI scaffolds libraries with the new `@angular/build:library` builder instead of ng-packagr, and that
+  move is a decision of its own. Still tested against better-auth 1.7.19; the peer ranges are unchanged.
+
 ## [22.1.2] - 2026-11-19
 
 Sign-in through a social provider, level with nuxt-extensions PR #34 (`signIn.social` and no inline image in the auth
