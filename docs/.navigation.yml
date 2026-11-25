@@ -1,0 +1,4 @@
+# Section of this repository on docs.lennetech.app
+title: ng-base
+icon: i-lucide-component
+description: The Angular library of the lenne.tech stack, with auth, uploads, AI, offline sync, UI components and SSR helpers for nest-server.
