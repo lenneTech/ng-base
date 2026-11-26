@@ -161,6 +161,11 @@ root route `canActivateChild: [ltSystemSetupGuard]`. Import the guards, `ltAuthI
 no Better Auth, 2FA or passkey code. `LtAuthService` (`/auth`) shares the same state and belongs on the pages that sign
 in, register, verify 2FA or manage passkeys. `/auth` re-exports everything of `/auth/provide`, so either import works.
 
+`validateSession()` (app start) checks the user of the `lt-auth-state` cookie against `GET /iam/get-session`. When the API
+answers that no session exists (401, 403, or neither user nor session), that user is signed out and the call answers
+`false`; a timeout or an error keeps the user, and so does JWT mode with a stored JWT (as in nuxt-extensions 4.0.6). The
+next 401 still leads to the login page.
+
 `lt-jwt-token` holds a JWT or nothing. After 2FA, a passkey or a social sign-in never store a token yourself: the service
 puts the session in place, `authenticateWithPasskey()` returns `{ success, error?, user? }`, and `twoFactor.verifyTotp()`
 / `verifyBackupCode()` / `signIn.social()` drop Better Auth's opaque session token from their answer (a JWT of

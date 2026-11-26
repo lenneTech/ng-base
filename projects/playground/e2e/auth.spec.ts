@@ -127,6 +127,34 @@ test('login, reload with the server-rendered signed-in shell, logout', async ({ 
   expect(await sessionResponse.text()).toMatch(/^(null)?$/);
 });
 
+test('reload after the API ended the session: the cached user is signed out, the next page asks for a sign-in', async ({ page, context, request, playwright }) => {
+  test.skip(AUTH_MODE === 'jwt', 'JWT mode with a stored JWT keeps the user until a request fails (as nuxt-extensions); unit-tested');
+  const user = await createUser(request, 'ended');
+  await login(page, user);
+  await expect(page.getByTestId('dashboard-email')).toHaveText(user.email);
+
+  // End the session on the server only (as an expiry or a sign-out on another device does): the browser keeps its
+  // session cookie and the auth-state cookie with the user.
+  const cookie = (await readSessionCookies(context)).map(({ name, value }) => `${name}=${value}`).join('; ');
+  expect(cookie).not.toBe('');
+  const api = await playwright.request.newContext();
+  try {
+    expect((await api.post(`${API_URL}/iam/sign-out`, { data: {}, headers: { cookie, origin: SITE_URL } })).ok()).toBe(true);
+    expect(await (await api.get(`${API_URL}/iam/get-session`, { headers: { cookie } })).text()).toMatch(/^(null)?$/);
+  } finally {
+    await api.dispose();
+  }
+  expect((await readAuthState(context))?.user?.email).toBe(user.email);
+
+  await page.reload();
+  await waitForHydration(page);
+  await expect.poll(async () => (await readAuthState(context))?.user ?? null).toBeNull();
+  await expect(page.getByTestId('header-user')).toHaveText('');
+
+  await page.getByRole('link', { name: 'Upload' }).click();
+  await waitForURLAndHydration(page, /\/auth\/login\?redirect=%2Fapp%2Fupload$/);
+});
+
 test('auth guard: a signed-out visit to a protected page goes to the login page and back', async ({ page, request }) => {
   const user = await createUser(request, 'guard');
   await gotoAndWaitForHydration(page, '/app/upload');

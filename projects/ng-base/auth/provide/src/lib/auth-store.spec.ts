@@ -251,15 +251,81 @@ describe('LtAuthStore — validateSession() in the browser', () => {
     expect(auth.isAdmin()).toBe(true);
   });
 
-  it('trusts the cached user when the session carries none, else answers false', async () => {
-    signedIn();
-    const auth = setup();
+  it('signs out a cached user when get-session answers that no session exists (200 without user and session, 401, 403)', async () => {
+    // The session expired or was deleted on the server: trusting the cached user showed the app signed in while every
+    // protected request failed.
+    const answers: Array<() => Response> = [() => json(null), () => json({}), () => json({ message: 'Unauthorized' }, 401), () => json({ message: 'Forbidden' }, 403)];
+    for (const answer of answers) {
+      TestBed.resetTestingModule();
+      signedIn();
+      const auth = setup();
+      route = (url) => (url === `${IAM}/get-session` ? answer() : url === `${IAM}/token` ? json({ message: 'Unauthorized' }, 401) : json({}));
+      await expect(auth.validateSession()).resolves.toBe(false);
+      expect(auth.user()).toBeNull();
+      expect(cookieState()).toBeNull();
+      await settle();
+    }
+
+    TestBed.resetTestingModule();
+    const anonymous = setup();
     session(null);
+    await expect(anonymous.validateSession()).resolves.toBe(false);
+  });
+
+  it('keeps the cached user when get-session cannot decide (5xx, network error) or proves a session without user', async () => {
+    const answers: Array<() => Promise<Response> | Response> = [
+      () => json({ message: 'Bad Gateway' }, 502),
+      () => Promise.reject(new TypeError('offline')),
+      () => json({ session: { id: 's1' } }),
+    ];
+    for (const answer of answers) {
+      TestBed.resetTestingModule();
+      signedIn();
+      const auth = setup();
+      route = (url) => (url === `${IAM}/get-session` ? answer() : json({}));
+      await expect(auth.validateSession()).resolves.toBe(true);
+      expect(auth.user()).toEqual(USER);
+      await settle();
+    }
+  });
+
+  it('keeps the cached user in JWT mode with a stored JWT, where the cookie session may be absent (as nuxt-extensions)', async () => {
+    signedIn('jwt');
+    const auth = setup();
+    route = (url) => (url === `${IAM}/get-session` ? json(null) : json({}));
     await expect(auth.validateSession()).resolves.toBe(true);
     expect(auth.user()).toEqual(USER);
+    expect(auth.isJwtMode()).toBe(true);
+  });
 
-    auth.clearUser();
+  it('still sends the user to the login page on the next 401 after signing out a dead session at app start', async () => {
+    // The guards already let the protected page through on the cached user; only the session-loss detection can take
+    // the user to the login page, and it used to do so on the first 401 while the cached user was still trusted.
+    signedIn('cookie');
+    const auth = setup();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    route = (url) => (url === `${IAM}/get-session` ? json(null) : json({}, 401));
     await expect(auth.validateSession()).resolves.toBe(false);
+    expect(navigate).not.toHaveBeenCalled();
+
+    await auth.fetchWithAuth(`${API}/measures`);
+    await flush();
+    expect(navigate).toHaveBeenCalledWith('/auth/login?redirect=%2F');
+    expect(calls(`${IAM}/token`)).toHaveLength(0);
+  });
+
+  it('lets a 401 after an explicit sign-out decide nothing, also when validateSession() signed out before', async () => {
+    signedIn('cookie');
+    const auth = setup();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    route = (url) => (url === `${IAM}/get-session` ? json(null) : json({}, 401));
+    await expect(auth.validateSession()).resolves.toBe(false);
+    auth.clearUser();
+
+    await auth.fetchWithAuth(`${API}/measures`);
+    await flush();
+    expect(navigate).not.toHaveBeenCalled();
+    expect(calls(`${IAM}/get-session`)).toHaveLength(1);
   });
 
   it('stops waiting after 10 s and falls back to the cached user', async () => {

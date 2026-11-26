@@ -123,11 +123,17 @@ export class LtAuthStore {
   private featuresRequest: Promise<LtAuthFeatures> | null = null;
   /** In-flight `GET /token` shared by every 401 of a burst (cookie → JWT switch and stale-JWT refresh alike). */
   private jwtMint: Promise<string | null> | null = null;
+  /**
+   * `validateSession()` signed out a cached user whose API session was gone. The guards let the current page through
+   * on that user, so the session-loss detection still counts it as signed in: the next 401 takes the user to the login
+   * page, as it did while the cached user was trusted. Ends with the next `setUser()` / `clearUser()`.
+   */
+  private signedOutAtValidation = false;
   private readonly sessionLoss = createLtSessionLossDetector(
     {
       clearUser: () => this.clearUser(),
       currentUrl: () => this.currentUrl(),
-      isAuthenticated: () => this.isAuthenticated(),
+      isAuthenticated: () => this.isAuthenticated() || this.signedOutAtValidation,
       isJwtMode: () => this.isJwtMode(),
       navigate: (url) => this.navigate(url),
       probeSession: () => this.fetchWithAuth(this.authUrl('/get-session'), { method: 'GET' }),
@@ -218,6 +224,7 @@ export class LtAuthStore {
     const sameUser = !!id && !!current?.['id'] && String(id) === String(current['id']);
     const resolved: LtAuthMode = mode ?? (sameUser ? this.modeState() : 'cookie');
     const state = toLtStoredAuthState({ authMode: resolved, user });
+    this.signedOutAtValidation = false;
     this.userState.set(state.user);
     this.modeState.set(resolved);
     this.authState.writeState(state);
@@ -225,6 +232,7 @@ export class LtAuthStore {
 
   /** Clear local auth state and cookies (browser). Does not delete offline data (use `signOut()` for that). */
   clearUser(): void {
+    this.signedOutAtValidation = false;
     this.userState.set(null);
     this.modeState.set('cookie');
     this.authState.clearAuthCookies();
@@ -265,15 +273,16 @@ export class LtAuthStore {
   /**
    * Validate the session (app start / hard reload). Server: answers from the cookie, no backend call. Browser:
    * `GET /iam/get-session` (≤ 10 s, plain {@link fetchWithAuth}); a user is merged with the cached one
-   * (nest-server-only fields kept, authz keys fail-closed); no user but a cached one → `true` (e.g. right after 2FA);
-   * else `false`.
+   * (nest-server-only fields kept, authz keys fail-closed). An answer that no session exists (401/403, or neither user
+   * nor session) signs a cached user out and answers `false`, except in JWT mode with a stored JWT; when the answer
+   * decides nothing (timeout, network error, another failure) a cached user is kept → `true`; else `false`.
    */
   async validateSession(): Promise<boolean> {
     if (this.isServer) {
       return !!this.cachedUser();
     }
     try {
-      const session = await withTimeout(this.fetchSession(), LT_VALIDATE_SESSION_TIMEOUT_MS);
+      const session = await withTimeout(this.readSession(), LT_VALIDATE_SESSION_TIMEOUT_MS);
       const sessionUser = session?.user;
       if (sessionUser) {
         // The answer proves the session, not the transport: keep the mode (a bearer-proven session stays in JWT mode).
@@ -285,6 +294,15 @@ export class LtAuthStore {
       }
       const cached = this.cachedUser();
       if (cached) {
+        // get-session ANSWERED that no session exists (401/403, or an answer without user and session): the session
+        // expired or was deleted on the server, and trusting the cached user showed the app signed in while every
+        // protected request failed. JWT mode with a stored JWT keeps the user, as in nuxt-extensions. A timeout, a
+        // network error or another failure decides nothing.
+        if (session?.verdict === false && !this.jwtToken()) {
+          this.clearUser();
+          this.signedOutAtValidation = true;
+          return false;
+        }
         if (!this.userState()) {
           this.userState.set(cached);
         }
@@ -465,11 +483,11 @@ export class LtAuthStore {
    */
   async loadSessionUser(mode: LtAuthMode = this.modeState()): Promise<LtUser | undefined> {
     try {
-      const data = await this.fetchSession();
-      if (!data?.user) {
+      const { user } = await this.readSession();
+      if (!user) {
         return undefined;
       }
-      this.setUser(this.mergeSessionUser(data.user), mode);
+      this.setUser(this.mergeSessionUser(user), mode);
       if (mode === 'cookie') {
         this.prefetchJwt();
       }
@@ -545,13 +563,21 @@ export class LtAuthStore {
     return this.authState.readUser() ?? this.userState();
   }
 
-  /** `GET /iam/get-session` with the session cookie (bearer too in JWT mode); `null` without a session. */
-  private async fetchSession(): Promise<{ session?: unknown; user?: LtUser } | null> {
+  /**
+   * `GET /iam/get-session` with the session cookie (bearer too in JWT mode): the user, and whether a session exists —
+   * `false` when the API answered 401/403 or without user and session, `null` when the answer decides nothing (another
+   * failure). The same verdict as the session-loss probe and nuxt-extensions' `probeSession()`.
+   */
+  private async readSession(): Promise<{ user?: LtUser; verdict: boolean | null }> {
     const response = await this.fetchWithAuth(this.authUrl('/get-session'), { method: 'GET' });
-    if (!response.ok) {
-      return null;
+    if (response.status === 401 || response.status === 403) {
+      return { verdict: false };
     }
-    return ((await response.json().catch(() => null)) as { session?: unknown; user?: LtUser } | null) ?? null;
+    if (!response.ok) {
+      return { verdict: null };
+    }
+    const data = (await response.json().catch(() => null)) as { session?: unknown; user?: LtUser } | null;
+    return { user: data?.user || undefined, verdict: Boolean(data && (data.user || data.session)) };
   }
 
   /** Mint a JWT and switch to JWT mode; one `GET /token` per burst. */

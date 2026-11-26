@@ -223,9 +223,11 @@ export class LtAuthService {
   }
 
   /**
-   * Validate the session (app start / hard reload). Server: answers from the cookie, no backend call. Browser:
-   * `GET /iam/get-session` (≤ 10 s); a user is merged with the cached one (nest-server-only fields kept, authz keys
-   * fail-closed); no user but a cached one → `true` (e.g. right after 2FA); else `false`.
+   * Validate the session (app start / hard reload), see {@link LtAuthStore.validateSession}. Server: answers from the
+   * cookie, no backend call. Browser: `GET /iam/get-session` (≤ 10 s); a user is merged with the cached one
+   * (nest-server-only fields kept, authz keys fail-closed). An answer that no session exists (401/403, or neither user
+   * nor session) signs a cached user out and answers `false`, except in JWT mode with a stored JWT; when the answer
+   * decides nothing (timeout, network error, another failure) a cached user is kept → `true`; else `false`.
    */
   validateSession(): Promise<boolean> {
     return this.store.validateSession();
