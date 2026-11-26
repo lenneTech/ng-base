@@ -8,6 +8,26 @@ and never moves for a breaking change, MINOR is a change an app has to act on wh
 The history up to 18.x (Bootstrap, Apollo/GraphQL, legacy JWT auth) is reachable via the tag `v18.1.3` and the git
 history; that line is not maintained any more.
 
+## [22.1.5] - 2026-11-26
+
+A toast raised before the deferred toaster has rendered is no longer lost, for example the warning of a page that
+redirects on a direct visit. Tested against nest-server 12.11.2. Apps take it over as is.
+
+### Fixed
+
+- `/ui/provide`, `/ui`: a toast raised before the deferred `<hlm-toaster />` has rendered is no longer lost. Spartan's
+  toaster empties the toast state when it is created, so with the toaster in a `@defer` block (as this README advises)
+  every toast of the first moments of a page load disappeared, for example the warning of a page that redirects on a
+  direct visit. In the browser such toasts now wait until a toaster has rendered and then appear in order, each once;
+  `<hlm-toaster>` reports its first render through the new `ltToasterRendered()` (for the toaster, not for app code).
+  An app that renders `<brn-sonner-toaster>` without `<hlm-toaster>` gets its toasts handed over at once, as before.
+  Apps take it over as is.
+
+### Changed
+
+- Dependencies: `@types/node` 24.19.3 (development only). Angular stays on 22.2.x, `better-auth` and
+  `@better-auth/passkey` on 1.7.19.
+
 ## [22.1.4] - 2026-11-26
 
 An app no longer looks signed in after its session ended on the server, level with nuxt-extensions 4.0.6. Tested
