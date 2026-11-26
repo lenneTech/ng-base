@@ -1,5 +1,16 @@
 import type { BooleanInput, NumberInput } from '@angular/cdk/coercion';
-import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, numberAttribute } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	DestroyRef,
+	afterNextRender,
+	booleanAttribute,
+	computed,
+	inject,
+	input,
+	numberAttribute,
+} from '@angular/core';
+import { ltToasterRendered } from '@lenne.tech/ng-base/ui/provide';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideCircleCheck, lucideInfo, lucideLoader2, lucideOctagonX, lucideTriangleAlert } from '@ng-icons/lucide';
 import { BrnSonnerImports, type ToasterProps } from '@spartan-ng/brain/sonner';
@@ -113,4 +124,10 @@ export class HlmToaster {
 	);
 
 	protected readonly _computedClass = computed(() => hlm('toaster group', this.userClass()));
+
+	constructor() {
+		// lenne.Tech: toasts raised before the first render wait for it (see generate-helm.mjs).
+		const destroyRef = inject(DestroyRef);
+		afterNextRender(() => destroyRef.onDestroy(ltToasterRendered()));
+	}
 }

@@ -106,10 +106,39 @@ function strictNullCheck(file) {
   };
 }
 
+/**
+ * lenne.Tech patch: the toaster reports its first render. Spartan's `BrnSonnerToaster` empties the toast state in its
+ * constructor, so a toast raised before `<hlm-toaster>` exists (it sits in a `@defer` block) was lost. The Sonner
+ * adapter of `@lenne.tech/ng-base/ui/provide` holds such toasts until `ltToasterRendered()` is called and shows them
+ * then; the returned release runs when the toaster is destroyed. `ui` may import `ui/provide`, never the other way round.
+ */
+function toasterReportsRender(source) {
+  const steps = [
+    [
+      "import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, numberAttribute } from '@angular/core';",
+      "import {\n\tChangeDetectionStrategy,\n\tComponent,\n\tDestroyRef,\n\tafterNextRender,\n\tbooleanAttribute,\n\tcomputed,\n\tinject,\n\tinput,\n\tnumberAttribute,\n} from '@angular/core';\nimport { ltToasterRendered } from '@lenne.tech/ng-base/ui/provide';",
+    ],
+    [
+      /(\tprotected readonly _computedClass = computed\(\(\) => hlm\('toaster group', this\.userClass\(\)\)\);\n)(\})/,
+      `$1\n\tconstructor() {\n\t\t// lenne.Tech: toasts raised before the first render wait for it (see generate-helm.mjs).\n\t\tconst destroyRef = inject(DestroyRef);\n\t\tafterNextRender(() => destroyRef.onDestroy(ltToasterRendered()));\n\t}\n$2`,
+    ],
+  ];
+  for (const [pattern, replacement] of steps) {
+    const next = source.replace(pattern, replacement);
+    if (next === source) {
+      console.error(`generate-helm: toaster patch no longer applies (${pattern})`);
+      process.exit(1);
+    }
+    source = next;
+  }
+  return source;
+}
+
 const PATCHES = {
   'date-picker/lib/hlm-date-picker.ts': strictNullCheck('hlm-date-picker.ts'),
   'date-picker/lib/hlm-month-year-picker.ts': strictNullCheck('hlm-month-year-picker.ts'),
   'input/lib/hlm-input.ts': invalidFollowsErrorState('BrnInput'),
+  'sonner/lib/hlm-toaster.ts': toasterReportsRender,
   'textarea/lib/hlm-textarea.ts': invalidFollowsErrorState('BrnTextarea'),
 };
 

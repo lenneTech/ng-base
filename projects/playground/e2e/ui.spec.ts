@@ -29,6 +29,14 @@ test('a toast appears', async ({ page }) => {
   await expect(toast).toContainText('Der Toast aus dem Playground funktioniert.');
 });
 
+test('a toast raised on a direct page load, before the deferred toaster exists, appears once', async ({ page }) => {
+  // The toaster sits in `@defer (on idle)`; Spartan's toaster empties the toast state when it is created.
+  await gotoAndWaitForHydration(page, '/demo?toast');
+  const toast = page.locator('[data-sonner-toast]').filter({ hasText: 'Gespeichert' });
+  await expect(toast).toBeVisible();
+  await expect(toast).toHaveCount(1);
+});
+
 test('the confirmation dialog: Escape cancels, Enter and the button confirm', async ({ page }) => {
   await gotoAndWaitForHydration(page, '/demo');
   const trigger = page.getByRole('button', { name: 'Bestätigung anfragen' });

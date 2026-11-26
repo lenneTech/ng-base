@@ -118,6 +118,9 @@ the CDK overlay module):
 }
 ```
 
+A toast raised before the deferred toaster has rendered (a page that warns and redirects on a direct visit) waits for
+it and appears once it has rendered.
+
 ## Runtime configuration
 
 | Variable                                                              | Scope                  | Purpose                                                                                                                             |
