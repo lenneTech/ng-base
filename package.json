@@ -73,7 +73,7 @@
     "@playwright/test": "1.65.1",
     "@tailwindcss/postcss": "4.3.5",
     "@types/express": "5.0.6",
-    "@types/node": "24.19.2",
+    "@types/node": "24.19.3",
     "fake-indexeddb": "6.2.8",
     "happy-dom": "21.0.4",
     "modern-screenshot": "4.7.0",
