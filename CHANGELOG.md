@@ -8,6 +8,25 @@ and never moves for a breaking change, MINOR is a change an app has to act on wh
 The history up to 18.x (Bootstrap, Apollo/GraphQL, legacy JWT auth) is reachable via the tag `v18.1.3` and the git
 history; that line is not maintained any more.
 
+## [22.1.4] - 2026-11-26
+
+An app no longer looks signed in after its session ended on the server, level with nuxt-extensions 4.0.6. Tested
+against nest-server 12.11.2 in cookie and JWT mode. Apps take it over as is.
+
+### Fixed
+
+- `/auth/provide`: `validateSession()` no longer trusts a cached user when `GET /iam/get-session` answers that no
+  session exists (401, 403, or neither user nor session). The session had expired or was deleted on the server, yet the
+  app looked signed in (guards, header) until the first protected request failed with 401. Now the user is signed out
+  and the call answers `false`. A timeout, a network error or another failure decides nothing and keeps the user, and so
+  does JWT mode with a stored JWT. Level with nuxt-extensions 4.0.6. The next request that fails with 401 still sends
+  the user to the login page, as before, and the next navigation to a guarded page does too. Apps take it over as is.
+
+### Changed
+
+- Dependencies: `@spartan-ng/brain` 1.10.1 (within the peer range `>=1.9.0 <2.0.0`), `@axe-core/playwright` 4.14.1,
+  lockfile refresh. Angular stays on 22.2.x, `better-auth` and `@better-auth/passkey` on 1.7.19 (peer range unchanged).
+
 ## [22.1.3] - 2026-11-24
 
 No `/iam/token` request against an API without JWT, and the JWT of a session nest-server 12.11 replaces is kept, level
